@@ -1,0 +1,11 @@
+[package]
+name = "genj"
+version = "0.1.0"
+edition = "2024"
+authors = ["Frederic Delorme <frederic.delorme@gmail.com>"]
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+zip = "0.6"
+walkdir = "2.3"
+chrono = "*"
