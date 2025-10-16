@@ -11,7 +11,10 @@ use zip::ZipArchive;
 #[command(
     author = "Frédéric Delorme",
     version = "1.0",
-    about = "Génère un projet Java à partir d'un template ZIP ou dossier"
+    about = "This script generates a Java project based on the specified template files.
+It creates the necessary directory structure, copies the templates, replaces
+placeholders in the templates with the provided values, and generates additional
+files such as MANIFEST.MF and README.md."
 )]
 struct Cli {
     #[arg(short, long, help = "Chemin du template (ZIP ou dossier)")]
@@ -32,6 +35,12 @@ struct Cli {
     package: String,
     #[arg(short = 'm', long = "mainclass", default_value = "App")]
     mainclass: String,
+     #[arg(short = 'b', long = "build", help = "Outil de construction (maven ou gradle)", default_value = "maven")]
+    build_tool: String,
+    #[arg(long = "maven_version", default_value = "3.9.5")]
+    maven_version: String,
+    #[arg(long = "gradle_version", default_value = "8.5")]
+    gradle_version: String,
 }
 
 fn main() -> io::Result<()> {
@@ -68,10 +77,60 @@ fn main() -> io::Result<()> {
         std::process::exit(1);
     }
 
+    // Traitement du build tool
+    let build_tool = args.build_tool.to_lowercase();
+    if build_tool != "maven" && build_tool != "gradle" {
+        eprintln!("Outil de build non supporté : {} (valeurs possibles : maven, gradle)", build_tool);
+        std::process::exit(1);
+    }
+
+    // Ajout du fichier pom.xml ou build.gradle
+    if build_tool == "maven" {
+        // Ex : projet simple Maven
+        let pom_path = dest_path.join("pom.xml");
+        let pom_content = format!(
+            r#"<project xmlns="http://maven.apache.org/POM/4.0.0" ...>
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>{}</groupId>
+        <artifactId>{}</artifactId>
+        <version>{}</version>
+    </project>"#,
+            args.package,
+            args.project_name,
+            args.project_version
+        );
+        write(pom_path, pom_content)?;
+    } else if build_tool == "gradle" {
+        // Ex : projet simple Gradle
+        let gradle_path = dest_path.join("build.gradle");
+        let gradle_content = format!(
+            r#"plugins {{
+        id 'java'
+    }}
+    group '{}'
+    version '{}'
+    repositories {{
+        mavenCentral()
+    }}
+    dependencies {{}}
+    "#,
+            args.package,
+            args.project_version
+        );
+        write(gradle_path, gradle_content)?;
+    }
+
+    // Mise à jour du fichier .sdkman
     if let Some(java_ver) = args.java {
-        let sdkman_file = dest_path.join(".sdkman");
-        let content = format!("java={}", java_ver);
-        write(sdkman_file, content)?;
+        let sdkman_file = dest_path.join(".sdkmanrc");
+        let mut sdkman_content = format!("java={}\n", java_ver);
+
+        if build_tool == "maven" {
+            sdkman_content.push_str(&format!("maven={}\n", args.maven_version));
+        } else if build_tool == "gradle" {
+            sdkman_content.push_str(&format!("gradle={}\n", args.gradle_version));
+        }
+        write(sdkman_file, sdkman_content)?;
     }
 
     println!("Projet Java généré dans {}", dest_path.display());
