@@ -89,7 +89,7 @@ fn main() -> io::Result<()> {
         // Ex : projet simple Maven
         let pom_path = dest_path.join("pom.xml");
         let pom_content = format!(
-            r#"<project xmlns="http://maven.apache.org/POM/4.0.0" ...>
+            r#"<project xmlns="http://maven.apache.org/POM/4.0.0">
         <modelVersion>4.0.0</modelVersion>
         <groupId>{}</groupId>
         <artifactId>{}</artifactId>
@@ -157,6 +157,30 @@ fn replace_package_in_path(path_str: &str, replacements: &[(&str, &str)], packag
     final_path
 }
 
+// Détecte si un buffer d'octets ressemble à du texte.
+fn is_text_bytes(buf: &[u8]) -> bool {
+    // Si on trouve un octet NUL, c'est très probablement binaire
+    if buf.iter().any(|&b| b == 0) {
+        return false;
+    }
+
+    // Essayer une vérification UTF-8 simple
+    if std::str::from_utf8(buf).is_ok() {
+        return true;
+    }
+
+    // Si pas UTF-8, considérer comme binaire
+    false
+}
+
+// Lit un petit préfixe du fichier pour décider si c'est du texte
+fn is_text_path(path: &Path) -> io::Result<bool> {
+    let mut file = File::open(path)?;
+    let mut buf = [0u8; 8192];
+    let n = file.read(&mut buf)?;
+    Ok(is_text_bytes(&buf[..n]))
+}
+
 fn extract_zip_with_replace(
     zip_path: &Path,
     dest_path: &Path,
@@ -177,14 +201,14 @@ fn extract_zip_with_replace(
         .filter(|s| !s.is_empty());
 
     for i in 0..archive.len() {
-        let mut entry = archive.by_index(i)?;
-        let raw_name = entry.name();
+    let mut entry = archive.by_index(i)?;
+    let raw_name = entry.name().to_string();
 
         // Suppression du préfixe racine commun
         let relative_path = if let Some(prefix) = common_prefix {
-            raw_name.strip_prefix(prefix).unwrap_or(raw_name)
+            raw_name.as_str().strip_prefix(prefix).unwrap_or(raw_name.as_str())
         } else {
-            raw_name
+            raw_name.as_str()
         };
 
         // Utilisation de replace_package_in_path pour gérer ${PACKAGE}
@@ -196,14 +220,25 @@ fn extract_zip_with_replace(
 
         let full_path = dest_path.join(outpath);
 
-        if entry.name().ends_with('/') {
+        if raw_name.ends_with('/') {
             create_dir_all(&full_path)?;
         } else {
             if let Some(parent) = full_path.parent() {
                 create_dir_all(parent)?;
             }
-            let mut content = String::new();
-            entry.read_to_string(&mut content)?;
+
+            // Lire en bytes puis détecter si c'est texte
+            let mut bytes: Vec<u8> = Vec::new();
+            entry.read_to_end(&mut bytes)?;
+
+            if !is_text_bytes(&bytes) {
+                // Ignorer les fichiers binaires
+                eprintln!("Skipping binary file in zip: {}", raw_name);
+                continue;
+            }
+
+            // Ici on suppose que c'est UTF-8
+            let content = String::from_utf8(bytes).unwrap_or_default();
             let replaced_content = replacements.iter().fold(content, |acc, (pat, val)| acc.replace(pat, val));
             write(&full_path, replaced_content)?;
         }
@@ -234,12 +269,25 @@ fn copy_dir_with_replace(
         if entry.file_type().is_dir() {
             create_dir_all(&full_dest_path)?;
         } else if entry.file_type().is_file() {
-            if let Some(parent) = full_dest_path.parent() {
-                create_dir_all(parent)?;
+            // Sauter les fichiers binaires
+            match is_text_path(entry.path()) {
+                Ok(true) => {
+                    if let Some(parent) = full_dest_path.parent() {
+                        create_dir_all(parent)?;
+                    }
+                    let content = read_to_string(entry.path())?;
+                    let replaced_content = replacements.iter().fold(content, |acc, (pat, val)| acc.replace(pat, val));
+                    write(full_dest_path, replaced_content)?;
+                }
+                Ok(false) => {
+                    eprintln!("Skipping binary file: {}", entry.path().display());
+                    continue;
+                }
+                Err(err) => {
+                    eprintln!("Error reading file {}: {}", entry.path().display(), err);
+                    continue;
+                }
             }
-            let content = read_to_string(entry.path())?;
-            let replaced_content = replacements.iter().fold(content, |acc, (pat, val)| acc.replace(pat, val));
-            write(full_dest_path, replaced_content)?;
         }
     }
     Ok(())
