@@ -1,6 +1,5 @@
 package  ${PACKAGE};
 
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -44,212 +43,229 @@ import javax.swing.JFrame;
  * @author ${AUTHOR_NAME}<${AUTHOR_EMAIL}>
  * @version ${PROJECT_VERSION}
  */
-public class ${MAINCLASS} implements KeyListener {
+public class ${MAINCLASS}implements KeyListener{
 
+/**
+ * Enumeration representing the different operational modes of the ${MAINCLASS}.
+ *
+ * <p>
+ * These modes control the behavior and features available during ${MAINCLASS}
+ * execution:
+ * <ul>
+ * <li><strong>DEVELOPMENT</strong>: Enables debug features, detailed logging,
+ * and development tools</li>
+ * <li><strong>PRODUCTION</strong>: Optimized mode with minimal logging for
+ * deployment environments</li>
+ * </ul>
+ *
+ * <p>
+ * The mode affects logging verbosity, debug information display, and
+ * performance optimizations.
+ * It can be configured through command-line arguments or configuration files.
+ *
+ * @see #debug
+ * @see #config
+ */
+public enum AppMode {
     /**
-     * Enumeration representing the different operational modes of the ${MAINCLASS}.
-     *
-     * <p>These modes control the behavior and features available during ${MAINCLASS} execution:
-     * <ul>
-     *   <li><strong>DEVELOPMENT</strong>: Enables debug features, detailed logging, and development tools</li>
-     *   <li><strong>PRODUCTION</strong>: Optimized mode with minimal logging for deployment environments</li>
-     * </ul>
-     *
-     * <p>The mode affects logging verbosity, debug information display, and performance optimizations.
-     * It can be configured through command-line arguments or configuration files.
-     *
-     * @see #debug
-     * @see #config
+     * Development mode.
+     * Used for debugging and development purposes.
      */
-    public enum AppMode {
-        /**
-         * Development mode.
-         * Used for debugging and development purposes.
-         */
-        DEVELOPMENT,
-        /**
-         * Production mode.
-         * Used for running the Game${MAINCLASS} in a production environment.
-         */
-        PRODUCTION,
-    }
-
+    DEVELOPMENT,
     /**
-     * Text alignment options for rendering text.
-     * Used to specify horizontal alignment when drawing text.
+     * Production mode.
+     * Used for running the ${MAINCLASS} in a production environment.
      */
-    public enum TextAlign {
-        LEFT,
-        CENTER,
-        RIGHT,
+    PRODUCTION,
+}
+
+/**
+ * Text alignment options for rendering text.
+ * Used to specify horizontal alignment when drawing text.
+ */
+public enum TextAlign {
+    LEFT,
+    CENTER,
+    RIGHT,
+}
+
+/**
+ * A circular queue implementation that extends LinkedList with a fixed
+ * capacity.
+ * When the queue reaches its maximum capacity, adding a new element will
+ * automatically
+ * remove the oldest element (first in the queue) to maintain the size limit.
+ *
+ * <p>
+ * This implementation is useful for maintaining a rolling buffer of recent
+ * items,
+ * such as event history or logging where only the most recent N items need to
+ * be kept.
+ *
+ * <p>
+ * Example usage:
+ * 
+ * <pre>{@code
+ * CircularQueue<String> queue = new CircularQueue<>(3);
+ * queue.add("A"); // Queue: [A]
+ * queue.add("B"); // Queue: [A, B]
+ * queue.add("C"); // Queue: [A, B, C]
+ * queue.add("D"); // Queue: [B, C, D] (A is removed)
+ * }</pre>
+ *
+ * @param <E> the type of elements held in this queue
+ */
+public class CircularQueue<E> extends LinkedList<E> {
+
+    private final int capacity;
+
+    public CircularQueue(int capacity) {
+        this.capacity = capacity;
     }
 
-    /**
-     * A circular queue implementation that extends LinkedList with a fixed capacity.
-     * When the queue reaches its maximum capacity, adding a new element will automatically
-     * remove the oldest element (first in the queue) to maintain the size limit.
-     *
-     * <p>This implementation is useful for maintaining a rolling buffer of recent items,
-     * such as event history or logging where only the most recent N items need to be kept.
-     *
-     * <p>Example usage:
-     * <pre>{@code
-     * CircularQueue<String> queue = new CircularQueue<>(3);
-     * queue.add("A"); // Queue: [A]
-     * queue.add("B"); // Queue: [A, B]
-     * queue.add("C"); // Queue: [A, B, C]
-     * queue.add("D"); // Queue: [B, C, D] (A is removed)
-     * }</pre>
-     *
-     * @param <E> the type of elements held in this queue
-     */
-    public class CircularQueue<E> extends LinkedList<E> {
+    @Override
+    public boolean add(E e) {
+        if (size() >= capacity)
+            removeFirst();
+        return super.add(e);
+    }
+}
 
-        private final int capacity;
+/**
+ * Represents a generic entity with properties such as position, velocity, size,
+ * color, and active state.
+ * This class is intended to be a base model for visual and interactive objects
+ * in a graphical ${MAINCLASS}lication.
+ *
+ * @param <T> the specific type extending this Entity class, enabling fluent API
+ *            configuration
+ */
+public static class Entity<T> {
+    public static long idx = 0;
+    public long id = idx++;
+    public String name = "entity_%d".formatted(id);
 
-        public CircularQueue(int capacity) {
-            this.capacity = capacity;
+    public float x = 0.0f, y = 0.0f;
+    public float vx = 0.0f, vy = 0.0f;
+
+    public float mass = 1.0f;
+
+    public int width = 0, height = 0;
+    public Color color = Color.BLACK, fillColor = Color.BLUE;
+
+    public List<Entity<?>> children = new ArrayList<>();
+
+    public boolean active = true;
+
+    public Entity() {
+    }
+
+    public Entity(String name) {
+        this.name = name;
+    }
+
+    public T add(Entity<?> b) {
+        children.add(b);
+        return (T) this;
+    }
+
+    public T setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+        return (T) this;
+    }
+
+    public T setVelocity(float vx, float vy) {
+        this.vx = vx;
+        this.vy = vy;
+        return (T) this;
+    }
+
+    public T setSize(int w, int h) {
+        this.width = w;
+        this.height = h;
+        return (T) this;
+    }
+
+    public T setColor(Color c) {
+        this.color = c;
+        return (T) this;
+    }
+
+    public T setFillColor(Color fc) {
+        this.fillColor = fc;
+        return (T) this;
+    }
+
+    public T setActive(boolean a) {
+        this.active = a;
+        return (T) this;
+    }
+
+    public T setMass(float m) {
+        this.mass = m;
+        return (T) this;
+    }
+
+    public boolean isIntersect(Entity other) {
+        return (x + width) - (other.x + other.width) > 0 && (y + height) - (other.y + other.height) > 0;
+    }
+
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public void update(long elapsed) {
+        x += vx * (elapsed / 1000f);
+        y += vy * (elapsed / 1000f);
+    }
+
+    public void draw(Graphics2D g) {
+        if (fillColor != null) {
+            g.setColor(fillColor);
+            g.fillRect((int) (x + 0.5f), (int) (y + 0.5f), width, height);
         }
-
-        @Override
-        public boolean add(E e) {
-            if (size() >= capacity) removeFirst();
-            return super.add(e);
+        if (color != null) {
+            g.setColor(color);
+            g.drawRect((int) (x + 0.5f), (int) (y + 0.5f), width, height);
         }
     }
 
-    /**
-     * Represents a generic entity with properties such as position, velocity, size, color, and active state.
-     * This class is intended to be a base model for visual and interactive objects in a graphical ${MAINCLASS}lication.
-     *
-     * @param <T> the specific type extending this Entity class, enabling fluent API configuration
-     */
-    public static class Entity<T> {
-        public static long idx = 0;
-        public long id = idx++;
-        public String name = "entity_%d".formatted(id);
+}
 
-        public float x = 0.0f, y = 0.0f;
-        public float vx = 0.0f, vy = 0.0f;
-
-        public float mass = 1.0f;
-
-        public int width = 0, height = 0;
-        public Color color = Color.BLACK, fillColor = Color.BLUE;
-
-        public List<Entity<?>> children = new ArrayList<>();
-
-        public boolean active = true;
-
-        public Entity() {
-        }
-
-        public Entity(String name) {
-            this.name = name;
-        }
-
-        public T add(Entity<?> b) {
-            children.add(b);
-            return (T) this;
-        }
-
-        public T setPosition(float x, float y) {
-            this.x = x;
-            this.y = y;
-            return (T) this;
-        }
-
-        public T setVelocity(float vx, float vy) {
-            this.vx = vx;
-            this.vy = vy;
-            return (T) this;
-        }
-
-        public T setSize(int w, int h) {
-            this.width = w;
-            this.height = h;
-            return (T) this;
-        }
-
-        public T setColor(Color c) {
-            this.color = c;
-            return (T) this;
-        }
-
-        public T setFillColor(Color fc) {
-            this.fillColor = fc;
-            return (T) this;
-        }
-
-        public T setActive(boolean a) {
-            this.active = a;
-            return (T) this;
-        }
-
-        public T setMass(float m) {
-            this.mass = m;
-            return (T) this;
-        }
-
-        public boolean isIntersect(Entity other) {
-            return (x + width) - (other.x + width) > 0 && (y + height) - (other.y + other.height) > 0;
-        }
-
-        public boolean isActive() {
-            return this.active;
-        }
-
-        public void update(long elapsed) {
-            x += vx * (elapsed / 1000f);
-            y += vy * (elapsed / 1000f);
-        }
-
-        public void draw(Graphics2D g) {
-            if (fillColor != null) {
-                g.setColor(fillColor);
-                g.fillRect((int) (x + 0.5f), (int) (y + 0.5f), width, height);
-            }
-            if (color != null) {
-                g.setColor(color);
-                g.drawRect((int) (x + 0.5f), (int) (y + 0.5f), width, height);
-            }
-        }
-
+/**
+ * Represents a game object with properties such as position, velocity, size,
+ * color, and active state.
+ * This class extends the Entity class and is intended to be a base model for
+ * visual and interactive game objects.
+ */
+public static class GameObject extends Entity<GameObject> {
+    public GameObject(String name) {
+        super(name);
     }
+}
 
-    /**
-     * Represents a game object with properties such as position, velocity, size, color, and active state.
-     * This class extends the Entity class and is intended to be a base model for visual and interactive game objects.
-     */
-    public static class GameObject extends Entity<GameObject> {
-        public GameObject(String name) {
-            super(name);
-        }
-    }
-
-    public static class Colors {
-        public static Color random() {
-            return new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-        }
-    }
+public static class Colors {
+    public static Color random() {
+        return new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+    }}
 
     /**
      * The resource bundle for internationalization.
      */
     public static ResourceBundle i18Text = ResourceBundle.getBundle(
-            "i18n/messages"
-    );
+            "i18n/messages");
     /**
-     * The Game${MAINCLASS} configuration properties.
+     * The ${MAINCLASS} configuration properties.
      */
     public static Properties config = new Properties();
     /**
-     * The debug level for the Game${MAINCLASS}.
+     * The debug level for the ${MAINCLASS}.
      * 0 = no debug, 1 = basic debug, 2> = detailed debug
      */
     public static int debug = 0;
     /**
-     * The current Game${MAINCLASS} mode.
+     * The current ${MAINCLASS} mode.
      * Default is PRODUCTION.
      */
     public static AppMode mode = AppMode.DEVELOPMENT;
@@ -270,13 +286,14 @@ public class ${MAINCLASS} implements KeyListener {
     private static Random rand = new Random(67092);
 
     /**
-     * Creates a new instance of the Game${MAINCLASS}.
+     * Creates a new instance of the ${MAINCLASS}.
      */
-    public ${MAINCLASS}() {
+    public ${MAINCLASS}()
+    {
         info(
                 ${MAINCLASS}.class,
                 "Create ${MAINCLASS} '%s'",
-                getI18n("${MAINCLASS}.name", "${MAINCLASS}lication")
+                getI18n("app.main.name", "Application").formatted(getI18n("app.main.version", "0.0.1"))
         );
     }
 
@@ -288,8 +305,8 @@ public class ${MAINCLASS} implements KeyListener {
     public void run(String[] args) {
         info(
                 ${MAINCLASS}.class,
-                "Game${MAINCLASS} '%s' is running..",
-                getI18n("${MAINCLASS}.name", "1.0.0")
+                "${MAINCLASS} '%s' is running..",
+                getI18n("app.main.name", "Application").formatted(getI18n("app.main.version", "0.0.1"))
         );
         for (String arg : args) {
             info(${MAINCLASS}.class, "- %s", arg);
@@ -300,7 +317,7 @@ public class ${MAINCLASS} implements KeyListener {
     }
 
     /**
-     * Initializes the Game${MAINCLASS}.
+     * Initializes the ${MAINCLASS}.
      *
      * @param args the command-line arguments
      */
@@ -308,13 +325,13 @@ public class ${MAINCLASS} implements KeyListener {
         info(
                 ${MAINCLASS}.class,
                 "${MAINCLASS} '%s' is initializing.",
-                getI18n("${MAINCLASS}.name", "${MAINCLASS}lication")
+                getI18n("app.main.name", "Application")
         );
         // default values
-        config.put("${MAINCLASS}.config.file", "/config.properties");
-        config.put("${MAINCLASS}.debug", 0);
-        config.put("${MAINCLASS}.mode", AppMode.DEVELOPMENT);
-        config.put("${MAINCLASS}.window.size", "800x600");
+        config.put("app.config.file", "/config.properties");
+        config.put("app.debug", 0);
+        config.put("app.mode", AppMode.DEVELOPMENT);
+        config.put("app.window.size", "800x600");
         // parsing arguments
         for (String arg : args) {
             String[] kv = arg.split("=", 2);
@@ -350,7 +367,7 @@ public class ${MAINCLASS} implements KeyListener {
     }
 
     /**
-     * Parses the Game${MAINCLASS} configuration.
+     * Parses the ${MAINCLASS} configuration.
      *
      * @param config the configuration properties
      */
@@ -359,15 +376,15 @@ public class ${MAINCLASS} implements KeyListener {
         for (String key : config.stringPropertyNames()) {
             String value = config.getProperty(key);
             switch (key) {
-                case "${MAINCLASS}.debug" -> {
+                case "app.debug" -> {
                     debug = Integer.parseInt(value);
                     info(${MAINCLASS}.class, "read config '%s' = '%s'", key, value);
                 }
-                case "${MAINCLASS}.mode" -> {
+                case "app.mode" -> {
                     mode = AppMode.valueOf(value.toUpperCase());
                     info(${MAINCLASS}.class, "read config '%s' = '%s'", key, value);
                 }
-                case "${MAINCLASS}.window.size" -> {
+                case "app.window.size" -> {
                     String[] keyVal = value.toLowerCase().split("x");
                     winDim = new Dimension(
                             Integer.parseInt(keyVal[0]),
@@ -376,7 +393,7 @@ public class ${MAINCLASS} implements KeyListener {
                     info(${MAINCLASS}.class, "read config '%s' = '%s'", key, value);
                 }
                 default -> {
-                    info(
+                    warn(
                             ${MAINCLASS}.class,
                             "Unknown config '%s' = '%s'",
                             key,
@@ -444,8 +461,7 @@ public class ${MAINCLASS} implements KeyListener {
                     -1,
                     "Unable to wait for %d ms : %s",
                     l,
-                    e.getMessage()
-            );
+                    e.getMessage());
         }
     }
 
@@ -456,10 +472,8 @@ public class ${MAINCLASS} implements KeyListener {
 
     public void createWindow() {
         window = new JFrame(
-                getI18n("${MAINCLASS}.name", "${MAINCLASS}lication").formatted(
-                        getI18n("${MAINCLASS}.version", "1.0.0")
-                )
-        );
+                getI18n("app.main.name", "Application").formatted(
+                        getI18n("app.main.version", "1.0.0")));
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setPreferredSize(winDim);
         window.addKeyListener(this);
@@ -543,9 +557,7 @@ public class ${MAINCLASS} implements KeyListener {
                         RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON,
                         RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-                )
-        );
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
         // clear window
         g.setBackground(Color.BLACK);
         g.clearRect(0, 0, window.getWidth(), window.getHeight());
@@ -556,24 +568,22 @@ public class ${MAINCLASS} implements KeyListener {
 
         drawText(
                 g,
-                getI18n("${MAINCLASS}.message.welcome", "Welcome into this demo"),
+                getI18n("app.message.welcome", "Welcome into this demo"),
                 (int) (window.getWidth() * 0.1),
                 (int) (window.getHeight() * 0.1),
                 TextAlign.LEFT,
                 24.0f,
                 Color.WHITE,
-                Font.BOLD
-        );
+                Font.BOLD);
         drawText(
                 g,
-                getI18n("${MAINCLASS}.message.exit", "press ESCAPE to exit"),
+                getI18n("app.message.exit", "press ESCAPE to exit"),
                 (int) (window.getWidth() * 0.95),
                 (int) (window.getHeight() * .95),
                 TextAlign.RIGHT,
                 12.0f,
                 Color.GRAY,
-                Font.BOLD
-        );
+                Font.BOLD);
 
         if (debug > 0) {
             drawText(
@@ -583,15 +593,13 @@ public class ${MAINCLASS} implements KeyListener {
                             stats.get("elapsed"),
                             stats.get("gameTime"),
                             stats.get("fps"),
-                            pause ? "ON" : "OFF"
-                    ),
+                            pause ? "ON" : "OFF"),
                     30,
                     window.getHeight() - 40,
                     TextAlign.LEFT,
                     11.0f,
                     Color.ORANGE,
-                    Font.PLAIN
-            );
+                    Font.PLAIN);
         }
         // switch buffer
         g.dispose();
@@ -603,7 +611,7 @@ public class ${MAINCLASS} implements KeyListener {
     }
 
     /**
-     * Disposes the Game${MAINCLASS} resources.
+     * Disposes the ${MAINCLASS} resources.
      */
     private void dispose() {
         if (Optional.ofNullable(window).isPresent()) {
@@ -611,13 +619,13 @@ public class ${MAINCLASS} implements KeyListener {
         }
         info(
                 ${MAINCLASS}.class,
-                "Game${MAINCLASS} '%s' is ending.",
-                i18Text.getString("${MAINCLASS}.name")
+                "${MAINCLASS} '%s' is ending.",
+                i18Text.getString("app.main.name")
         );
     }
 
     /**
-     * The main entry point for the Game${MAINCLASS}.
+     * The main entry point for the ${MAINCLASS}.
      */
     public static void main(String[] args) {
         ${MAINCLASS} ${MAINCLASS} = new ${MAINCLASS}();
@@ -636,15 +644,13 @@ public class ${MAINCLASS} implements KeyListener {
             Class<?> cls,
             String level,
             String message,
-            Object... args
-    ) {
+            Object... args) {
         System.out.printf(
                 "%s;%s;%s;%s%n",
                 ZonedDateTime.now(),
                 cls.getCanonicalName(),
                 level,
-                message.formatted(args)
-        );
+                message.formatted(args));
     }
 
     /**
@@ -681,8 +687,7 @@ public class ${MAINCLASS} implements KeyListener {
             Class<?> cls,
             int debugLevel,
             String message,
-            Object... args
-    ) {
+            Object... args) {
         if (isDebugGreaterThan(debugLevel) && mode == AppMode.DEVELOPMENT) {
             log(cls, "DEBUG", message, args);
         }
@@ -711,8 +716,7 @@ public class ${MAINCLASS} implements KeyListener {
             Class<?> cls,
             int exitStatus,
             String message,
-            Object... args
-    ) {
+            Object... args) {
         log(cls, "FATAL", message, args);
         System.exit(exitStatus);
     }
@@ -791,8 +795,7 @@ public class ${MAINCLASS} implements KeyListener {
             TextAlign align,
             float fontSize,
             Color c,
-            int fontStyle
-    ) {
+            int fontStyle) {
         Font font = g.getFont().deriveFont(fontStyle, fontSize);
         drawText(g, text, x, y, align, font, c);
     }
@@ -815,15 +818,14 @@ public class ${MAINCLASS} implements KeyListener {
             int y,
             TextAlign align,
             Font font,
-            Color c
-    ) {
+            Color c) {
         g.setFont(font);
         g.setColor(c);
         int offsetX = align.equals(TextAlign.CENTER)
                 ? (int) -(g.getFontMetrics().stringWidth(text) * 0.5)
                 : align.equals(TextAlign.RIGHT)
-                ? -g.getFontMetrics().stringWidth(text)
-                : 0;
+                        ? -g.getFontMetrics().stringWidth(text)
+                        : 0;
         g.drawString(text, x + offsetX, y);
     }
 
@@ -836,7 +838,8 @@ public class ${MAINCLASS} implements KeyListener {
      */
     public static String getI18n(String key, String defaultText) {
         String msg = i18Text.getString(key);
-        if (msg == null) return defaultText;
+        if (msg == null)
+            return defaultText;
         return msg;
     }
 
@@ -856,8 +859,6 @@ public class ${MAINCLASS} implements KeyListener {
                 hours,
                 mins,
                 secs,
-                time % 1000
-        );
+                time % 1000);
     }
 }
-
