@@ -1,6 +1,6 @@
 # Classe Entity et GameObject
 
-Cette page documente l'implémentation des classes `Entity` et `GameObject` présentes dans `App.java` (package `com.snapgames.demo.oneoone`). Elle explique la conception, les champs importants, les méthodes principales, des exemples d'utilisation simples dans la démo, ainsi qu'un diagramme PlantUML et une illustration SVG.
+Cette page documente l'implémentation des classes `Entity` et `GameObject` présentes dans `${MAINCLASS}.java` (package `com.snapgames.demo.oneoone`). Elle explique la conception, les champs importants, les méthodes principales, des exemples d'utilisation simples dans la démo, ainsi qu'un diagramme PlantUML et une illustration SVG.
 
 ## Résumé
 
@@ -79,7 +79,7 @@ Une illustration simplifiée est fournie dans `src/docs/illustrations/entity-dia
 
 ## Exemple d'utilisation dans la demo
 
-Dans `App.createScene()` la demo instancie un joueur et plusieurs cases :
+Dans `${MAINCLASS}.createScene()` la demo instancie un joueur et plusieurs cases :
 
 ```java
 add(new GameObject("player")
@@ -153,7 +153,7 @@ assert a.isIntersect(b);
 
 Si vous le souhaitez, je peux :
 
-- corriger la méthode `isIntersect` dans `App.java` et ajouter un test unitaire ;
+- corriger la méthode `isIntersect` dans `${MAINCLASS}.java` et ajouter un test unitaire ;
 - générer une image PNG depuis le PlantUML et l'inclure dans la doc ;
 - détailler un guide sur le pooling d'objets pour améliorer les performances.
 

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420">
+  <style>
+    .title { font: 700 16px/1.2 "Segoe UI", Roboto, "Helvetica Neue", Arial; fill: #1f2937; }
+    .folder { font: 600 13px monospace; fill: #0f172a; }
+    .file { font: 12px monospace; fill: #0f172a; }
+    .badge { font: 11px monospace; fill: white; }
+    .box { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.2; rx: 6; }
+    .folder-box { fill: #eef2ff; stroke: #c7d2fe; }
+    .line { stroke: #cbd5e1; stroke-width: 1.0; }
+  </style>
+
+  <rect x="12" y="12" width="876" height="396" rx="10" fill="#ffffff" stroke="#e2e8f0" />
+
+  <text x="28" y="36" class="title">Aperçu du rendu — projet "Demo" généré</text>
+
+  <!-- Root box -->
+  <g transform="translate(28,56)">
+    <rect class="box" x="0" y="0" width="420" height="340" />
+    <text class="folder" x="18" y="26">Demo/</text>
+
+    <!-- Left column: tree -->
+    <g transform="translate(18,40)">
+      <!-- pom / gradle -->
+      <g transform="translate(0,0)">
+        <rect class="folder-box" x="0" y="0" width="220" height="36" rx="6"/>
+        <text class="file" x="12" y="22">pom.xml (ou build.gradle)</text>
+        <rect x="172" y="6" width="40" height="20" rx="4" fill="#10b981"/>
+        <text class="badge" x="178" y="20">maven</text>
+      </g>
+
+      <!-- .sdkmanrc -->
+      <g transform="translate(0,52)">
+        <rect class="box" x="0" y="0" width="220" height="30" rx="6"/>
+        <text class="file" x="12" y="20">.sdkmanrc → java=25-zulu</text>
+      </g>
+
+      <!-- README.md -->
+      <g transform="translate(0,100)">
+        <rect class="box" x="0" y="0" width="220" height="30" rx="6"/>
+        <text class="file" x="12" y="20">README.md</text>
+      </g>
+
+      <!-- src tree label -->
+      <g transform="translate(260,0)">
+        <text class="folder" x="0" y="14">src/</text>
+
+        <!-- src/main/java/com/demo/App.java -->
+        <g transform="translate(0,18)">
+          <rect class="box" x="0" y="0" width="320" height="36" rx="6"/>
+          <text class="file" x="10" y="22">src/main/java/com/demo/App.java</text>
+        </g>
+
+        <!-- resources -->
+        <g transform="translate(0,64)">
+          <rect class="box" x="0" y="0" width="320" height="30" rx="6"/>
+          <text class="file" x="10" y="20">src/main/resources/application.properties</text>
+        </g>
+
+        <!-- binary / libs -->
+        <g transform="translate(0,108)">
+          <rect class="box" x="0" y="0" width="320" height="34" rx="6"/>
+          <text class="file" x="10" y="22">lib/some-native-lib.so  (copié tel quel)</text>
+        </g>
+      </g>
+
+      <!-- Manifest/metadata -->
+      <g transform="translate(0,156)">
+        <rect class="box" x="0" y="0" width="220" height="28" rx="6"/>
+        <text class="file" x="12" y="18">META-INF/MANIFEST.MF</text>
+      </g>
+
+      <!-- placeholders shown -->
+      <g transform="translate(0,204)">
+        <rect class="box" x="0" y="0" width="360" height="106" rx="6"/>
+        <text class="file" x="12" y="20">Remplacements appliqués :</text>
+        <text class="file" x="18" y="40">- ${PROJECT_NAME} → Demo</text>
+        <text class="file" x="18" y="58">- ${PACKAGE} → com.demo  (transformé en arborescence)</text>
+        <text class="file" x="18" y="76">- ${MAINCLASS} → App</text>
+        <text class="file" x="18" y="94">- ${JAVA} → 25</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(470,86)">
+    <text class="title" x="0" y="0">Légende</text>
+    <rect x="0" y="14" width="220" height="90" class="box" />
+    <text class="file" x="12" y="36">• Fichiers texte → recherche & remplacements</text>
+    <text class="file" x="12" y="56">• Fichiers binaires → copiés tels quels</text>
+    <text class="file" x="12" y="76">• ${PACKAGE} → converti en dossiers com/demo</text>
+  </g>
+
+  <!-- small footer -->
+  <text x="470" y="260" class="file">Exemple : App.java contient package com.demo; main = Demo.App</text>
+</svg>
