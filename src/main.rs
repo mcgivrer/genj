@@ -1,7 +1,7 @@
 use clap::Parser;
 use chrono::prelude::*;
 use std::fs::File;
-use std::fs::{create_dir_all, read_to_string, write};
+use std::fs::{create_dir_all, read_to_string, write, copy};
 use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
@@ -253,8 +253,8 @@ fn extract_zip_with_replace(
             entry.read_to_end(&mut bytes)?;
 
             if !is_text_bytes(&bytes) {
-                // Ignorer les fichiers binaires
-                eprintln!("Skipping binary file in zip: {}", raw_name);
+                // Copier les fichiers binaires tels quels
+                write(&full_path, &bytes)?;
                 continue;
             }
 
@@ -301,7 +301,14 @@ fn copy_dir_with_replace(
                     write(full_dest_path, replaced_content)?;
                 }
                 Ok(false) => {
-                    eprintln!("Skipping binary file: {}", entry.path().display());
+                    // Copier les fichiers binaires tels quels
+                    if let Some(parent) = full_dest_path.parent() {
+                        create_dir_all(parent)?;
+                    }
+                    match copy(entry.path(), &full_dest_path) {
+                        Ok(_) => { /* copié */ }
+                        Err(err) => eprintln!("Failed to copy binary file {}: {}", entry.path().display(), err),
+                    }
                     continue;
                 }
                 Err(err) => {
