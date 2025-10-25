@@ -85,7 +85,7 @@
   <g transform="translate(470,86)">
     <text class="title" x="0" y="0">Légende</text>
     <rect x="0" y="14" width="220" height="90" class="box" />
-    <text class="file" x="12" y="36">• Fichiers texte → recherche & remplacements</text>
+    <text class="file" x="12" y="36">• Fichiers texte → recherche &amp; remplacements</text>
     <text class="file" x="12" y="56">• Fichiers binaires → copiés tels quels</text>
     <text class="file" x="12" y="76">• ${PACKAGE} → converti en dossiers com/demo</text>
   </g>
