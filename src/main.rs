@@ -29,8 +29,10 @@ struct Cli {
     email: String,
     #[arg(short = 'v', long = "project_version", default_value = "0.0.1")]
     project_version: String,
-    #[arg(short = 'j', long = "java")]
-    java: Option<String>,
+    #[arg(short = 'j', long = "java_version", help = "la version du JDK", default_value="25")]
+    java: String,
+    #[arg(short = 'f', long = "java_flavor", help="La saveur du JDK (pour sdkman)", default_value="25-zulu")]
+    java_flavor: String,
     #[arg(short = 'k', long = "package", default_value = "com.demo")]
     package: String,
     #[arg(short = 'm', long = "mainclass", default_value = "App")]
@@ -41,6 +43,8 @@ struct Cli {
     maven_version: String,
     #[arg(long = "gradle_version", default_value = "8.5")]
     gradle_version: String,
+    #[arg(short = 'l', long = "vendor_name", help="Le nom du vendeur (pour le manifest)", default_value = "Vendor")]
+    vendor_name: String,
 }
 
 fn main() -> io::Result<()> {
@@ -60,6 +64,8 @@ fn main() -> io::Result<()> {
         ("${AUTHOR_EMAIL}", args.email.as_str()),
         ("${PROJECT_VERSION}", args.project_version.as_str()),
         ("${PACKAGE}", package_val.as_str()),
+        ("${JAVA}", args.java.as_str()),
+        ("${VENDOR_NAME}", args.vendor_name.as_str()),
         ("${MAINCLASS}", mainclass_val.as_str()),
         ("${PROJECT_YEAR}", current_year.as_str()),
     ];
@@ -94,10 +100,25 @@ fn main() -> io::Result<()> {
         <groupId>{}</groupId>
         <artifactId>{}</artifactId>
         <version>{}</version>
+        <properties>
+            <maven.compiler.target>{}</maven.compiler.target>
+            <maven.compiler.source>{}</maven.compiler.source>
+        </properties>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-console-standalone -->
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-console-standalone</artifactId>
+                <version>6.0.0</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
     </project>"#,
             args.package,
             args.project_name,
-            args.project_version
+            args.project_version,
+            args.java,
+            args.java
         );
         write(pom_path, pom_content)?;
     } else if build_tool == "gradle" {
@@ -121,17 +142,17 @@ fn main() -> io::Result<()> {
     }
 
     // Mise à jour du fichier .sdkman
-    if let Some(java_ver) = args.java {
-        let sdkman_file = dest_path.join(".sdkmanrc");
-        let mut sdkman_content = format!("java={}\n", java_ver);
+    
+    let sdkman_file = dest_path.join(".sdkmanrc");
+    let mut sdkman_content = format!("java={}\n", args.java_flavor);
 
-        if build_tool == "maven" {
-            sdkman_content.push_str(&format!("maven={}\n", args.maven_version));
-        } else if build_tool == "gradle" {
-            sdkman_content.push_str(&format!("gradle={}\n", args.gradle_version));
-        }
-        write(sdkman_file, sdkman_content)?;
+    if build_tool == "maven" {
+        sdkman_content.push_str(&format!("maven={}\n", args.maven_version));
+    } else if build_tool == "gradle" {
+        sdkman_content.push_str(&format!("gradle={}\n", args.gradle_version));
     }
+    write(sdkman_file, sdkman_content)?;
+
 
     println!("Projet Java généré dans {}", dest_path.display());
     Ok(())
