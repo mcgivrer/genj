@@ -1,0 +1,273 @@
+#!/bin/bash
+# mini build script v1.3 (c) 2025 Frederic Delorme
+#
+# HISTORY:
+#
+# 2025-07-31 v1.3 : Update build script by adding help and release options.
+# 2025-06-03 v1.2 : Add Javadoc and sources package generation.
+#
+# USAGE:
+#
+# Please adapt the `PROJECT_NAME`, `PROJECT_VERSION` and `PROJECT_MAIN_CLASS_NAME` variables to fit your own project.
+# The generated JARs will be named as target/build/[PROJECT_NAME]-App-[PROJECT_VERSION].jar
+#
+# NOTE: `MAIN_CLASS` is a list of space-separated classes that generate as many JAR files as listed classes.
+# - Add external JAR dependencies (mostly in ./libs) by using the JARS variable.
+# e.g.: JARS="./libs/flexmark-all-0.64.8-lib.jar ./libs/org.eclipse.jgit-7.2.0.202503040940-r.jar"
+# - You can set some compulation options into COMPILATION_OPTS
+# - Define the java version SOURCE_VERSION variable
+# - Set default source encoding into SOURCE_ENCODING (default is UTF-8)
+#
+# EXAMPLES:
+#
+# to build your project:
+#
+# Example 1:
+#     build
+# will execute all the following steps
+# - clean (c), 
+# - build (b), 
+# - create a manifest (m), 
+# - create a jar(j) to `/target/build`,
+#
+# Example 2:
+#     build c b m j t d s
+# Will 
+# - clean (c), 
+# - build (b), 
+# - create a manifest (m), 
+# - create a jar(j) to `/target/build`,
+# - execute unit tests (t) from `src/test`,
+# - generate javadoc (d) to `/target`,
+# - generate sources jar (s) to `/target`.
+#
+# Example 3:
+#     build r
+# will 
+# - run (r) the created JAR in `/target/build/[app_name]-[main_class]-[app_version].jar`.
+#
+PROJECT_NAME=${PROJECT_NAME}
+PROJECT_VERSION=${PROJECT_VERSION}
+MAIN_CLASS=${PACKAGE}.${MAINCLASS}
+AUTHOR_NAME="${AUTHOR_NAME}<${AUTHOR_EMAIL}>"
+VENDOR_NAME="vendor_${VENDOR_NAME}"
+# Compilation options
+COMPILATION_OPTS=
+# align the JDK version in the below SOURCE_VERSION variable
+SOURCE_VERSION=${JAVA}
+# default source encoding
+SOURCE_ENCODING=UTF-8
+# Javadoc: define the root package
+JAVADOC_SUBPACKAGES="-group \"core\" ${PACKAGE}"
+#
+# List of paths to jar dependencies (space separated).
+# e.g.: JARS="libs/jinput-2.0.8.jar libs/my-mandatory-lib-0.0.1.jar"
+# 
+JARS=
+#
+#--------------------- DO NOT CHANGE THE FOLLOWING LINES -----------------------
+#
+GIT_COMMIT_ID=$(git rev-parse HEAD)
+JAVA_BUILD=$(java --version | head -1 | cut -f2 -d' ')
+# declare general script variables
+SRC=./src
+LIBS=./libs
+TARGET=./target
+BUILD=${TARGET}/build
+CLASSES=${TARGET}/classes
+RESOURCES=${SRC}/main/resources
+
+if [[ "$OSTYPE" == "linux"* ]]; then
+  FS=":"
+else
+  FS=";"
+fi
+# define colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+function generateJavadoc() {
+  JAVADOC_GROUPS="$PROJECT_NAME"
+  JAR_JAVADOC_NAME=$PROJECT_NAME-$PROJECT_VERSION-javadoc.jar  
+  echo -e "|_ ${BLUE}4. Generate Javadoc ${NC}..."
+  echo "> from : $SRC"
+  echo "> to   : $TARGET/javadoc"
+  # prepare $TARGET
+  mkdir -p $TARGET/javadoc
+  # Compile class files
+  rm -Rf $TARGET/javadoc/*
+  #mkdir -p $SRC/main/javadoc
+  #java -jar ./$LIBS/tools/markdown2html-0.3.1.jar <README.md >$SRC/main/javadoc/overview.html
+  javadoc -source $SOURCE_VERSION \
+    -author -use -version \
+    -doctitle \"$PROGRAM_NAME\" \
+    -d $TARGET/javadoc \
+    -sourcepath "${SRC}/main/java${FS}${SRC}/main/javadoc" \
+    -subpackages "${JAVADOC_SUBPACKAGES}" \
+    -cp ".;$EXTERNAL_JARS"
+    #-overview $SRC/main/javadoc/overview.html \
+    #$JAVADOC_GROUPS \
+  cd $TARGET/javadoc
+  jar cvf ../$JAR_JAVADOC_NAME *
+  cd ../../
+  echo -e "   |_ ${GREEN}done$NC"
+  echo "- build javadoc $JAR_JAVADOC_NAME" >>$TARGET/build.log
+}
+#
+function generateSourceJar() {
+  echo -e "|_ ${BLUE}5. Generate JAR sources $TARGET/${PROJECT_NAME}-sources-${PROJECT_VERSION}.jar${NC}..."
+  echo "> from : $SRC"
+  echo "> to   : $TARGET/"
+  jar cvf ${TARGET}/${PROJECT_NAME}-${PROJECT_VERSION}-sources.jar -C $SRC .
+  echo -e "   |_ ${GREEN}done$NC"
+  echo "- create JAR sources ${PROJECT_NAME}-${PROJECT_VERSION}-sources.jar" >>$TARGET/build.log
+}
+#
+function executeTests() {
+  TEST_CLASSES=$TARGET/test-classes 
+  TEST_RESOURCES=$SRC/test/resources 
+  LIB_TEST=$LIBS/junit-platform-console-standalone-1.14.0.jar
+  echo -e "|_ ${BLUE}6. Execute tests${NC}..."
+  echo "> from : $SRC/test"
+  echo "> to   : $TARGET/test-classes"
+  mkdir -p $TARGET/test-classes
+  echo "copy test resources"
+  cp -r ./$RESOURCES/* $TEST_CLASSES
+  cp -r ./$TEST_RESOURCES/* $TEST_CLASSES
+  echo "compile test classes"
+  #list test sources
+  find $SRC/main -name '*.java' >$TARGET/sources.lst
+  find $SRC/test -name '*.java' >$TARGET/test-sources.lst
+  javac -source $SOURCE_VERSION -encoding $SOURCE_ENCODING $COMPILATION_OPTS -cp ".${FS}$LIB_TEST${FS}${EXTERNAL_JARS}" -d $TEST_CLASSES @$TARGET/sources.lst @$TARGET/test-sources.lst
+  echo "execute tests through JUnit"
+  java $JAR_OPTS -jar $LIB_TEST --cp "${EXTERNAL_JARS}${FS}${CLASSES}${FS}${TEST_CLASSES}${FS}." --scan-class-path
+  echo -e "   |_ ${GREEN}done$NC"
+  echo "- execute tests through JUnit $SRC/test." >>target/build.log
+  ## TODO Integrate Cucumber tests execution
+  ## e.g. 'java -cp "path/to/cucumber-core.jar:path/to/cucumber-java.jar:path/to/cucumber-junit.jar:path/to/other/dependencies/*:path/to/your/classes" cucumber.api.cli.Main --glue com.your.step.definitions path/to/your/features'
+}
+echo "build project ' ${PROJECT_NAME}' version ${PROJECT_VERSION}..."
+# Check if no arguments were passed
+if [ $# -eq 0 ]; then
+    echo "No options provided. Defaulting to 'c b m j'."
+    args=("c" "b" "m" "j")
+else
+    args=("$@")
+fi
+
+for arg in "${args[@]}"
+do
+	echo "execute command $arg:";
+  case $arg in 
+    b | --build)
+      echo "build ..."
+      echo "sources files:"
+      find src/main/java src/main/resources -type f -name *.java
+      echo ---
+      javac -d target/classes -cp ${JARS// //;}:src/main/java:src/main/resources $(find src/main/java src/main/resources -type f -name *.java)
+      cp -vr src/main/resources/* target/classes/
+      ;;
+    c | --clear)
+      echo "clean previous build..."
+      rm -vrf target/
+      mkdir -vp target/{build,classes}
+      echo "done."
+      echo ---
+      ;;
+    d | --doc)
+      generateJavadoc
+      ;;
+    j | --jar)
+    echo "build jar..."
+      for app in ${MAIN_CLASS}
+      do
+        echo ">> for ${PROJECT_NAME}.$app..."
+        jar cvfm target/build/${PROJECT_NAME}-$app-${PROJECT_VERSION}.jar target/MANIFEST.MF -C target/classes .
+        mkdir -p target/build/libs
+        cp -vr ./libs/ target/build/libs
+        echo "done."
+      done
+      ;;
+    m | --manifest)
+      echo "create manifest ..."
+      echo """Manifest-Version: ${PROJECT_NAME}
+Main-Class: ${MAIN_CLASS}
+Class-Path: ${JARS}
+Created-By: ${JAVA_BUILD}
+Implementation-Title: ${PROJECT_NAME}
+Implementation-Version: ${PROJECT_VERSION}-build_${GIT_COMMIT_ID:0:12}
+Implementation-Vendor: ${VENDOR_NAME}
+Implementation-Author: ${AUTHOR_NAME}
+""" >>target/MANIFEST.MF
+      ;;
+    r | --run | --execute)
+      echo "run ..."
+        # Récupérer tous les arguments après l'option "r"
+        shift # Supprime le premier argument (r)
+        if [ -n "${JARS}"]
+        then
+        	java $RUNTIME_OPTS -jar target/build/${PROJECT_NAME}-${MAIN_CLASS}-${PROJECT_VERSION}.jar "$@"
+        else
+        	java -cp ${JARS// //${FS}} $RUNTIME_OPTS -jar target/build/${PROJECT_NAME}-${MAIN_CLASS}-${PROJECT_VERSION}.jar "$@"
+        fi
+      ;;
+    s | --src)
+      generateSourceJar
+      ;;
+    t | --test)
+      executeTests
+      ;;
+    re | --release)
+      echo "release ..."
+      mkdir -p ${TARGET}/release
+      tar -czvf ${TARGET}/release/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz \
+       ${TARGET}/build ${TARGET}/${PROJECT_NAME}-${PROJECT_VERSION}-sources.jar \
+       ${TARGET}/${PROJECT_NAME}-${PROJECT_VERSION}-javadoc.jar
+      echo "Here is the release file ${TARGET}/release/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz"
+      ;;
+    h | --help)
+      echo "$0 Usage"
+      echo "--------"
+      echo "the following commands are available:"
+      echo "  b  | --build     : Build the project"
+      echo "  c  | --clear     : Clean the build directory"
+      echo "  d  | --doc       : Generate Javadoc"
+      echo "  j  | --jar       : Create JAR files"
+      echo "  m  | --manifest  : Create a manifest file"
+      echo "  r  | --run       : Run the application"
+      echo "  s  | --src       : Generate source JAR"
+      echo "  t  | --test      : Execute tests"
+      echo "  re | --release   : Create a release package"
+      echo "  h  | --help      : Show this help message"
+      echo ""
+      echo "Usage examples"
+      echo ""
+      echo " Example 1:"
+      echo "     build"
+      echo " will execute all the following steps"
+      echo " - clean (c), "
+      echo " - build (b), "
+      echo " - create a manifest (m), "
+      echo " - create a jar(j) to `/target/build`,"
+      echo ""
+      echo " Example 2:"
+      echo "     build c b m j t d s"
+      echo " Will "
+      echo " - clean (c), "
+      echo " - build (b), "
+      echo " - create a manifest (m), "
+      echo " - create a jar(j) to `/target/build`,"
+      echo " - execute unit tests (t) from `src/test`,"
+      echo " - generate javadoc (d) to `/target`,"
+      echo " - generate sources jar (s) to `/target`."
+      echo ""
+      echo " Example 3:"
+      echo "     build r"
+      echo " will " 
+      echo " - run (r) the created JAR in `/target/build/[app_name]-[main_class]-[app_version].jar`."
+      echo "---"
+      ;;
+  esac;
+done

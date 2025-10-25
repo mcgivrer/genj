@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="240" viewBox="0 0 800 240">
+  <style>
+    .title { font: 20px sans-serif; fill: #222; }
+    .class-box { fill: #f8f9fb; stroke: #2b6cb0; stroke-width: 2; }
+    .header { fill: #2b6cb0; }
+    .header-text { font: 14px sans-serif; fill: #fff; }
+    .member { font: 12px monospace; fill: #111; }
+    .arrow { stroke: #2b6cb0; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2b6cb0" />
+    </marker>
+  </defs>
+  <text x="16" y="28" class="title">Entity / GameObject - diagramme simplifié</text>
+
+  <!-- Entity box -->
+  <rect x="16" y="40" width="360" height="150" rx="6" class="class-box" />
+  <rect x="16" y="40" width="360" height="28" rx="6" class="header" />
+  <text x="28" y="60" class="header-text">Entity&lt;T&gt;</text>
+
+  <text x="28" y="86" class="member">+ long id</text>
+  <text x="28" y="104" class="member">+ String name</text>
+  <text x="28" y="122" class="member">+ float x, y, vx, vy</text>
+  <text x="28" y="140" class="member">+ int width, height</text>
+  <text x="28" y="158" class="member">+ Color color, fillColor</text>
+  <text x="28" y="176" class="member">+ boolean active</text>
+
+  <text x="220" y="86" class="member">+ add(Entity)</text>
+  <text x="220" y="104" class="member">+ setPosition(float,float)</text>
+  <text x="220" y="122" class="member">+ setVelocity(float,float)</text>
+  <text x="220" y="140" class="member">+ setSize(int,int)</text>
+  <text x="220" y="158" class="member">+ update(long)</text>
+  <text x="220" y="176" class="member">+ draw(Graphics2D)</text>
+
+  <!-- GameObject box -->
+  <rect x="440" y="90" width="240" height="66" rx="6" class="class-box" />
+  <rect x="440" y="90" width="240" height="28" rx="6" class="header" />
+  <text x="452" y="110" class="header-text">GameObject</text>
+  <text x="452" y="134" class="member">+ (extends Entity&lt;GameObject&gt;)</text>
+  <text x="452" y="152" class="member">+ GameObject(String name)</text>
+
+  <!-- inheritance arrow -->
+  <path d="M 380 115 L 440 115" class="arrow" />
+
+  <!-- note -->
+  <rect x="16" y="200" width="760" height="28" fill="#fffbeb" stroke="#f59e0b" stroke-width="1" rx="4" />
+  <text x="28" y="219" font-family="sans-serif" font-size="12" fill="#92400e">Note: Entity fournit le comportement et l'état ; GameObject est une simple spécialisation utilisée par la demo.</text>
+</svg>
