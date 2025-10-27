@@ -9,3 +9,5 @@ clap = { version = "4", features = ["derive"] }
 zip = "0.6"
 walkdir = "2.3"
 chrono = "*"
+git2 = "0.18"
+serde_json = "1.0"

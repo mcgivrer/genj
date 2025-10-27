@@ -1,7 +1,9 @@
-use clap::Parser;
 use chrono::prelude::*;
+use clap::Parser;
+use git2::{Config, Repository};
+use serde_json::{Value, json};
 use std::fs::File;
-use std::fs::{create_dir_all, read_to_string, write, copy};
+use std::fs::{copy, create_dir_all, read_to_string, write};
 use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
@@ -29,21 +31,41 @@ struct Cli {
     email: String,
     #[arg(short = 'v', long = "project_version", default_value = "0.0.1")]
     project_version: String,
-    #[arg(short = 'j', long = "java_version", help = "la version du JDK", default_value="25")]
+    #[arg(
+        short = 'j',
+        long = "java_version",
+        help = "la version du JDK",
+        default_value = "25"
+    )]
     java: String,
-    #[arg(short = 'f', long = "java_flavor", help="La saveur du JDK (pour sdkman)", default_value="25-zulu")]
+    #[arg(
+        short = 'f',
+        long = "java_flavor",
+        help = "La saveur du JDK (pour sdkman)",
+        default_value = "25-zulu"
+    )]
     java_flavor: String,
     #[arg(short = 'k', long = "package", default_value = "com.demo")]
     package: String,
     #[arg(short = 'm', long = "mainclass", default_value = "App")]
     mainclass: String,
-     #[arg(short = 'b', long = "build", help = "Outil de construction (maven ou gradle)", default_value = "maven")]
+    #[arg(
+        short = 'b',
+        long = "build",
+        help = "Outil de construction (maven ou gradle)",
+        default_value = "maven"
+    )]
     build_tool: String,
     #[arg(long = "maven_version", default_value = "3.9.5")]
     maven_version: String,
     #[arg(long = "gradle_version", default_value = "8.5")]
     gradle_version: String,
-    #[arg(short = 'l', long = "vendor_name", help="Le nom du vendeur (pour le manifest)", default_value = "Vendor")]
+    #[arg(
+        short = 'l',
+        long = "vendor_name",
+        help = "Le nom du vendeur (pour le manifest)",
+        default_value = "Vendor"
+    )]
     vendor_name: String,
 }
 
@@ -55,9 +77,9 @@ fn main() -> io::Result<()> {
     let mut dest_path = PathBuf::from(&args.destination);
 
     dest_path = dest_path.join(&args.project_name);
-    
+
     let current_year = Utc::now().year().to_string();
-    
+
     let replacements = [
         ("${PROJECT_NAME}", args.project_name.as_str()),
         ("${AUTHOR_NAME}", args.author.as_str()),
@@ -86,7 +108,10 @@ fn main() -> io::Result<()> {
     // Traitement du build tool
     let build_tool = args.build_tool.to_lowercase();
     if build_tool != "maven" && build_tool != "gradle" {
-        eprintln!("Outil de build non supporté : {} (valeurs possibles : maven, gradle)", build_tool);
+        eprintln!(
+            "Outil de build non supporté : {} (valeurs possibles : maven, gradle)",
+            build_tool
+        );
         std::process::exit(1);
     }
 
@@ -114,11 +139,7 @@ fn main() -> io::Result<()> {
             </dependency>
         </dependencies>
     </project>"#,
-            args.package,
-            args.project_name,
-            args.project_version,
-            args.java,
-            args.java
+            args.package, args.project_name, args.project_version, args.java, args.java
         );
         write(pom_path, pom_content)?;
     } else if build_tool == "gradle" {
@@ -135,14 +156,13 @@ fn main() -> io::Result<()> {
     }}
     dependencies {{}}
     "#,
-            args.package,
-            args.project_version
+            args.package, args.project_version
         );
         write(gradle_path, gradle_content)?;
     }
 
     // Mise à jour du fichier .sdkman
-    
+
     let sdkman_file = dest_path.join(".sdkmanrc");
     let mut sdkman_content = format!("java={}\n", args.java_flavor);
 
@@ -153,12 +173,28 @@ fn main() -> io::Result<()> {
     }
     write(sdkman_file, sdkman_content)?;
 
+    // Configurer VSCode et Git
+    let vscode_config = VsCodeConfig::new(
+        args.project_name.clone(),
+        args.author.clone(),
+        args.email.clone(),
+        None,                 // ou une URL de dépôt distant si nécessaire
+        "1.14.0".to_string(), // version de JUnit
+    );
+
+    if let Err(e) = vscode_config.setup_project(&dest_path) {
+        eprintln!("Erreur lors de la configuration VSCode/Git: {}", e);
+    }
 
     println!("Projet Java généré dans {}", dest_path.display());
     Ok(())
 }
 
-fn replace_package_in_path(path_str: &str, replacements: &[(&str, &str)], package_val: &str) -> PathBuf {
+fn replace_package_in_path(
+    path_str: &str,
+    replacements: &[(&str, &str)],
+    package_val: &str,
+) -> PathBuf {
     let path_parts: Vec<&str> = path_str.split('/').collect();
     let mut final_path = PathBuf::new();
 
@@ -216,28 +252,36 @@ fn extract_zip_with_replace(
         .collect::<Result<_, _>>()?;
 
     // Détection du préfixe racine commun
-    let common_prefix = entry_names.iter()
+    let common_prefix = entry_names
+        .iter()
         .filter_map(|name| name.find('/').map(|pos| &name[..pos + 1]))
         .reduce(|a, b| if a == b { a } else { "" })
         .filter(|s| !s.is_empty());
 
     for i in 0..archive.len() {
-    let mut entry = archive.by_index(i)?;
-    let raw_name = entry.name().to_string();
+        let mut entry = archive.by_index(i)?;
+        let raw_name = entry.name().to_string();
 
         // Suppression du préfixe racine commun
         let relative_path = if let Some(prefix) = common_prefix {
-            raw_name.as_str().strip_prefix(prefix).unwrap_or(raw_name.as_str())
+            raw_name
+                .as_str()
+                .strip_prefix(prefix)
+                .unwrap_or(raw_name.as_str())
         } else {
             raw_name.as_str()
         };
 
         // Utilisation de replace_package_in_path pour gérer ${PACKAGE}
-        let outpath = replace_package_in_path(relative_path, replacements, 
-                         replacements.iter()
-                          .find(|(key, _)| *key == "${PACKAGE}")
-                          .map(|(_, val)| *val)
-                          .unwrap_or(""));
+        let outpath = replace_package_in_path(
+            relative_path,
+            replacements,
+            replacements
+                .iter()
+                .find(|(key, _)| *key == "${PACKAGE}")
+                .map(|(_, val)| *val)
+                .unwrap_or(""),
+        );
 
         let full_path = dest_path.join(outpath);
 
@@ -260,7 +304,9 @@ fn extract_zip_with_replace(
 
             // Ici on suppose que c'est UTF-8
             let content = String::from_utf8(bytes).unwrap_or_default();
-            let replaced_content = replacements.iter().fold(content, |acc, (pat, val)| acc.replace(pat, val));
+            let replaced_content = replacements
+                .iter()
+                .fold(content, |acc, (pat, val)| acc.replace(pat, val));
             write(&full_path, replaced_content)?;
         }
     }
@@ -273,7 +319,8 @@ fn copy_dir_with_replace(
     replacements: &[(&str, &str)],
 ) -> io::Result<()> {
     // Extraire la valeur correspondant à ${PACKAGE} pour l'utiliser dans la construction des chemins
-    let package_val = replacements.iter()
+    let package_val = replacements
+        .iter()
         .find(|(key, _)| *key == "${PACKAGE}")
         .map(|(_, val)| *val)
         .unwrap_or("");
@@ -297,7 +344,9 @@ fn copy_dir_with_replace(
                         create_dir_all(parent)?;
                     }
                     let content = read_to_string(entry.path())?;
-                    let replaced_content = replacements.iter().fold(content, |acc, (pat, val)| acc.replace(pat, val));
+                    let replaced_content = replacements
+                        .iter()
+                        .fold(content, |acc, (pat, val)| acc.replace(pat, val));
                     write(full_dest_path, replaced_content)?;
                 }
                 Ok(false) => {
@@ -307,7 +356,11 @@ fn copy_dir_with_replace(
                     }
                     match copy(entry.path(), &full_dest_path) {
                         Ok(_) => { /* copié */ }
-                        Err(err) => eprintln!("Failed to copy binary file {}: {}", entry.path().display(), err),
+                        Err(err) => eprintln!(
+                            "Failed to copy binary file {}: {}",
+                            entry.path().display(),
+                            err
+                        ),
                     }
                     continue;
                 }
@@ -319,4 +372,174 @@ fn copy_dir_with_replace(
         }
     }
     Ok(())
+}
+
+// Structure pour les configurations VSCode
+#[derive(Debug)]
+struct VsCodeConfig {
+    project_name: String,
+    git_author_name: String,
+    git_author_email: String,
+    remote_repo_url: Option<String>,
+    standalone_junit_version: String,
+}
+
+impl VsCodeConfig {
+    fn new(
+        project_name: String,
+        git_author_name: String,
+        git_author_email: String,
+        remote_repo_url: Option<String>,
+        standalone_junit_version: String,
+    ) -> Self {
+        Self {
+            project_name,
+            git_author_name,
+            git_author_email,
+            remote_repo_url,
+            standalone_junit_version,
+        }
+    }
+
+    fn generate_settings_json(&self) -> Value {
+        json!({
+            "java.format.settings.url": ".vscode/java-formatter.xml",
+            "java.project.sourcePaths": [
+                "src/main/java",
+                "src/main/resources",
+                "src/test/java",
+                "src/test/resources"
+            ],
+            "java.project.encoding": "warning",
+            "java.project.referencedLibraries": [
+                format!("libs/junit-platform-console-standalone-{}.jar", self.standalone_junit_version)
+            ],
+            "java.project.outputPath": "target/classes"
+        })
+    }
+
+    fn generate_launch_json(&self) -> Value {
+        json!({
+            "version": "0.2.0",
+            "configurations": [
+                {
+                    "type": "java",
+                    "name": "Current File",
+                    "request": "launch",
+                    "mainClass": "${file}"
+                },
+                {
+                    "type": "java",
+                    "name": "App",
+                    "request": "launch",
+                    "mainClass": "App",
+                    "projectName": format!("{}_{}", self.project_name, "53c24221")
+                }
+            ]
+        })
+    }
+
+    fn init_git_repository(&self, project_path: &Path) -> io::Result<()> {
+        // Initialiser le dépôt Git
+        let repo = Repository::init(project_path)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        let mut config = repo
+            .config()
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        // Définir la branche par défaut (par exemple, "main")
+        config
+            .set_str("init.defaultBranch", "main")
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+        // Configurer l'utilisateur Git
+        config
+            .set_str("user.name", &self.git_author_name)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+        config
+            .set_str("user.email", &self.git_author_email)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        // Ajouter tous les fichiers and faire le premier commit
+        let mut index = repo
+            .index()
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        index
+            .add_all(["."].iter(), git2::IndexAddOption::DEFAULT, None)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        index
+            .write()
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        let tree_id = index
+            .write_tree()
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        let tree = repo
+            .find_tree(tree_id)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        let sig = repo
+            .signature()
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        repo.commit(
+            Some("HEAD"),
+            &sig,
+            &sig,
+            &format!("Create Project {}", self.project_name),
+            &tree,
+            &[],
+        )
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+        // Configurer le dépôt distant si une URL est fournie
+        if let Some(url) = &self.remote_repo_url {
+            repo.remote("origin", url)
+                .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+            // Push vers le dépôt distant
+            let mut remote = repo
+                .find_remote("origin")
+                .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+
+            remote
+                .push(&["refs/heads/main:refs/heads/main"], None)
+                .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+        }
+
+        Ok(())
+    }
+
+    fn setup_vscode_config(&self, project_path: &Path) -> io::Result<()> {
+        let vscode_dir = project_path.join(".vscode");
+        create_dir_all(&vscode_dir)?;
+
+        // Générer settings.json
+        let settings_json = self.generate_settings_json();
+        let settings_path = vscode_dir.join("settings.json");
+        write(
+            &settings_path,
+            serde_json::to_string_pretty(&settings_json)?,
+        )?;
+
+        // Générer launch.json
+        let launch_json = self.generate_launch_json();
+        let launch_path = vscode_dir.join("launch.json");
+        write(&launch_path, serde_json::to_string_pretty(&launch_json)?)?;
+
+        Ok(())
+    }
+
+    fn setup_project(&self, project_path: &Path) -> io::Result<()> {
+        // Créer les répertoires VSCode et configurer
+        self.setup_vscode_config(project_path)?;
+
+        // Initialiser le dépôt Git et configurer
+        self.init_git_repository(project_path)?;
+
+        Ok(())
+    }
 }

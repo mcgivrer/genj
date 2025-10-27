@@ -593,9 +593,9 @@ public class ${MAINCLASS} implements KeyListener {
                             pause ? "ON" : "OFF"
                     ),
                     30,
-                    window.getHeight() - 40,
+                    window.getHeight() - 20,
                     TextAlign.LEFT,
-                    11.0f,
+                    10.0f,
                     Color.ORANGE,
                     Font.PLAIN
             );
