@@ -19,9 +19,17 @@ placeholders in the templates with the provided values, and generates additional
 files such as MANIFEST.MF and README.md."
 )]
 struct Cli {
-    #[arg(short, long, help = "Chemin du template (ZIP ou dossier)")]
+    #[arg(
+        short = 't',
+        long = "template_path",
+        help = "Chemin du template (ZIP ou dossier)"
+    )]
     template: String,
-    #[arg(short, long, help = "Répertoire destination")]
+    #[arg(
+        short = 'd',
+        long = "destination_path",
+        help = "Répertoire destination"
+    )]
     destination: String,
     #[arg(short = 'n', long = "project_name", default_value = "Demo")]
     project_name: String,
@@ -67,6 +75,12 @@ struct Cli {
         default_value = "Vendor"
     )]
     vendor_name: String,
+    #[arg(
+        short = 'r',
+        long = "remote_git_repository",
+        help = "Defini the repository git distant pour ce projet"
+    )]
+    remote_git: Option<String>,
 }
 
 fn main() -> io::Result<()> {
@@ -80,6 +94,8 @@ fn main() -> io::Result<()> {
 
     let current_year = Utc::now().year().to_string();
 
+//    let remote_git_repo = Some(args.remote_git).as_ref();
+
     let replacements = [
         ("${PROJECT_NAME}", args.project_name.as_str()),
         ("${AUTHOR_NAME}", args.author.as_str()),
@@ -90,6 +106,7 @@ fn main() -> io::Result<()> {
         ("${VENDOR_NAME}", args.vendor_name.as_str()),
         ("${MAINCLASS}", mainclass_val.as_str()),
         ("${PROJECT_YEAR}", current_year.as_str()),
+//        ("${REMOTE_GIT_REPO}", remote_git_repo.as_deref().as_str()),
     ];
 
     let template_path = Path::new(&args.template);
@@ -176,6 +193,7 @@ fn main() -> io::Result<()> {
     // Configurer VSCode et Git
     let vscode_config = VsCodeConfig::new(
         args.project_name.clone(),
+        args.mainclass.clone(),
         args.author.clone(),
         args.email.clone(),
         None,                 // ou une URL de dépôt distant si nécessaire
@@ -378,6 +396,7 @@ fn copy_dir_with_replace(
 #[derive(Debug)]
 struct VsCodeConfig {
     project_name: String,
+    main_class: String,
     git_author_name: String,
     git_author_email: String,
     remote_repo_url: Option<String>,
@@ -387,6 +406,7 @@ struct VsCodeConfig {
 impl VsCodeConfig {
     fn new(
         project_name: String,
+        main_class: String,
         git_author_name: String,
         git_author_email: String,
         remote_repo_url: Option<String>,
@@ -394,6 +414,7 @@ impl VsCodeConfig {
     ) -> Self {
         Self {
             project_name,
+            main_class,
             git_author_name,
             git_author_email,
             remote_repo_url,
@@ -422,6 +443,13 @@ impl VsCodeConfig {
         json!({
             "version": "0.2.0",
             "configurations": [
+                {
+                    "type": "java",
+                    "name": "App",
+                    "request": "launch",
+                    "mainClass": format!("{}_{}", self.main_class,"com.demo.App"),
+                    "projectName": format!("{}_{}", self.project_name,"DemoGenJ")
+                },
                 {
                     "type": "java",
                     "name": "Current File",
