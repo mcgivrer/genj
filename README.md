@@ -1,39 +1,39 @@
 # genj
 
-Outil en ligne de commande écrit en Rust pour générer un projet Java à partir d'un template (fichier ZIP ou dossier).
+A command-line tool written in Rust to generate a Java project from a template (ZIP file or folder).
 
-## Principe
+## Principle
 
-Le binaire lit un template (ZIP ou dossier), copie les fichiers vers le répertoire de destination en appliquant des remplacements de variables dans les chemins et le contenu des fichiers. Il gère aussi la transformation de la variable `${PACKAGE}` en arborescence de dossiers Java.
+The binary reads a template (ZIP or folder), copies files to the destination directory while applying variable replacements in file paths and content. It also handles the transformation of the `${PACKAGE}` variable into a Java folder hierarchy.
 
-Le comportement principal est implémenté dans [`main`](src/main.rs) via la structure de configuration [`Cli`](src/main.rs) et les fonctions [`extract_zip_with_replace`](src/main.rs), [`copy_dir_with_replace`](src/main.rs) et [`replace_package_in_path`](src/main.rs).
+The main behavior is implemented in [`main`](src/main.rs) via the [`Cli`](src/main.rs) configuration structure and the [`extract_zip_with_replace`](src/main.rs), [`copy_dir_with_replace`](src/main.rs), and [`replace_package_in_path`](src/main.rs) functions.
 
-## Variables de remplacement disponibles
+## Available replacement variables
 
-Les motifs suivants sont remplacés dans les fichiers et les noms de fichiers :
+The following patterns are replaced in files and file names:
 - `${PROJECT_NAME}`
 - `${AUTHOR_NAME}`
 - `${AUTHOR_EMAIL}`
 - `${PROJECT_VERSION}`
-- `${PACKAGE}` (transformé en arborescence de dossiers, ex. `com.example`)
+- `${PACKAGE}` (transformed into folder hierarchy, e.g., `com.example`)
 - `${MAINCLASS}`
 - `${PROJECT_YEAR}`
 - `${JAVA}`
 - `${VENDOR_NAME}`
 
-## Génération du build et de l'environnement
+## Build and environment generation
 
-Selon l'option `--build`, le générateur ajoute automatiquement :
-- Maven (`pom.xml`) si `--build maven`
-- Gradle (`build.gradle`) si `--build gradle`
+Depending on the `--build` option, the generator automatically adds:
+- Maven (`pom.xml`) if `--build maven`
+- Gradle (`build.gradle`) if `--build gradle`
 
-Un fichier `.sdkmanrc` est toujours créé avec :
-- `java=<java_flavor>` (ex.: `25-zulu`)
-- `maven=<version>` si build Maven, ou `gradle=<version>` si build Gradle
+A `.sdkmanrc` file is always created with:
+- `java=<java_flavor>` (e.g., `25-zulu`)
+- `maven=<version>` if Maven build, or `gradle=<version>` if Gradle build
 
 ## Installation
 
-Requiert Rust/Cargo. Pour compiler :
+Requires Rust/Cargo. To compile:
 
 ```sh
 cargo build --release
@@ -41,27 +41,27 @@ cargo build --release
 
 ## Options (CLI)
 
-Raccourcis et options disponibles (voir `src/main.rs`) :
-- `-t, --template <PATH>`: Chemin du template (ZIP ou dossier) [obligatoire]
-- `-d, --destination <DIR>`: Répertoire destination [obligatoire]
-- `-n, --project_name <NAME>`: Nom du projet (def.: `Demo`)
-- `-a, --author <NAME>`: Auteur (def.: `Auteur inconnu`)
-- `-e, --email <EMAIL>`: Email (def.: `email@inconnu.local`)
-- `-v, --project_version <VER>`: Version du projet (def.: `0.0.1`)
-- `-j, --java_version <VER>`: Version du JDK à cibler (ex.: `25`) utilisée aussi dans `pom.xml`/`build.gradle` (def.: `25`)
-- `-f, --java_flavor <LABEL>`: Saveur du JDK pour sdkman (ex.: `25-zulu`) (def.: `25-zulu`)
-- `-k, --package <PKG>`: Package Java (def.: `com.demo`)
-- `-m, --mainclass <CLASS>`: Classe principale (def.: `App`)
-- `-b, --build <maven|gradle>`: Outil de build (def.: `maven`)
-- `--maven_version <VER>`: Version Maven pour `.sdkmanrc` (def.: `3.9.5`)
-- `--gradle_version <VER>`: Version Gradle pour `.sdkmanrc` (def.: `8.5`)
-- `-l, --vendor_name <NAME>`: Nom du vendeur (utilisable dans les templates) (def.: `Vendor`)
+Available shortcuts and options (see `src/main.rs`):
+- `-t, --template <PATH>`: Path to the template (ZIP or folder) [required]
+- `-d, --destination <DIR>`: Destination directory [required]
+- `-n, --project_name <NAME>`: Project name (default: `Demo`)
+- `-a, --author <NAME>`: Author (default: `Unknown Author`)
+- `-e, --email <EMAIL>`: Email (default: `email@unknown.local`)
+- `-v, --project_version <VER>`: Project version (default: `0.0.1`)
+- `-j, --java_version <VER>`: JDK version to target (e.g., `25`) also used in `pom.xml`/`build.gradle` (default: `25`)
+- `-f, --java_flavor <LABEL>`: JDK flavor for sdkman (e.g., `25-zulu`) (default: `25-zulu`)
+- `-k, --package <PKG>`: Java package (default: `com.demo`)
+- `-m, --mainclass <CLASS>`: Main class (default: `App`)
+- `-b, --build <maven|gradle>`: Build tool (default: `maven`)
+- `--maven_version <VER>`: Maven version for `.sdkmanrc` (default: `3.9.5`)
+- `--gradle_version <VER>`: Gradle version for `.sdkmanrc` (default: `8.5`)
+- `-l, --vendor_name <NAME>`: Vendor name (usable in templates) (default: `Vendor`)
 
-## Utilisation
+## Usage
 
-Exemples :
+Examples:
 
-- Générer depuis un dossier template (Maven par défaut) :
+- Generate from a template folder (Maven by default):
 
 ```sh
 cargo run -- \
@@ -75,13 +75,13 @@ cargo run -- \
   --mainclass App
 ```
 
-- Générer depuis un ZIP :
+- Generate from a ZIP:
 
 ```sh
-cargo run -- --template /chemin/vers/template.zip --destination ./out --project_name Demo
+cargo run -- --template /path/to/template.zip --destination ./out --project_name Demo
 ```
 
-- Forcer Gradle et préciser les versions dans `.sdkmanrc` :
+- Force Gradle and specify versions in `.sdkmanrc`:
 
 ```sh
 cargo run -- \
@@ -93,23 +93,23 @@ cargo run -- \
   --java_flavor 25-zulu
 ```
 
-- Cibler une version de JDK pour la compilation (utilisée dans `pom.xml` et `build.gradle`) :
+- Target a specific JDK version for compilation (used in `pom.xml` and `build.gradle`):
 
 ```sh
 cargo run -- --template templates/basic-java --destination ./out --project_name Demo -j 25
 ```
 
-## Templates fournis
+## Provided templates
 
-Des templates d'exemple se trouvent dans `templates/` (ex.: `templates/basic-java`). Vous pouvez les utiliser tels quels ou créer votre propre template (dossier ou ZIP). La structure peut contenir `${PACKAGE}` dans les chemins pour que le générateur crée les sous-dossiers correspondants.
+Example templates can be found in `templates/` (e.g., `templates/basic-java`). You can use them as is or create your own template (folder or ZIP). The structure can contain `${PACKAGE}` in paths so that the generator creates the corresponding subfolders.
 
-## Fichiers importants
+## Important files
 
-- Configuration Cargo : `Cargo.toml`
-- Entrée du programme et logique : `src/main.rs`
+- Cargo configuration: `Cargo.toml`
+- Program entry point and logic: `src/main.rs`
 
-## Remarques
+## Notes
 
-- Le programme crée le répertoire de destination `<destination>/<project_name>`.
-- Si le template est un ZIP, le script tente d'éliminer un préfixe racine commun présent dans l'archive.
-- Les fichiers binaires détectés (non texte) sont copiés tels quels; seuls les fichiers texte subissent les remplacements.
+- The program creates the destination directory `<destination>/<project_name>`.
+- If the template is a ZIP, the script attempts to remove a common root prefix present in the archive.
+- Binary files detected (non-text) are copied as is; only text files undergo replacements.
