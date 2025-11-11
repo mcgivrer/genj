@@ -113,3 +113,39 @@ Example templates can be found in `templates/` (e.g., `templates/basic-java`). Y
 - The program creates the destination directory `<destination>/<project_name>`.
 - If the template is a ZIP, the script attempts to remove a common root prefix present in the archive.
 - Binary files detected (non-text) are copied as is; only text files undergo replacements.
+
+## Generate Debian package
+
+Rendre le script exécutable :
+
+```bash
+chmod +x build_deb.sh
+```
+
+Puis pour générer le package Debian :
+
+```bash
+./build_deb.sh
+```
+
+Le script va :
+1. Compiler le projet Rust en mode release
+2. Créer la structure Debian standard
+3. Copier le binaire compilé dans `/usr/bin/`
+4. Copier et compresser la page man dans `/usr/share/man/man1/`
+5. Créer les scripts de maintenance (postinst, prerm, postrm)
+6. Générer les fichiers de documentation (changelog, copyright)
+7. Construire le package `.deb`
+
+**Installation du package généré :**
+
+```bash
+sudo dpkg -i genj_1.0.4_amd64.deb
+```
+
+**Vérification :**
+
+```bash
+which genj
+man genj
+genj --help
