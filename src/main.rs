@@ -1,6 +1,6 @@
 use chrono::prelude::*;
 use clap::Parser;
-use git2::Repository;
+use git2::{Repository};
 use serde_json::{Value, json};
 use std::fs::File;
 use std::fs::{copy, create_dir_all, read_to_string, write};
@@ -12,7 +12,7 @@ use zip::ZipArchive;
 #[derive(Parser, Debug)]
 #[command(
     author = "Frédéric Delorme",
-    version = "1.0",
+    version = "1.0.4",
     about = "This script generates a Java project based on the specified template files.
 It creates the necessary directory structure, copies the templates, replaces
 placeholders in the templates with the provided values, and generates additional
