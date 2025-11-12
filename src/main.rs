@@ -1,6 +1,6 @@
 use chrono::prelude::*;
 use clap::Parser;
-use git2::{Config, Repository};
+use git2::Repository;
 use serde_json::{Value, json};
 use std::fs::File;
 use std::fs::{copy, create_dir_all, read_to_string, write};
