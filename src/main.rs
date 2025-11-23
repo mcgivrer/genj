@@ -12,7 +12,7 @@ use zip::ZipArchive;
 #[derive(Parser, Debug)]
 #[command(
     author = "Frédéric Delorme",
-    version = "1.0.4",
+    version = "1.2.1",
     about = "This script generates a Java project based on the specified template files.
 It creates the necessary directory structure, copies the templates, replaces
 placeholders in the templates with the provided values, and generates additional

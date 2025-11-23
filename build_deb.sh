@@ -4,7 +4,7 @@ set -e
 
 # Configuration
 PROJECT_NAME="genj"
-VERSION="1.2.0"
+VERSION="1.2.1"
 MAINTAINER="Frédéric Delorme <fred@example.com>"
 DESCRIPTION="Generate a Java project from a template"
 ARCHITECTURE="amd64"
@@ -34,8 +34,9 @@ mkdir -p "$DEBIAN_META"
 # Create binary directory
 mkdir -p "$DEBIAN_DIR/usr/bin"
 
-# Create man directory
+# Create man directories
 mkdir -p "$DEBIAN_DIR/usr/share/man/man1"
+mkdir -p "$DEBIAN_DIR/usr/share/man/man5"
 
 # Compile the Rust project
 echo -e "${YELLOW}Compiling Rust project...${NC}"
@@ -46,14 +47,23 @@ echo -e "${YELLOW}Copying binary...${NC}"
 cp target/release/genj "$DEBIAN_DIR/usr/bin/genj"
 chmod 755 "$DEBIAN_DIR/usr/bin/genj"
 
-# Copy man page
-echo -e "${YELLOW}Copying man page...${NC}"
+# Copy man pages (man1)
+echo -e "${YELLOW}Copying man pages (section 1)...${NC}"
 if [ -f "docs/man/man1/genj.1" ]; then
     cp docs/man/man1/genj.1 "$DEBIAN_DIR/usr/share/man/man1/genj.1"
     gzip -9 "$DEBIAN_DIR/usr/share/man/man1/genj.1"
 else
-    echo -e "${RED}Error: genj.1 man file not found${NC}"
+    echo -e "${RED}Error: docs/man/man1/genj.1 man file not found${NC}"
     exit 1
+fi
+
+# Copy man pages (man5)
+echo -e "${YELLOW}Copying man pages (section 5)...${NC}"
+if [ -f "docs/man/man5/genj-template.5" ]; then
+    cp docs/man/man5/genj-template.5 "$DEBIAN_DIR/usr/share/man/man5/genj-template.5"
+    gzip -9 "$DEBIAN_DIR/usr/share/man/man5/genj-template.5"
+else
+    echo -e "${YELLOW}Warning: docs/man/man5/genj-template.5 man file not found (optional)${NC}"
 fi
 
 # Create control file
@@ -70,7 +80,7 @@ Description: $DESCRIPTION
  .
  Key Features:
   * Template support: ZIP files or directory structures
-  * Variable replacement: ${PROJECT_NAME}, ${AUTHOR_NAME}, ${PACKAGE}, etc.
+  * Variable replacement: \${PROJECT_NAME}, \${AUTHOR_NAME}, \${PACKAGE}, etc.
   * Build tool generation: Maven (pom.xml) or Gradle (build.gradle)
   * Development environment: VSCode configuration and Git setup
   * SDK management: .sdkmanrc file for SDKMan integration
@@ -88,9 +98,13 @@ cat > "$DEBIAN_META/postinst" << 'EOF'
 #!/bin/bash
 set -e
 
-# Compress man page if not already done
+# Compress man pages if not already done
 if [ -f /usr/share/man/man1/genj.1 ]; then
     gzip -9f /usr/share/man/man1/genj.1
+fi
+
+if [ -f /usr/share/man/man5/genj-template.5 ]; then
+    gzip -9f /usr/share/man/man5/genj-template.5
 fi
 
 # Update man database
@@ -99,6 +113,8 @@ if command -v mandb &> /dev/null; then
 fi
 
 echo "genj has been installed successfully."
+echo "View the manual with: man genj"
+echo "View the template guide with: man genj-template"
 EOF
 
 chmod 755 "$DEBIAN_META/postinst"
@@ -133,11 +149,13 @@ mkdir -p "$DEBIAN_DIR/usr/share/doc/$PROJECT_NAME"
 cat > "$DEBIAN_DIR/usr/share/doc/$PROJECT_NAME/changelog.Debian" << EOF
 ${PROJECT_NAME} (${VERSION}) stable; urgency=medium
 
-  * Initial Debian package release
+  * Version $VERSION release
+  * Added comprehensive man page documentation (genj.1 and genj-template.5)
   * Supports Maven and Gradle builds
   * Automatic Git repository initialization
   * VSCode configuration generation
   * SDKMan environment file creation
+  * Template creation guide
 
  -- ${MAINTAINER}  $(date -R)
 EOF
@@ -197,4 +215,6 @@ echo -e "\n${YELLOW}To install the package:${NC}"
 echo -e "  ${GREEN}sudo dpkg -i $DEB_PACKAGE${NC}"
 echo -e "\n${YELLOW}To uninstall:${NC}"
 echo -e "  ${GREEN}sudo apt remove $PROJECT_NAME${NC}"
-EOF
+echo -e "\n${YELLOW}After installation, consult the documentation:${NC}"
+echo -e "  ${GREEN}man genj${NC}"
+echo -e "  ${GREEN}man genj-template${NC}"
