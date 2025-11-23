@@ -1,4 +1,4 @@
-.TH GENJ 1 "November 2025" "genj 1.2.0" "User Commands"
+.TH GENJ 1 "November 2025" "genj 1.2.1" "User Commands"
 .SH NAME
 genj \- Generate a Java project from a template
 .SH SYNOPSIS
@@ -124,9 +124,16 @@ If the template is a ZIP file, the script attempts to remove a common root prefi
 Binary files detected (non-text) are copied as is; only text files undergo variable replacements.
 .IP \(bu 2
 The Git repository is automatically initialized with an initial commit.
+.IP \(bu 2
+For information on how to create custom templates, see
+.BR genj-template (5).
 .SH AUTHOR
 Frédéric Delorme
 .SH VERSION
-1.2.0
+1.2.1
 .SH SEE ALSO
+.TP
+.BR genj-template (5)
+Template format and creation guide for genj projects.
+.TP
 For more information, visit the project repository or consult the README.md file.
