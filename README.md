@@ -116,34 +116,34 @@ Example templates can be found in `templates/` (e.g., `templates/basic-java`). Y
 
 ## Generate Debian package
 
-Rendre le script exécutable :
+Make the script executable:
 
 ```bash
 chmod +x build_deb.sh
 ```
 
-Puis pour générer le package Debian :
+Then generate the Debian package:
 
 ```bash
 ./build_deb.sh
 ```
 
-Le script va :
-1. Compiler le projet Rust en mode release
-2. Créer la structure Debian standard
-3. Copier le binaire compilé dans `/usr/bin/`
-4. Copier et compresser la page man dans `/usr/share/man/man1/`
-5. Créer les scripts de maintenance (postinst, prerm, postrm)
-6. Générer les fichiers de documentation (changelog, copyright)
-7. Construire le package `.deb`
+The script will:
+1. Compile the Rust project in release mode
+2. Create the standard Debian structure
+3. Copy the compiled binary to `/usr/bin/`
+4. Copy and compress the man page to `/usr/share/man/man1/`
+5. Create maintenance scripts (postinst, prerm, postrm)
+6. Generate documentation files (changelog, copyright)
+7. Build the `.deb` package
 
-**Installation du package généré :**
+**Installing the generated package:**
 
 ```bash
 sudo dpkg -i genj_1.0.4_amd64.deb
 ```
 
-**Vérification :**
+**Verification:**
 
 ```bash
 which genj
