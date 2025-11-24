@@ -30,11 +30,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "linux-x86_64"
     };
 
-    let zip_filename = format!("package/{}-{}-{}.zip", package_name, version, platform);
+    let zip_filename = format!("target/package/{}-{}-{}.zip", package_name, version, platform);
     let exe_path = format!("target/release/{}{}", package_name, exe_ext);
 
     // Créer le répertoire build s'il n'existe pas
-    fs::create_dir_all("package").expect("Impossible de créer le répertoire build");
+    fs::create_dir_all("target/package").expect("Impossible de créer le répertoire build");
 
     // Créer le fichier ZIP
     let file = fs::File::create(&zip_filename)

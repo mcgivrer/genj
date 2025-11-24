@@ -114,33 +114,50 @@ Example templates can be found in `templates/` (e.g., `templates/basic-java`). Y
 - If the template is a ZIP, the script attempts to remove a common root prefix present in the archive.
 - Binary files detected (non-text) are copied as is; only text files undergo replacements.
 
-## Generate Debian package
+## Release and packaging scripts
 
-Make the script executable:
+Two helper scripts are provided to produce release artifacts and Debian packages:
+
+- build-release-full.sh
+  - Purpose: compile a release build and collect artifacts (release binary, man pages, docs, LICENSE, README, etc.) into a release directory and an archive (tar.gz).
+  - Usage:
+    ```bash
+    chmod +x build-release-full.sh
+    ./build-release-full.sh
+    ```
+  - Result: a release archive (and/or release directory) is produced in the repository (see script output for exact path). Use this to distribute prebuilt binaries.
+
+- build_deb.sh
+  - Purpose: build a Debian package (.deb) that installs the `genj` binary and man pages (section 1 and section 5), plus documentation.
+  - Usage:
+    ```bash
+    chmod +x build_deb.sh
+    ./build_deb.sh
+    ```
+  - Result: a Debian package `genj_<version>_<arch>.deb` is created in the project root. Install with:
+    ```bash
+    sudo dpkg -i genj_<version>_<arch>.deb
+    ```
+
+Make both scripts executable before running:
 
 ```bash
-chmod +x build_deb.sh
+chmod +x build-release-full.sh build_deb.sh
 ```
 
-Then generate the Debian package:
+## Generate Debian package (legacy note)
 
-```bash
-./build_deb.sh
-```
-
-The script will:
-1. Compile the Rust project in release mode
-2. Create the standard Debian structure
-3. Copy the compiled binary to `/usr/bin/`
-4. Copy and compress the man page to `/usr/share/man/man1/`
-5. Create maintenance scripts (postinst, prerm, postrm)
-6. Generate documentation files (changelog, copyright)
-7. Build the `.deb` package
+The project includes `build_deb.sh` which automates packaging into a .deb. The script:
+1. Compiles the project in release mode
+2. Creates the Debian package layout (including `/usr/bin` and `/usr/share/man`)
+3. Copies and compresses man pages (genj.1 and genj-template.5) into appropriate sections
+4. Creates maintainer scripts (postinst, prerm, postrm) and documentation under `/usr/share/doc/genj`
+5. Builds the .deb
 
 **Installing the generated package:**
 
 ```bash
-sudo dpkg -i genj_1.0.4_amd64.deb
+sudo dpkg -i genj_1.2.2_amd64.deb
 ```
 
 **Verification:**
@@ -148,4 +165,6 @@ sudo dpkg -i genj_1.0.4_amd64.deb
 ```bash
 which genj
 man genj
+man genj-template
 genj --help
+```
