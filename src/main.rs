@@ -19,9 +19,9 @@ placeholders in the templates with the provided values, and generates additional
 files such as MANIFEST.MF and README.md."
 )]
 struct Cli {
-    #[arg(short = 'd', long, help = "Path to the template (ZIP or folder)")]
+    #[arg(short = 't', long="template", help = "Path to the template (ZIP or folder)")]
     template: String,
-    #[arg(short, long, help = "Destination directory")]
+    #[arg(short='d', long="destination", help = "Destination directory")]
     destination: String,
     #[arg(short = 'n', long = "project_name", default_value = "Demo")]
     project_name: String,

@@ -92,6 +92,10 @@ Description: $DESCRIPTION
  Licensed under the MIT License - See /usr/share/doc/$PROJECT_NAME/copyright
  for full license details.
 EOF
+# copy metaino file
+echo -e "${YELLOW}Copying metainfo file...${NC}"
+mkdir -p "$DEBIAN_DIR/usr/share/metainfo"
+cp ./docs/$PROJECT_NAME.metainfo.xml "$DEBIAN_DIR/usr/share/metainfo/$PROJECT_NAME.metainfo.xml"
 
 # Create postinst script (run after installation)
 echo -e "${YELLOW}Creating postinst script...${NC}"
