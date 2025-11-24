@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 echo -e "${YELLOW}Building Debian package for ${PROJECT_NAME}...${NC}"
 
 # Create temporary build directory
-BUILD_DIR=$(mktemp -d)
+BUILD_DIR=./package/
 trap "rm -rf $BUILD_DIR" EXIT
 
 echo -e "${YELLOW}Build directory: $BUILD_DIR${NC}"
