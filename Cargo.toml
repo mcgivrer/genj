@@ -14,6 +14,10 @@ categories = ["development-tools", "command-line-utilities"]
 readme = "README.md"
 build = "build.rs"
 
+[[bin]]
+name = "genj"
+path = "src/main.rs"
+
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 zip = "0.6"
