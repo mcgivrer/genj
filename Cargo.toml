@@ -1,8 +1,18 @@
 [package]
 name = "genj"
-version = "1.0.4"
-edition = "2024"
+version = "1.2.1"
+edition = "2021"
 authors = ["Frederic Delorme <frederic.delorme@gmail.com>"]
+license = "MIT"
+license-file = "LICENSE"
+description = "Generate a Java project from a template (ZIP file or folder)"
+repository = "https://github.com/mcgivrer/genj"
+homepage = "https://github.com/mcgivrer/genj"
+documentation = "https://github.com/mcgivrer/genj#readme"
+keywords = ["java", "project", "generator", "template", "maven", "gradle"]
+categories = ["development-tools", "command-line-utilities"]
+readme = "README.md"
+build = "build.rs"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

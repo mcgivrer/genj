@@ -1,0 +1,139 @@
+.TH GENJ 1 "November 2025" "genj 1.2.1" "User Commands"
+.SH NAME
+genj \- Generate a Java project from a template
+.SH SYNOPSIS
+.B genj
+.BI \-t " TEMPLATE"
+.BI \-d " DESTINATION"
+.RI [ OPTIONS ]
+.SH DESCRIPTION
+.B genj
+is a command-line tool written in Rust that generates a Java project from a template (ZIP file or folder).
+The binary reads a template, copies files to the destination directory while applying variable replacements
+in file paths and content. It also handles the transformation of the \fB${PACKAGE}\fR variable into a Java folder hierarchy.
+.SH REQUIRED OPTIONS
+.TP
+.BI \-t,\ \-\-template " TEMPLATE"
+Path to the template (ZIP file or folder).
+.TP
+.BI \-d,\ \-\-destination " DESTINATION"
+Destination directory where the project will be created.
+.SH OPTIONAL OPTIONS
+.TP
+.BI \-n,\ \-\-project_name " NAME"
+Project name (default: \fBDemo\fR).
+.TP
+.BI \-a,\ \-\-author " NAME"
+Author name (default: \fBUnknown Author\fR).
+.TP
+.BI \-e,\ \-\-email " EMAIL"
+Author email (default: \fBemail@unknown.local\fR).
+.TP
+.BI \-v,\ \-\-project_version " VERSION"
+Project version (default: \fB0.0.1\fR).
+.TP
+.BI \-j,\ \-\-java_version " VERSION"
+JDK version to target (e.g., \fB25\fR). Also used in \fBpom.xml\fR and \fBbuild.gradle\fR (default: \fB25\fR).
+.TP
+.BI \-f,\ \-\-java_flavor " FLAVOR"
+JDK flavor for sdkman (e.g., \fB25-zulu\fR) (default: \fB25-zulu\fR).
+.TP
+.BI \-k,\ \-\-package " PACKAGE"
+Java package name (default: \fBcom.demo\fR).
+.TP
+.BI \-m,\ \-\-mainclass " CLASS"
+Main class name (default: \fBApp\fR).
+.TP
+.BI \-b,\ \-\-build " TOOL"
+Build tool to use: \fBmaven\fR or \fBgradle\fR (default: \fBmaven\fR).
+.TP
+.BI \-\-maven_version " VERSION"
+Maven version for \fB.sdkmanrc\fR (default: \fB3.9.5\fR).
+.TP
+.BI \-\-gradle_version " VERSION"
+Gradle version for \fB.sdkmanrc\fR (default: \fB8.5\fR).
+.TP
+.BI \-l,\ \-\-vendor_name " NAME"
+Vendor name (usable in templates) (default: \fBVendor\fR).
+.SH REPLACEMENT VARIABLES
+The following patterns are replaced in files and file names:
+.TP
+\fB${PROJECT_NAME}\fR
+Project name.
+.TP
+\fB${AUTHOR_NAME}\fR
+Author name.
+.TP
+\fB${AUTHOR_EMAIL}\fR
+Author email.
+.TP
+\fB${PROJECT_VERSION}\fR
+Project version.
+.TP
+\fB${PACKAGE}\fR
+Java package (transformed into folder hierarchy, e.g., \fBcom.example\fR becomes \fBcom/example\fR).
+.TP
+\fB${MAINCLASS}\fR
+Main class name.
+.TP
+\fB${PROJECT_YEAR}\fR
+Current year.
+.TP
+\fB${JAVA}\fR
+JDK version.
+.TP
+\fB${VENDOR_NAME}\fR
+Vendor name.
+.SH GENERATED FILES
+.B genj
+automatically generates the following files:
+.TP
+\fBpom.xml\fR
+Maven build configuration (if \fB--build maven\fR).
+.TP
+\fBbuild.gradle\fR
+Gradle build configuration (if \fB--build gradle\fR).
+.TP
+\fB.sdkmanrc\fR
+SDKMan configuration file with Java and build tool versions.
+.TP
+\fB.vscode/settings.json\fR
+VSCode Java project settings.
+.TP
+\fB.vscode/launch.json\fR
+VSCode launch configuration for debugging.
+.TP
+\fB.git/\fR
+Git repository initialized with initial commit.
+.SH EXAMPLES
+.TP
+Generate a Maven project from a template folder:
+.B genj -t templates/basic-java -d ./out -n Demo -a "Frédéric Delorme" -e fred@example.com -v 0.1.0 -k com.demo -m App
+.TP
+Generate a Gradle project from a ZIP template:
+.B genj -t template.zip -d ./out -n MyProject -b gradle --gradle_version 8.5
+.TP
+Generate with specific JDK version:
+.B genj -t templates/basic-java -d ./out -n Demo -j 25 -f 25-zulu
+.SH NOTES
+.IP \(bu 2
+The program creates the destination directory as \fB<destination>/<project_name>\fR.
+.IP \(bu 2
+If the template is a ZIP file, the script attempts to remove a common root prefix present in the archive.
+.IP \(bu 2
+Binary files detected (non-text) are copied as is; only text files undergo variable replacements.
+.IP \(bu 2
+The Git repository is automatically initialized with an initial commit.
+.IP \(bu 2
+For information on how to create custom templates, see
+.BR genj-template (5).
+.SH AUTHOR
+Frédéric Delorme
+.SH VERSION
+1.2.1
+.SH SEE ALSO
+.TP
+.BR genj-template (5)
+Template format and creation guide for genj projects.
+.TP
+For more information, visit the project repository or consult the README.md file.
