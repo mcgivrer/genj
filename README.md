@@ -31,6 +31,48 @@ A `.sdkmanrc` file is always created with:
 - `java=<java_flavor>` (e.g., `25-zulu`)
 - `maven=<version>` if Maven build, or `gradle=<version>` if Gradle build
 
+## Generated files
+
+After project generation, the following files and directories are created:
+
+- **`.genrc`** - Configuration file in JSON format containing all generation parameters:
+  - Project metadata (name, version, author, email)
+  - Build configuration (build tool, Java version, vendor name)
+  - Generation timestamp (`created_at` in ISO 8601 format)
+  - Generator metadata (`generated_with`: command name and version)
+  - Template source path
+  - Optional remote Git repository URL
+
+Example `.genrc` content:
+```json
+{
+  "project_name": "MyApp",
+  "author": "John Doe",
+  "email": "john@example.com",
+  "project_version": "1.0.0",
+  "package": "com.example.app",
+  "mainclass": "Application",
+  "java_version": "21",
+  "java_flavor": "21-zulu",
+  "build_tool": "maven",
+  "maven_version": "3.9.5",
+  "gradle_version": "8.5",
+  "vendor_name": "My Company",
+  "template": "templates/basic-java",
+  "remote_git_repository": null,
+  "created_at": "2025-11-26T14:30:45.123456+00:00",
+  "generated_with": {
+    "cmd": "genj",
+    "version": "1.2.2"
+  }
+}
+```
+
+- **`.sdkmanrc`** - SDKMan environment configuration
+- **`.vscode/`** - VSCode configuration directory with `settings.json` and `launch.json`
+- **`.git/`** - Git repository initialized with initial commit
+- **`pom.xml`** or **`build.gradle`** - Build configuration based on `--build` option
+
 ## Installation
 
 Requires Rust/Cargo. To compile:
@@ -56,6 +98,7 @@ Available shortcuts and options (see `src/main.rs`):
 - `--maven_version <VER>`: Maven version for `.sdkmanrc` (default: `3.9.5`)
 - `--gradle_version <VER>`: Gradle version for `.sdkmanrc` (default: `8.5`)
 - `-l, --vendor_name <NAME>`: Vendor name (usable in templates) (default: `Vendor`)
+- `--verbose`: Enable verbose output for detailed debugging information
 
 ## Usage
 
@@ -99,6 +142,61 @@ cargo run -- \
 cargo run -- --template templates/basic-java --destination ./out --project_name Demo -j 25
 ```
 
+### Verbose mode
+
+Enable verbose output to see detailed information about each step of the generation process:
+
+```sh
+cargo run -- \
+  --template templates/basic-java \
+  --destination ./out \
+  --project_name Demo \
+  --verbose
+```
+
+**Output with `--verbose`:**
+```
+=== genj - Java Project Generator ===
+Version: 1.2.2
+Verbose mode enabled
+
+[VERBOSE] Destination path will be: ./out/Demo
+[VERBOSE] Generation timestamp: 2025-11-26T14:30:45.123456+00:00
+[VERBOSE] Replacement variables:
+  ${PROJECT_NAME} = Demo
+  ${AUTHOR_NAME} = Unknown Author
+  ...
+[INFO] Reading template from: templates/basic-java
+[VERBOSE] Template detected as directory
+[VERBOSE] Scanning source directory: templates/basic-java
+[VERBOSE] Created directory: ./out/Demo/src/main/java/com/demo
+[VERBOSE] Copied and replaced: ./out/Demo/src/main/java/com/demo/App.java
+[✓] Template directory copied
+[INFO] Using build tool: maven
+[VERBOSE] Generating pom.xml
+[✓] pom.xml generated
+[✓] .sdkmanrc generated
+[✓] .genrc configuration file generated
+[INFO] Configuring VSCode and Git repository...
+[VERBOSE] Initializing Git repository
+...
+[✓] Java project 'Demo' generated successfully in ./out/Demo
+
+=== Generation Summary ===
+Project Name: Demo
+Package: com.demo
+Build Tool: maven
+Java Version: 25
+Location: ./out/Demo
+```
+
+Verbose mode is useful for:
+- Debugging template processing issues
+- Verifying variable replacements
+- Checking file and directory operations
+- Understanding the generation workflow
+- Troubleshooting file copy failures
+
 ## Provided templates
 
 Example templates can be found in `templates/` (e.g., `templates/basic-java`). You can use them as is or create your own template (folder or ZIP). The structure can contain `${PACKAGE}` in paths so that the generator creates the corresponding subfolders.
@@ -113,6 +211,7 @@ Example templates can be found in `templates/` (e.g., `templates/basic-java`). Y
 - The program creates the destination directory `<destination>/<project_name>`.
 - If the template is a ZIP, the script attempts to remove a common root prefix present in the archive.
 - Binary files detected (non-text) are copied as is; only text files undergo replacements.
+- The `.genrc` file stores the exact parameters used for generation and can be used to regenerate similar projects.
 
 ## Release and packaging scripts
 
@@ -145,7 +244,7 @@ Make both scripts executable before running:
 chmod +x build-release-full.sh build_deb.sh
 ```
 
-## Generate Debian package (legacy note)
+## Generate Debian package
 
 The project includes `build_deb.sh` which automates packaging into a .deb. The script:
 1. Compiles the project in release mode

@@ -9,10 +9,12 @@ use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 use zip::ZipArchive;
 
+const VERSION: &str = "1.2.2";
+
 #[derive(Parser, Debug)]
 #[command(
     author = "Frédéric Delorme",
-    version = "1.2.2",
+    version = VERSION,
     about = "This script generates a Java project based on the specified template files.
 It creates the necessary directory structure, copies the templates, replaces
 placeholders in the templates with the provided values, and generates additional
@@ -70,9 +72,33 @@ struct Cli {
     #[arg(
         short = 'r',
         long = "remote_git_repository",
-        help = "Defini the repository git distant pour ce projet"
+        help = "Define the remote git repository for this project"
     )]
     remote_git: Option<String>,
+    #[arg(
+        long = "verbose",
+        help = "Enable verbose output for debugging",
+        action = clap::ArgAction::SetTrue
+    )]
+    verbose: bool,
+}
+
+fn log_verbose(message: &str, verbose: bool) {
+    if verbose {
+        println!("[VERBOSE] {}", message);
+    }
+}
+
+fn log_info(message: &str) {
+    println!("[INFO] {}", message);
+}
+
+fn log_success(message: &str) {
+    println!("[✓] {}", message);
+}
+
+fn log_warning(message: &str) {
+    eprintln!("[⚠] {}", message);
 }
 
 fn main() -> io::Result<()> {
@@ -80,13 +106,31 @@ fn main() -> io::Result<()> {
     let package_val = &args.package;
     let mainclass_val = &args.mainclass;
 
-    let mut dest_path = PathBuf::from(&args.destination);
+    if args.verbose {
+        println!("=== genj - Java Project Generator ===");
+        println!("Version: 1.2.2");
+        println!("Verbose mode enabled");
+        println!();
+    }
 
+    let mut dest_path = PathBuf::from(&args.destination);
     dest_path = dest_path.join(&args.project_name);
 
-    let current_year = Utc::now().year().to_string();
+    log_verbose(
+        &format!(
+            "Destination path will be: {}",
+            dest_path.display()
+        ),
+        args.verbose,
+    );
 
-//    let remote_git_repo = Some(args.remote_git).as_ref();
+    let current_year = Utc::now().year().to_string();
+    let creation_timestamp = Utc::now().to_rfc3339();
+
+    log_verbose(
+        &format!("Generation timestamp: {}", creation_timestamp),
+        args.verbose,
+    );
 
     let replacements = [
         ("${PROJECT_NAME}", args.project_name.as_str()),
@@ -98,34 +142,52 @@ fn main() -> io::Result<()> {
         ("${VENDOR_NAME}", args.vendor_name.as_str()),
         ("${MAINCLASS}", mainclass_val.as_str()),
         ("${PROJECT_YEAR}", current_year.as_str()),
-//        ("${REMOTE_GIT_REPO}", remote_git_repo.as_deref().as_str()),
     ];
+
+    log_verbose("Replacement variables:", args.verbose);
+    if args.verbose {
+        for (key, val) in &replacements {
+            println!("  {} = {}", key, val);
+        }
+    }
 
     let template_path = Path::new(&args.template);
 
+    log_info(&format!(
+        "Reading template from: {}",
+        template_path.display()
+    ));
+
     if template_path.is_file() {
+        log_verbose("Template detected as ZIP file", args.verbose);
         // ZIP extraction
-        extract_zip_with_replace(template_path, &dest_path, &replacements)?;
+        extract_zip_with_replace(template_path, &dest_path, &replacements, args.verbose)?;
+        log_success("ZIP template extracted");
     } else if template_path.is_dir() {
+        log_verbose("Template detected as directory", args.verbose);
         // Copy directory with replace
-        copy_dir_with_replace(template_path, &dest_path, &replacements)?;
+        copy_dir_with_replace(template_path, &dest_path, &replacements, args.verbose)?;
+        log_success("Template directory copied");
     } else {
-        eprintln!("Invalid template path");
+        log_warning("Invalid template path");
         std::process::exit(1);
     }
 
     // Build tool processing
     let build_tool = args.build_tool.to_lowercase();
     if build_tool != "maven" && build_tool != "gradle" {
-        eprintln!(
+        log_warning(&format!(
             "Unsupported build tool: {} (possible values: maven, gradle)",
             build_tool
-        );
+        ));
         std::process::exit(1);
     }
 
+    log_info(&format!("Using build tool: {}", build_tool));
+
     // Add pom.xml or build.gradle file
     if build_tool == "maven" {
+        log_verbose("Generating pom.xml", args.verbose);
         // Ex: simple Maven project
         let pom_path = dest_path.join("pom.xml");
         let pom_content = format!(
@@ -151,7 +213,9 @@ fn main() -> io::Result<()> {
             args.package, args.project_name, args.project_version, args.java, args.java
         );
         write(pom_path, pom_content)?;
+        log_success("pom.xml generated");
     } else if build_tool == "gradle" {
+        log_verbose("Generating build.gradle", args.verbose);
         // Ex: simple Gradle project
         let gradle_path = dest_path.join("build.gradle");
         let gradle_content = format!(
@@ -168,10 +232,11 @@ fn main() -> io::Result<()> {
             args.package, args.project_version
         );
         write(gradle_path, gradle_content)?;
+        log_success("build.gradle generated");
     }
 
-    // Update .sdkman file
-
+    // Update .sdkmanrc file
+    log_verbose("Generating .sdkmanrc", args.verbose);
     let sdkman_file = dest_path.join(".sdkmanrc");
     let mut sdkman_content = format!("java={}\n", args.java_flavor);
 
@@ -181,22 +246,74 @@ fn main() -> io::Result<()> {
         sdkman_content.push_str(&format!("gradle={}\n", args.gradle_version));
     }
     write(sdkman_file, sdkman_content)?;
+    log_success(".sdkmanrc generated");
+
+    // Generate .genrc configuration file
+    log_verbose("Generating .genrc configuration file", args.verbose);
+    let genrc_config = json!({
+        "project_name": args.project_name,
+        "author": args.author,
+        "email": args.email,
+        "project_version": args.project_version,
+        "package": args.package,
+        "mainclass": args.mainclass,
+        "java_version": args.java,
+        "java_flavor": args.java_flavor,
+        "build_tool": build_tool,
+        "maven_version": args.maven_version,
+        "gradle_version": args.gradle_version,
+        "vendor_name": args.vendor_name,
+        "template": args.template,
+        "remote_git_repository": args.remote_git,
+        "created_at": creation_timestamp,
+        "generated_with": {
+            "cmd":"genj",
+            "version": VERSION
+        }
+    });
+
+    let genrc_path = dest_path.join(".genrc");
+    write(
+        &genrc_path,
+        serde_json::to_string_pretty(&genrc_config)?,
+    )?;
+    log_success(".genrc configuration file generated");
 
     // Configure VSCode and Git
+    log_info("Configuring VSCode and Git repository...");
     let vscode_config = VsCodeConfig::new(
         args.project_name.clone(),
         args.mainclass.clone(),
         args.author.clone(),
         args.email.clone(),
-        None,                 // or a remote repository URL if necessary
+        args.remote_git.clone(),
         "1.14.0".to_string(), // JUnit version
+        args.verbose,
     );
 
     if let Err(e) = vscode_config.setup_project(&dest_path) {
-        eprintln!("Error during VSCode/Git configuration: {}", e);
+        log_warning(&format!(
+            "Error during VSCode/Git configuration: {}",
+            e
+        ));
     }
 
-    println!("Java project generated in {}", dest_path.display());
+    log_success(&format!(
+        "Java project '{}' generated successfully in {}",
+        args.project_name,
+        dest_path.display()
+    ));
+
+    if args.verbose {
+        println!();
+        println!("=== Generation Summary ===");
+        println!("Project Name: {}", args.project_name);
+        println!("Package: {}", args.package);
+        println!("Build Tool: {}", build_tool);
+        println!("Java Version: {}", args.java);
+        println!("Location: {}", dest_path.display());
+    }
+
     Ok(())
 }
 
@@ -252,9 +369,19 @@ fn extract_zip_with_replace(
     zip_path: &Path,
     dest_path: &Path,
     replacements: &[(&str, &str)],
+    verbose: bool,
 ) -> io::Result<()> {
+    log_verbose(
+        &format!("Opening ZIP file: {}", zip_path.display()),
+        verbose,
+    );
     let file = File::open(zip_path)?;
     let mut archive = ZipArchive::new(file)?;
+
+    log_verbose(
+        &format!("ZIP contains {} entries", archive.len()),
+        verbose,
+    );
 
     // Collect entry names to avoid multiple mutable borrows
     let entry_names: Vec<String> = (0..archive.len())
@@ -267,6 +394,13 @@ fn extract_zip_with_replace(
         .filter_map(|name| name.find('/').map(|pos| &name[..pos + 1]))
         .reduce(|a, b| if a == b { a } else { "" })
         .filter(|s| !s.is_empty());
+
+    if let Some(prefix) = common_prefix {
+        log_verbose(
+            &format!("Detected common root prefix: {}", prefix),
+            verbose,
+        );
+    }
 
     for i in 0..archive.len() {
         let mut entry = archive.by_index(i)?;
@@ -297,6 +431,10 @@ fn extract_zip_with_replace(
 
         if raw_name.ends_with('/') {
             create_dir_all(&full_path)?;
+            log_verbose(
+                &format!("Created directory: {}", full_path.display()),
+                verbose,
+            );
         } else {
             if let Some(parent) = full_path.parent() {
                 create_dir_all(parent)?;
@@ -309,6 +447,10 @@ fn extract_zip_with_replace(
             if !is_text_bytes(&bytes) {
                 // Copy binary files as is
                 write(&full_path, &bytes)?;
+                log_verbose(
+                    &format!("Copied binary file: {}", full_path.display()),
+                    verbose,
+                );
                 continue;
             }
 
@@ -318,6 +460,10 @@ fn extract_zip_with_replace(
                 .iter()
                 .fold(content, |acc, (pat, val)| acc.replace(pat, val));
             write(&full_path, replaced_content)?;
+            log_verbose(
+                &format!("Extracted and replaced: {}", full_path.display()),
+                verbose,
+            );
         }
     }
     Ok(())
@@ -327,13 +473,22 @@ fn copy_dir_with_replace(
     src_dir: &Path,
     dest_dir: &Path,
     replacements: &[(&str, &str)],
+    verbose: bool,
 ) -> io::Result<()> {
+    log_verbose(
+        &format!("Scanning source directory: {}", src_dir.display()),
+        verbose,
+    );
+
     // Extract the value corresponding to ${PACKAGE} to use in path construction
     let package_val = replacements
         .iter()
         .find(|(key, _)| *key == "${PACKAGE}")
         .map(|(_, val)| *val)
         .unwrap_or("");
+
+    let mut file_count = 0;
+    let mut dir_count = 0;
 
     for entry in WalkDir::new(src_dir).into_iter().filter_map(Result::ok) {
         let rel_path = entry.path().strip_prefix(src_dir).unwrap();
@@ -346,6 +501,11 @@ fn copy_dir_with_replace(
 
         if entry.file_type().is_dir() {
             create_dir_all(&full_dest_path)?;
+            log_verbose(
+                &format!("Created directory: {}", full_dest_path.display()),
+                verbose,
+            );
+            dir_count += 1;
         } else if entry.file_type().is_file() {
             // Skip binary files
             match is_text_path(entry.path()) {
@@ -357,7 +517,12 @@ fn copy_dir_with_replace(
                     let replaced_content = replacements
                         .iter()
                         .fold(content, |acc, (pat, val)| acc.replace(pat, val));
-                    write(full_dest_path, replaced_content)?;
+                    write(&full_dest_path, replaced_content)?;
+                    log_verbose(
+                        &format!("Copied and replaced: {}", full_dest_path.display()),
+                        verbose,
+                    );
+                    file_count += 1;
                 }
                 Ok(false) => {
                     // Copy binary files as is
@@ -365,22 +530,40 @@ fn copy_dir_with_replace(
                         create_dir_all(parent)?;
                     }
                     match copy(entry.path(), &full_dest_path) {
-                        Ok(_) => { /* copied */ }
-                        Err(err) => eprintln!(
-                            "Failed to copy binary file {}: {}",
-                            entry.path().display(),
-                            err
-                        ),
+                        Ok(_) => {
+                            log_verbose(
+                                &format!("Copied binary file: {}", full_dest_path.display()),
+                                verbose,
+                            );
+                            file_count += 1;
+                        }
+                        Err(err) => {
+                            log_warning(&format!(
+                                "Failed to copy binary file {}: {}",
+                                entry.path().display(),
+                                err
+                            ));
+                        }
                     }
-                    continue;
                 }
                 Err(err) => {
-                    eprintln!("Error reading file {}: {}", entry.path().display(), err);
-                    continue;
+                    log_warning(&format!(
+                        "Error reading file {}: {}",
+                        entry.path().display(),
+                        err
+                    ));
                 }
             }
         }
     }
+
+    log_verbose(
+        &format!(
+            "Template copy complete: {} files, {} directories",
+            file_count, dir_count
+        ),
+        verbose,
+    );
     Ok(())
 }
 
@@ -393,6 +576,7 @@ struct VsCodeConfig {
     git_author_email: String,
     remote_repo_url: Option<String>,
     standalone_junit_version: String,
+    verbose: bool,
 }
 
 impl VsCodeConfig {
@@ -403,6 +587,7 @@ impl VsCodeConfig {
         git_author_email: String,
         remote_repo_url: Option<String>,
         standalone_junit_version: String,
+        verbose: bool,
     ) -> Self {
         Self {
             project_name,
@@ -411,6 +596,7 @@ impl VsCodeConfig {
             git_author_email,
             remote_repo_url,
             standalone_junit_version,
+            verbose,
         }
     }
 
@@ -460,10 +646,12 @@ impl VsCodeConfig {
     }
 
     fn init_git_repository(&self, project_path: &Path) -> io::Result<()> {
+        log_verbose("Initializing Git repository", self.verbose);
         // Initialize Git repository
         let repo = Repository::init(project_path)
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
 
+        log_verbose("Configuring Git user", self.verbose);
         let mut config = repo
             .config()
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
@@ -472,6 +660,11 @@ impl VsCodeConfig {
         config
             .set_str("init.defaultBranch", "main")
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+        
+        log_verbose(
+            &format!("Setting Git user: {}", self.git_author_name),
+            self.verbose,
+        );
         // Configure Git user
         config
             .set_str("user.name", &self.git_author_name)
@@ -480,6 +673,7 @@ impl VsCodeConfig {
             .set_str("user.email", &self.git_author_email)
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
 
+        log_verbose("Adding files to Git index", self.verbose);
         // Add all files and make the first commit
         let mut index = repo
             .index()
@@ -493,6 +687,7 @@ impl VsCodeConfig {
             .write()
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
 
+        log_verbose("Creating initial commit", self.verbose);
         let tree_id = index
             .write_tree()
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
@@ -515,8 +710,14 @@ impl VsCodeConfig {
         )
         .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
 
+        log_success("Git repository initialized with initial commit");
+
         // Configure remote repository if URL is provided
         if let Some(url) = &self.remote_repo_url {
+            log_verbose(
+                &format!("Configuring remote repository: {}", url),
+                self.verbose,
+            );
             repo.remote("origin", url)
                 .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
 
@@ -525,30 +726,37 @@ impl VsCodeConfig {
                 .find_remote("origin")
                 .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
 
+            log_verbose("Pushing to remote repository", self.verbose);
             remote
                 .push(&["refs/heads/main:refs/heads/main"], None)
                 .map_err(|e| io::Error::new(io::ErrorKind::Other, e.message().to_string()))?;
+            log_success("Pushed to remote repository");
         }
 
         Ok(())
     }
 
     fn setup_vscode_config(&self, project_path: &Path) -> io::Result<()> {
+        log_verbose("Creating VSCode configuration", self.verbose);
         let vscode_dir = project_path.join(".vscode");
         create_dir_all(&vscode_dir)?;
 
         // Generate settings.json
+        log_verbose("Generating .vscode/settings.json", self.verbose);
         let settings_json = self.generate_settings_json();
         let settings_path = vscode_dir.join("settings.json");
         write(
             &settings_path,
             serde_json::to_string_pretty(&settings_json)?,
         )?;
+        log_success(".vscode/settings.json created");
 
         // Generate launch.json
+        log_verbose("Generating .vscode/launch.json", self.verbose);
         let launch_json = self.generate_launch_json();
         let launch_path = vscode_dir.join("launch.json");
         write(&launch_path, serde_json::to_string_pretty(&launch_json)?)?;
+        log_success(".vscode/launch.json created");
 
         Ok(())
     }
