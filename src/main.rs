@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 use zip::ZipArchive;
 
-const VERSION: &str = "1.2.2";
+const VERSION: &str = "1.2.3";
 
 #[derive(Parser, Debug)]
 #[command(
