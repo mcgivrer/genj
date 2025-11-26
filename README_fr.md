@@ -63,7 +63,7 @@ Exemple de contenu `.genrc` :
   "created_at": "2025-11-26T14:30:45.123456+00:00",
   "generated_with": {
     "cmd": "genj",
-    "version": "1.2.2"
+    "version": "1.2.3"
   }
 }
 ```
@@ -157,7 +157,7 @@ cargo run -- \
 **Sortie en mode `--verbose`** :
 ```
 === genj - Java Project Generator ===
-Version: 1.2.2
+Version: 1.2.3
 Verbose mode enabled
 
 [VERBOSE] Destination path will be: ./out/Demo
