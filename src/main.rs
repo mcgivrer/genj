@@ -70,7 +70,7 @@ struct Cli {
     #[arg(
         short = 'r',
         long = "remote_git_repository",
-        help = "Defini the repository git distant pour ce projet"
+        help = "Define the remote git repository for this project"
     )]
     remote_git: Option<String>,
 }
@@ -85,8 +85,7 @@ fn main() -> io::Result<()> {
     dest_path = dest_path.join(&args.project_name);
 
     let current_year = Utc::now().year().to_string();
-
-//    let remote_git_repo = Some(args.remote_git).as_ref();
+    let creation_timestamp = Utc::now().to_rfc3339();
 
     let replacements = [
         ("${PROJECT_NAME}", args.project_name.as_str()),
@@ -98,7 +97,6 @@ fn main() -> io::Result<()> {
         ("${VENDOR_NAME}", args.vendor_name.as_str()),
         ("${MAINCLASS}", mainclass_val.as_str()),
         ("${PROJECT_YEAR}", current_year.as_str()),
-//        ("${REMOTE_GIT_REPO}", remote_git_repo.as_deref().as_str()),
     ];
 
     let template_path = Path::new(&args.template);
@@ -170,8 +168,7 @@ fn main() -> io::Result<()> {
         write(gradle_path, gradle_content)?;
     }
 
-    // Update .sdkman file
-
+    // Update .sdkmanrc file
     let sdkman_file = dest_path.join(".sdkmanrc");
     let mut sdkman_content = format!("java={}\n", args.java_flavor);
 
@@ -182,13 +179,39 @@ fn main() -> io::Result<()> {
     }
     write(sdkman_file, sdkman_content)?;
 
+    // Generate .genrc configuration file
+    let genrc_config = json!({
+        "project_name": args.project_name,
+        "author": args.author,
+        "email": args.email,
+        "project_version": args.project_version,
+        "package": args.package,
+        "mainclass": args.mainclass,
+        "java_version": args.java,
+        "java_flavor": args.java_flavor,
+        "build_tool": build_tool,
+        "maven_version": args.maven_version,
+        "gradle_version": args.gradle_version,
+        "vendor_name": args.vendor_name,
+        "template": args.template,
+        "remote_git_repository": args.remote_git,
+        "created_at": creation_timestamp,
+        "generated_with": "genj"
+    });
+
+    let genrc_path = dest_path.join(".genrc");
+    write(
+        &genrc_path,
+        serde_json::to_string_pretty(&genrc_config)?,
+    )?;
+
     // Configure VSCode and Git
     let vscode_config = VsCodeConfig::new(
         args.project_name.clone(),
         args.mainclass.clone(),
         args.author.clone(),
         args.email.clone(),
-        None,                 // or a remote repository URL if necessary
+        args.remote_git.clone(),
         "1.14.0".to_string(), // JUnit version
     );
 
