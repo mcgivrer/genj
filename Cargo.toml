@@ -1,6 +1,6 @@
 [package]
 name = "genj"
-version = "1.2.1"
+version = "1.2.2"
 edition = "2021"
 authors = ["Frederic Delorme <frederic.delorme@gmail.com>"]
 license = "MIT"
@@ -13,6 +13,10 @@ keywords = ["java", "project", "generator", "template", "maven", "gradle"]
 categories = ["development-tools", "command-line-utilities"]
 readme = "README.md"
 build = "build.rs"
+
+[[bin]]
+name = "genj"
+path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

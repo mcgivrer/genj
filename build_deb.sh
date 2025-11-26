@@ -4,9 +4,10 @@ set -e
 
 # Configuration
 PROJECT_NAME="genj"
-VERSION="1.2.1"
+VERSION="1.2.2"
 MAINTAINER="Frédéric Delorme <fredericDOTdelormeATgmailDOTcom>"
-DESCRIPTION="Generate a Java project from a template as a ZIP file or folder."
+DESCRIPTION="Generate a Java project from a template as a ZIP file or folder. \
+Please, look at https://github.com/mcgivrer/genj for details."
 ARCHITECTURE="amd64"
 
 # Colors for output
@@ -18,7 +19,7 @@ NC='\033[0m' # No Color
 echo -e "${YELLOW}Building Debian package for ${PROJECT_NAME}...${NC}"
 
 # Create temporary build directory
-BUILD_DIR=$(mktemp -d)
+BUILD_DIR=./package/
 trap "rm -rf $BUILD_DIR" EXIT
 
 echo -e "${YELLOW}Build directory: $BUILD_DIR${NC}"
@@ -91,6 +92,10 @@ Description: $DESCRIPTION
  Licensed under the MIT License - See /usr/share/doc/$PROJECT_NAME/copyright
  for full license details.
 EOF
+# copy metaino file
+echo -e "${YELLOW}Copying metainfo file...${NC}"
+mkdir -p "$DEBIAN_DIR/usr/share/metainfo"
+cp ./docs/$PROJECT_NAME.metainfo.xml "$DEBIAN_DIR/usr/share/metainfo/$PROJECT_NAME.metainfo.xml"
 
 # Create postinst script (run after installation)
 echo -e "${YELLOW}Creating postinst script...${NC}"
@@ -198,23 +203,24 @@ DEB_PACKAGE="${PROJECT_NAME}_${VERSION}_${ARCHITECTURE}.deb"
 dpkg-deb --build "$DEBIAN_DIR" "$DEB_PACKAGE"
 
 # Move deb to current directory
-mv "$DEB_PACKAGE" .
+mkdir -p ./target/package
+mv "$DEB_PACKAGE" ./target/package/
 
 echo -e "${GREEN}✓ Debian package created successfully: $DEB_PACKAGE${NC}"
 echo -e "${GREEN}✓ Installation size: ${INSTALLED_SIZE} KB${NC}"
 
 # Display package info
 echo -e "\n${YELLOW}Package information:${NC}"
-dpkg-deb -I "$DEB_PACKAGE"
+dpkg-deb -I "./target/package/$DEB_PACKAGE"
 
 # Optional: Display contents
 echo -e "\n${YELLOW}Package contents:${NC}"
-dpkg-deb -c "$DEB_PACKAGE"
+dpkg-deb -c "./target/package/$DEB_PACKAGE"
 
 echo -e "\n${YELLOW}To install the package:${NC}"
-echo -e "  ${GREEN}sudo dpkg -i $DEB_PACKAGE${NC}"
+echo -e "  ${GREEN}sudo dpkg -i ./target/package/$DEB_PACKAGE${NC}"
 echo -e "\n${YELLOW}To uninstall:${NC}"
-echo -e "  ${GREEN}sudo apt remove $PROJECT_NAME${NC}"
+echo -e "  ${GREEN}sudo apt remove ./target/package/$PROJECT_NAME${NC}"
 echo -e "\n${YELLOW}After installation, consult the documentation:${NC}"
 echo -e "  ${GREEN}man genj${NC}"
 echo -e "  ${GREEN}man genj-template${NC}"

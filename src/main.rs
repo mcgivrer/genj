@@ -12,16 +12,16 @@ use zip::ZipArchive;
 #[derive(Parser, Debug)]
 #[command(
     author = "Frédéric Delorme",
-    version = "1.2.1",
+    version = "1.2.2",
     about = "This script generates a Java project based on the specified template files.
 It creates the necessary directory structure, copies the templates, replaces
 placeholders in the templates with the provided values, and generates additional
 files such as MANIFEST.MF and README.md."
 )]
 struct Cli {
-    #[arg(short = 'd', long, help = "Path to the template (ZIP or folder)")]
+    #[arg(short = 't', long="template", help = "Path to the template (ZIP or folder)")]
     template: String,
-    #[arg(short, long, help = "Destination directory")]
+    #[arg(short='d', long="destination", help = "Destination directory")]
     destination: String,
     #[arg(short = 'n', long = "project_name", default_value = "Demo")]
     project_name: String,
