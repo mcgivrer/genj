@@ -69,8 +69,24 @@ pub fn run(cli: Cli) -> io::Result<()> {
     <maven.compiler.target>{}</maven.compiler.target>
     <maven.compiler.source>{}</maven.compiler.source>
   </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>{}.{}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>"#,
-            cli.package, cli.project_name, cli.project_version, cli.java, cli.java
+            cli.package, cli.project_name, cli.project_version, cli.java, cli.java, cli.package, cli.mainclass  
         );
         std::fs::create_dir_all(pom_path.parent().unwrap_or(&dest_path))?;
         std::fs::write(pom_path, pom_content)?;

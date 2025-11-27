@@ -1,6 +1,6 @@
 [package]
 name = "genj"
-version = "1.2.4"
+version = "1.3.1"
 edition = "2021"
 authors = ["Frederic Delorme <frederic.delorme@gmail.com>"]
 license = "MIT"
