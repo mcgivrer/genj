@@ -4,7 +4,7 @@ set -e
 
 # Configuration
 PROJECT_NAME="genj"
-VERSION="1.2.4"
+VERSION="1.3.1"
 MAINTAINER="Frédéric Delorme <fredericDOTdelormeATgmailDOTcom>"
 DESCRIPTION="Generate a Java project from a template as a ZIP file or folder. \
 Please, look at https://github.com/mcgivrer/genj for details."
