@@ -50,6 +50,8 @@ pub struct Cli {
     pub verbose: bool,
     #[arg(long = "list", help = "List available templates in /usr/share/genj/templates and ~/.genj/", action = clap::ArgAction::SetTrue)]
     pub list: bool,
+    #[arg(short = 's', long = "search", help = "Search for templates by name or metadata (description, tags, language, author)")]
+    pub search: Option<String>,
 }
 
 impl Cli {
