@@ -67,6 +67,14 @@ else
     echo -e "${YELLOW}Warning: docs/man/man5/genj-template.5 man file not found (optional)${NC}"
 fi
 
+# Copy template ZIPs into package
+if [ -n "$GENJ_TEMPLATE_ZIP_DIR" ] && [ -d "$GENJ_TEMPLATE_ZIP_DIR" ]; then
+    TEMPLATE_INSTALL_DIR="${GENJ_TEMPLATE_INSTALL_DIR:-usr/share/genj/templates}"
+    mkdir -p "$DEBIAN_DIR/$TEMPLATE_INSTALL_DIR"
+    cp "$GENJ_TEMPLATE_ZIP_DIR"/*.zip "$DEBIAN_DIR/$TEMPLATE_INSTALL_DIR/"
+    echo "✓ Template ZIPs copied to $DEBIAN_DIR/$TEMPLATE_INSTALL_DIR"
+fi
+
 # Create control file
 echo -e "${YELLOW}Creating control file...${NC}"
 cat > "$DEBIAN_META/control" << EOF
@@ -92,7 +100,8 @@ Description: $DESCRIPTION
  Licensed under the MIT License - See /usr/share/doc/$PROJECT_NAME/copyright
  for full license details.
 EOF
-# copy metaino file
+
+# Copy metainfo file
 echo -e "${YELLOW}Copying metainfo file...${NC}"
 mkdir -p "$DEBIAN_DIR/usr/share/metainfo"
 cp ./docs/$PROJECT_NAME.metainfo.xml "$DEBIAN_DIR/usr/share/metainfo/$PROJECT_NAME.metainfo.xml"

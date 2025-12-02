@@ -1,17 +1,21 @@
-.TH GENJ-TEMPLATE 5 "November 2025" "genj 1.3.1" "File Formats"
+.TH GENJ-TEMPLATE 5 "December 2025" "genj 1.3.1" "File Formats"
 .SH NAME
-genj-template \- Template format for genj project generator
+genj-template \- Template format and metadata for genj project generator
 .SH DESCRIPTION
 .B genj
 uses templates to generate Java projects. A template can be a directory structure
 or a compressed ZIP file containing project files with placeholder variables that
 .B genj
 replaces during project generation.
+
+Templates can include a \fB.template\fR metadata file (JSON format) that provides
+information used by the \fB--list\fR and \fB--search\fR commands for template discovery.
 .SH TEMPLATE STRUCTURE
 A typical template follows this structure:
 .PP
 .nf
 templates/my-template/
+├── .template
 ├── README.md
 ├── pom.xml
 ├── .gitignore
@@ -33,6 +37,132 @@ templates/my-template/
 └── docs/
     └── architecture.md
 .fi
+.SH TEMPLATE METADATA FILE: .template
+The \fB.template\fR file is a JSON file at the root of the template that provides metadata
+for template discovery and description via \fB--list\fR and \fB--search\fR commands.
+
+.SS .template File Format
+.nf
+{
+  "name": "Basic Java",
+  "version": "1.0.0",
+  "language": "Java",
+  "description": "Basic Java project template with Maven support",
+  "author": "Template Author",
+  "contact": "author@example.com",
+  "license": "MIT",
+  "tags": ["java", "maven", "basic", "starter"],
+  "created_at": "2025-12-02T10:00:00Z"
+}
+.fi
+
+.SS Metadata Fields
+.TP
+\fBname\fR (string, required)
+Display name of the template.
+Example: "Basic Java", "Spring Boot Starter"
+.TP
+\fBversion\fR (string, required)
+Semantic version of the template (e.g., "1.0.0", "2.1.3").
+.TP
+\fBlanguage\fR (string, required)
+Programming language(s) targeted by the template (e.g., "Java", "Java 21+", "Java 17-21").
+.TP
+\fBdescription\fR (string, required)
+Detailed description of template purpose and features.
+Used in \fB--list\fR output and \fB--search\fR results.
+.TP
+\fBauthor\fR (string, required)
+Name of the template creator.
+.TP
+\fBcontact\fR (string, required)
+Contact email of the template author (e.g., "author@example.com").
+.TP
+\fBlicense\fR (string, required)
+License type of the template (e.g., "MIT", "Apache-2.0", "GPL-3.0").
+.TP
+\fBtags\fR (array of strings, required)
+Array of tags for categorization and search.
+Examples: ["java", "maven", "rest-api"], ["spring-boot", "gradle", "microservice"]
+.TP
+\fBcreated_at\fR (string, required)
+ISO 8601 timestamp of template creation (e.g., "2025-12-02T10:00:00Z").
+Format: YYYY-MM-DDTHH:MM:SSZ
+.SS Example: Comprehensive Metadata File
+.nf
+{
+  "name": "Spring Boot REST API",
+  "version": "2.0.0",
+  "language": "Java 21+",
+  "description": "Full-featured Spring Boot REST API template with testing, containerization, and deployment configs",
+  "author": "Frédéric Delorme",
+  "contact": "fred@example.com",
+  "license": "MIT",
+  "tags": ["spring-boot", "rest-api", "gradle", "docker", "kubernetes"],
+  "created_at": "2025-12-02T15:30:00Z"
+}
+.fi
+
+.SH TEMPLATE DISCOVERY
+Users can discover templates using the \fB--list\fR and \fB--search\fR commands.
+
+.SS Listing All Templates
+.nf
+genj --list
+.fi
+
+Displays all available templates from:
+.TP
+\(bu
+\fB/usr/share/genj/templates/\fR (system-wide templates)
+.TP
+\(bu
+\fB~/.genj/\fR (user-specific templates)
+
+Each template shows its metadata: name, description, language, version, author, license, tags, and creation date.
+
+.SS Searching Templates
+.nf
+genj --search TERM
+genj -s TERM
+.fi
+
+Searches for templates matching a search term (case-insensitive).
+Search is performed on:
+.TP
+\(bu
+Template name
+.TP
+\(bu
+Description
+.TP
+\(bu
+Language
+.TP
+\(bu
+Author
+.TP
+\(bu
+Version
+.TP
+\(bu
+Contact
+.TP
+\(bu
+License
+.TP
+\(bu
+Tags
+
+.SS Search Examples
+.nf
+genj --search java
+genj --search spring
+genj -s gradle
+genj --search "rest-api"
+genj --search microservice
+.fi
+
 .SH REPLACEMENT VARIABLES
 The following variables are replaced in file paths and content:
 .TP
@@ -78,7 +208,28 @@ mkdir -p templates/my-template/src/main/java/${PACKAGE}
 mkdir -p templates/my-template/src/test/java/${PACKAGE}
 mkdir -p templates/my-template/.vscode
 .fi
-.SS Step 2: Add Configuration Files
+
+.SS Step 2: Create Metadata File
+Create \fB.template\fR in the root of your template:
+.nf
+cat > templates/my-template/.template << 'EOF'
+{
+  "name": "My Custom Template",
+  "version": "1.0.0",
+  "language": "Java",
+  "description": "A custom template for my specific use case",
+  "author": "Your Name",
+  "contact": "you@example.com",
+  "license": "MIT",
+  "tags": ["custom", "mycompany"],
+  "created_at": "2025-12-02T10:00:00Z"
+}
+EOF
+.fi
+
+This metadata file is essential for template discovery via \fB--list\fR and \fB--search\fR.
+
+.SS Step 3: Add Configuration Files
 Create essential configuration files such as:
 .TP
 \fBpom.xml\fR
@@ -91,7 +242,7 @@ Maven build configuration with variables:
 .TP
 \fB.gitignore\fR
 Standard Git ignore patterns for Java projects.
-.SS Step 3: Add Source Files
+.SS Step 4: Add Source Files
 Create Java source files in \fBsrc/main/java/${PACKAGE}/\fR with placeholder variables:
 .nf
 package ${PACKAGE};
@@ -102,7 +253,7 @@ public class ${MAINCLASS} {
     }
 }
 .fi
-.SS Step 4: Add Test Files
+.SS Step 5: Add Test Files
 Create test files in \fBsrc/test/java/${PACKAGE}/\fR:
 .nf
 package ${PACKAGE};
@@ -117,14 +268,14 @@ public class ${MAINCLASS}Test {
     }
 }
 .fi
-.SS Step 5: Add Resource Files
+.SS Step 6: Add Resource Files
 Include resource files and configuration:
 .nf
 app.name=${PROJECT_NAME}
 app.version=${PROJECT_VERSION}
 app.author=${AUTHOR_NAME}
 .fi
-.SS Step 6: Add IDE Configuration
+.SS Step 7: Add IDE Configuration
 Create \fB.vscode/settings.json\fR:
 .nf
 {
@@ -135,7 +286,7 @@ Create \fB.vscode/settings.json\fR:
     "java.project.outputPath": "target/classes"
 }
 .fi
-.SS Step 7: Add Documentation
+.SS Step 8: Add Documentation
 Create \fBREADME.md\fR with template variables:
 .nf
 # ${PROJECT_NAME}
@@ -150,6 +301,35 @@ mvn clean package
 
 ${AUTHOR_NAME} (${AUTHOR_EMAIL})
 .fi
+
+.SS Step 9: Verify Your Template
+Test your template with the discovery commands:
+.nf
+# Copy template to user directory
+cp -r templates/my-template ~/.genj/
+
+# Verify metadata is displayed
+genj --list
+
+# Search by name or tag
+genj --search "my-template"
+.fi
+
+.SH TEMPLATE INSTALLATION
+.SS User Installation
+.nf
+cp -r templates/my-template ~/.genj/
+.fi
+
+Templates placed in \fB~/.genj/\fR are accessible to the current user only.
+
+.SS System-wide Installation
+.nf
+sudo cp -r templates/my-template /usr/share/genj/templates/
+.fi
+
+Templates placed in \fB/usr/share/genj/templates/\fR are accessible to all users (requires root privileges).
+
 .SH TEMPLATE FORMATS
 .SS Directory Template
 Use the template directory directly:
@@ -162,20 +342,45 @@ Create a compressed ZIP file:
 cd templates
 zip -r my-template.zip my-template/
 .fi
-.PP
+
+The \fB.template\fR file in the ZIP will be automatically detected by \fB--list\fR and \fB--search\fR.
+
 Then use it:
 .nf
 genj -t templates/my-template.zip -d ./output -n MyProject
 .fi
+
+Or install and reference by name:
+.nf
+cp templates/my-template.zip ~/.genj/
+genj -t my-template.zip -d ./output -n MyProject
+.fi
+
 .SH EXAMPLE: MAVEN TEMPLATE
 .nf
 templates/maven-basic/
+├── .template
 ├── pom.xml
 ├── .gitignore
 ├── src/main/java/${PACKAGE}/
 │   └── ${MAINCLASS}.java
 └── src/test/java/${PACKAGE}/
     └── ${MAINCLASS}Test.java
+.fi
+.PP
+.B .template:
+.nf
+{
+  "name": "Maven Basic",
+  "version": "1.0.0",
+  "language": "Java",
+  "description": "Basic Maven project template",
+  "author": "Your Name",
+  "contact": "you@example.com",
+  "license": "MIT",
+  "tags": ["maven", "basic", "java"],
+  "created_at": "2025-12-02T10:00:00Z"
+}
 .fi
 .PP
 .B pom.xml:
@@ -191,12 +396,28 @@ templates/maven-basic/
 .SH EXAMPLE: GRADLE TEMPLATE
 .nf
 templates/gradle-basic/
+├── .template
 ├── build.gradle
 ├── .gitignore
 ├── src/main/java/${PACKAGE}/
 │   └── ${MAINCLASS}.java
 └── src/test/java/${PACKAGE}/
     └── ${MAINCLASS}Test.java
+.fi
+.PP
+.B .template:
+.nf
+{
+  "name": "Gradle Basic",
+  "version": "1.0.0",
+  "language": "Java",
+  "description": "Basic Gradle project template",
+  "author": "Your Name",
+  "contact": "you@example.com",
+  "license": "MIT",
+  "tags": ["gradle", "basic", "java"],
+  "created_at": "2025-12-02T10:00:00Z"
+}
 .fi
 .PP
 .B build.gradle:
@@ -210,6 +431,7 @@ version = '${PROJECT_VERSION}'
 .SH EXAMPLE: SPRING BOOT TEMPLATE
 .nf
 templates/spring-boot/
+├── .template
 ├── pom.xml (with Spring Boot dependencies)
 ├── src/main/java/${PACKAGE}/
 │   └── Application.java (@SpringBootApplication)
@@ -218,28 +440,61 @@ templates/spring-boot/
 └── .vscode/
     └── settings.json
 .fi
+.PP
+.B .template:
+.nf
+{
+  "name": "Spring Boot Starter",
+  "version": "2.0.0",
+  "language": "Java 21+",
+  "description": "Spring Boot REST API starter template",
+  "author": "Your Team",
+  "contact": "team@example.com",
+  "license": "Apache-2.0",
+  "tags": ["spring-boot", "rest-api", "maven"],
+  "created_at": "2025-12-02T10:00:00Z"
+}
+.fi
+
 .SH BEST PRACTICES
 .TP
-1. Use variables in file paths
+1. Always include .template metadata
+Include a \fB.template\fR file in every template for proper discovery.
+Use meaningful names, descriptions, and tags to help users find your template.
+.TP
+2. Use variables in file paths
 Place the \fB${PACKAGE}\fR variable in directory paths to create proper Java package hierarchies.
 .TP
-2. Include meaningful documentation
+3. Use meaningful tags
+Tags should be descriptive and searchable (e.g., "spring-boot", "rest-api", "microservice").
+.TP
+4. Write clear descriptions
+Descriptions should explain the template purpose, features, and intended use case.
+.TP
+5. Include meaningful documentation
 Add README.md and architecture documentation to help developers understand the template.
 .TP
-3. Add comprehensive tests
+6. Add comprehensive tests
 Include unit test examples in \fBsrc/test/java/${PACKAGE}/\fR.
 .TP
-4. Configure IDE settings
+7. Configure IDE settings
 Provide \fB.vscode/settings.json\fR for consistent development experience.
 .TP
-5. Test template generation
+8. Test template generation
 Test your template with different parameter combinations before distribution.
 .TP
-6. Use meaningful defaults
+9. Use meaningful defaults
 Ensure your template works well with default values.
 .TP
-7. Include .gitignore
+10. Include .gitignore
 Provide a proper \fB.gitignore\fR file to exclude build artifacts.
+.TP
+11. Keep metadata updated
+Update version and created_at timestamps when modifying the template.
+.TP
+12. Validate metadata syntax
+Ensure \fB.template\fR JSON is valid using tools like \fBjq\fR or online validators.
+
 .SH LIMITATIONS
 .TP
 \(bu
@@ -253,6 +508,13 @@ Variables are only replaced in files detected as UTF-8 text.
 .TP
 \(bu
 File names containing variables are processed (e.g., \fB${MAINCLASS}.java\fR becomes \fBApp.java\fR).
+.TP
+\(bu
+Metadata fields are case-sensitive in the \fB.template\fR JSON file.
+.TP
+\(bu
+The \fB.template\fR file must be valid JSON for metadata to be displayed.
+
 .SH TESTING YOUR TEMPLATE
 .nf
 # Generate a project from your template
@@ -270,6 +532,50 @@ tree test-output/TestProject
 cd test-output/TestProject
 mvn clean package
 .fi
+
+.SH TROUBLESHOOTING
+.SS Template not appearing in --list
+.TP
+\(bu
+Verify the template is in \fB/usr/share/genj/templates/\fR or \fB~/.genj/\fR
+.TP
+\(bu
+Check that the template has a \fB.template\fR metadata file at the root
+.TP
+\(bu
+Validate \fB.template\fR JSON syntax (use \fBjq\fR or online JSON validator)
+.TP
+\(bu
+Verify file permissions (template directory should be readable)
+
+.SS Metadata not displaying correctly
+.TP
+\(bu
+Check \fB.template\fR JSON file for syntax errors
+.TP
+\(bu
+Verify all required metadata fields are present
+.TP
+\(bu
+Check field values for special characters that need escaping
+.TP
+\(bu
+Verify \fBcreated_at\fR uses ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ)
+
+.SS Search not finding templates
+.TP
+\(bu
+Use \fBgenj --list\fR to verify template exists
+.TP
+\(bu
+Check if search term matches template name, description, or tags (case-insensitive)
+.TP
+\(bu
+Verify template has \fB.template\fR metadata file
+.TP
+\(bu
+Try searching with shorter terms or common keywords
+
 .SH SEE ALSO
 .TP
 \fBgenj\fR(1)
@@ -280,7 +586,9 @@ Project overview and usage examples.
 .TP
 \fBTEMPLATES.md\fR
 Detailed template documentation in Markdown format.
+
 .SH AUTHOR
 Frédéric Delorme
+
 .SH VERSION
 1.3.1
