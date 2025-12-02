@@ -1,24 +1,54 @@
-.TH GENJ 1 "November 2025" "genj 1.3.1" "User Commands"
+.TH GENJ 1 "December 2025" "genj 1.3.1" "User Commands"
 .SH NAME
 genj \- Generate a Java project from a template
 .SH SYNOPSIS
 .B genj
-.BI \-t " TEMPLATE"
-.BI \-d " DESTINATION"
-.RI [ OPTIONS ]
+[\fB\-\-list\fR | \fB\-\-search\fR \fITERM\fR | [\fB\-t\fR \fITEMPLATE\fR] \fB\-d\fR \fIDESTINATION\fR [\fIOPTIONS\fR]]
 .SH DESCRIPTION
 .B genj
 is a command-line tool written in Rust that generates a Java project from a template (ZIP file or folder).
 The binary reads a template, copies files to the destination directory while applying variable replacements
 in file paths and content. It also handles the transformation of the \fB${PACKAGE}\fR variable into a Java folder hierarchy.
-.SH REQUIRED OPTIONS
+
+Templates can be discovered using the \fB\-\-list\fR and \fB\-\-search\fR options, or provided directly via \fB\-\-template\fR.
+.SH DISCOVERY OPTIONS
+.TP
+.BI \-\-list
+List all available templates from system and user template directories:
+.TP
+.IP ""
+.BR /usr/share/genj/templates
+- System-wide templates
+.TP
+.IP ""
+.BR ~/.genj/
+- User-specific templates
+
+Displays template metadata including description, language, version, author, license, and tags.
+.TP
+.BI \-\-search " TERM"
+Search for templates matching a search term (case-insensitive).
+Searches across template name, description, language, author, version, contact, license, and tags.
+Displays matching templates with full metadata.
+.TP
+.BI \-\-verbose
+Enable verbose output: print detailed processing information (file and directory operations, replacements, zip extraction details, git/vscode setup) to the terminal for debugging and tracing the generation workflow.
+.SH GENERATION OPTIONS
 .TP
 .BI \-t,\ \-\-template " TEMPLATE"
 Path to the template (ZIP file or folder).
+.IP ""
+Default search paths (if template name without path is provided):
+.IP ""
+1. \fB/usr/share/genj/templates/\fR
+.TP
+.IP ""
+2. \fB~/.genj/\fR
 .TP
 .BI \-d,\ \-\-destination " DESTINATION"
 Destination directory where the project will be created.
-.SH OPTIONAL OPTIONS
+If not specified, the current directory is used.
+.SH OPTIONAL PARAMETERS
 .TP
 .BI \-n,\ \-\-project_name " NAME"
 Project name (default: \fBDemo\fR).
@@ -56,8 +86,8 @@ Gradle version for \fB.sdkmanrc\fR (default: \fB8.5\fR).
 .BI \-l,\ \-\-vendor_name " NAME"
 Vendor name (usable in templates) (default: \fBVendor\fR).
 .TP
-.BI \-\-verbose
-Enable verbose output: print detailed processing information (file and directory operations, replacements, zip extraction details, git/vscode setup) to the terminal for debugging and tracing the generation workflow.
+.BI \-r,\ \-\-remote_git_repository " URL"
+Define the remote git repository for this project.
 .SH REPLACEMENT VARIABLES
 The following patterns are replaced in files and file names:
 .TP
@@ -100,6 +130,9 @@ Gradle build configuration (if \fB--build gradle\fR).
 \fB.sdkmanrc\fR
 SDKMan configuration file with Java and build tool versions.
 .TP
+\fB.genrc\fR
+JSON configuration file documenting the generation parameters and metadata.
+.TP
 \fB.vscode/settings.json\fR
 VSCode Java project settings.
 .TP
@@ -108,7 +141,33 @@ VSCode launch configuration for debugging.
 .TP
 \fB.git/\fR
 Git repository initialized with initial commit.
+.SH TEMPLATE METADATA
+Templates can include a \fB.template\fR metadata file (JSON format) at the root to provide information about the template:
+.TP
+.B Example .template metadata:
+.IP ""
+.nf
+{
+  "name": "Basic Java",
+  "version": "1.0.0",
+  "language": "Java",
+  "description": "Basic Java project template with Maven support",
+  "author": "Template Author",
+  "contact": "author@example.com",
+  "license": "MIT",
+  "tags": ["java", "maven", "basic"],
+  "created_at": "2025-12-02T10:00:00Z"
+}
+.fi
+.TP
+Metadata is displayed when using \fB\-\-list\fR and \fB\-\-search\fR options.
 .SH EXAMPLES
+.TP
+List all available templates:
+.B genj --list
+.TP
+Search for templates containing "spring":
+.B genj --search spring
 .TP
 Generate a Maven project from a template folder:
 .B genj -t templates/basic-java -d ./out -n Demo -a "Frédéric Delorme" -e fred@example.com -v 0.1.0 -k com.demo -m App
@@ -118,6 +177,17 @@ Generate a Gradle project from a ZIP template:
 .TP
 Generate with specific JDK version:
 .B genj -t templates/basic-java -d ./out -n Demo -j 25 -f 25-zulu
+.TP
+Generate with verbose output for debugging:
+.B genj -t basic-java -d ./out -n Demo --verbose
+.SH TEMPLATE SEARCH PATHS
+When a template name (without path separators) is provided with \fB\-\-template\fR, genj searches in the following order:
+.TP
+1. \fB/usr/share/genj/templates/\fR
+.TP
+2. \fB~/.genj/\fR
+.TP
+If the template is not found in these directories, it is treated as a file path.
 .SH NOTES
 .IP \(bu 2
 The program creates the destination directory as \fB<destination>/<project_name>\fR.
