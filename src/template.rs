@@ -5,7 +5,7 @@ use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 use zip::ZipArchive;
-
+use serde_json::Value;
 
 /// Main entry: process template path (file or dir)
 pub fn process_template(
@@ -186,7 +186,53 @@ fn copy_dir_with_replace(
     Ok(())
 }
 
-/// List available templates from system and user directories
+/// Extract .template metadata from a ZIP file
+fn extract_template_metadata(zip_path: &Path) -> Option<Value> {
+    let f = match File::open(zip_path) {
+        Ok(file) => file,
+        Err(_) => return None,
+    };
+    
+    let mut archive = match ZipArchive::new(f) {
+        Ok(a) => a,
+        Err(_) => return None,
+    };
+    
+    // Find .template file in the archive
+    for i in 0..archive.len() {
+        let mut entry = match archive.by_index(i) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        
+        if entry.name() == ".template" || entry.name().ends_with("/.template") {
+            let mut content = String::new();
+            if entry.read_to_string(&mut content).is_ok() {
+                if let Ok(metadata) = serde_json::from_str::<Value>(&content) {
+                    return Some(metadata);
+                }
+            }
+            break;
+        }
+    }
+    
+    None
+}
+
+/// Extract .template metadata from a directory
+fn extract_template_metadata_from_dir(dir_path: &Path) -> Option<Value> {
+    let template_file = dir_path.join(".template");
+    if template_file.exists() {
+        if let Ok(content) = read_to_string(&template_file) {
+            if let Ok(metadata) = serde_json::from_str::<Value>(&content) {
+                return Some(metadata);
+            }
+        }
+    }
+    None
+}
+
+/// List available templates from system and user directories with metadata
 pub fn list_available_templates() {
     let system_path = Path::new("/usr/share/genj/templates");
     let home_dir = dirs::home_dir().map(|h| h.join(".genj"));
@@ -195,19 +241,20 @@ pub fn list_available_templates() {
     
     // List system templates
     println!("📦 System templates (/usr/share/genj/templates):");
-    list_templates_in_dir(system_path);
+    list_templates_in_dir_with_metadata(system_path, "/usr/share/genj/templates");
     
     // List user templates
     if let Some(user_path) = home_dir {
         println!("\n👤 User templates (~/.genj):");
-        list_templates_in_dir(&user_path);
+        let home_path_str = format!("{}/.genj", dirs::home_dir().map(|h| h.display().to_string()).unwrap_or_else(|| "~".to_string()));
+        list_templates_in_dir_with_metadata(&user_path, &home_path_str);
     }
     
     println!("\n💡 Usage: genj -t <template_name_or_path> -d <destination> [options]");
     println!("   Or: genj -t /usr/share/genj/templates/basic-java.zip -d ./out -n MyProject");
 }
 
-fn list_templates_in_dir(path: &Path) {
+fn list_templates_in_dir_with_metadata(path: &Path, _display_path: &str) {
     if !path.exists() {
         println!("  (No templates found - directory does not exist)");
         return;
@@ -220,24 +267,66 @@ fn list_templates_in_dir(path: &Path) {
                 .filter_map(|e| {
                     let path = e.path();
                     let name = path.file_name()?.to_string_lossy().to_string();
-                    if path.is_file() && (name.ends_with(".zip")) {
-                        Some(name)
+                    if path.is_file() && name.ends_with(".zip") {
+                        Some((name, path, true))
                     } else if path.is_dir() {
-                        Some(format!("{}/", name))
+                        Some((format!("{}/", name), path, false))
                     } else {
                         None
                     }
                 })
                 .collect();
             
-            templates.sort();
+            templates.sort_by(|a, b| a.0.cmp(&b.0));
             
             if templates.is_empty() {
                 println!("  (No templates found)");
             } else {
-                for template in templates {
-                    println!("  - {}", template);
+                for (name, path, is_file) in templates {
+                    let metadata = if is_file {
+                        extract_template_metadata(&path)
+                    } else {
+                        extract_template_metadata_from_dir(&path)
+                    };
+                    
+                    println!("\n  📋 Template: {}", name);
+                    
+                    if let Some(metadata) = metadata {
+                        // Display all metadata fields without truncation
+                        if let Some(description) = metadata.get("description").and_then(|v| v.as_str()) {
+                            println!("     Description: {}", description);
+                        }
+                        if let Some(language) = metadata.get("language").and_then(|v| v.as_str()) {
+                            println!("     Language: {}", language);
+                        }
+                        if let Some(version) = metadata.get("version").and_then(|v| v.as_str()) {
+                            println!("     Version: {}", version);
+                        }
+                        if let Some(author) = metadata.get("author").and_then(|v| v.as_str()) {
+                            println!("     Author: {}", author);
+                        }
+                        if let Some(contact) = metadata.get("contact").and_then(|v| v.as_str()) {
+                            println!("     Contact: {}", contact);
+                        }
+                        if let Some(license) = metadata.get("license").and_then(|v| v.as_str()) {
+                            println!("     License: {}", license);
+                        }
+                        if let Some(tags) = metadata.get("tags").and_then(|v| v.as_array()) {
+                            let tag_strs: Vec<_> = tags.iter()
+                                .filter_map(|t| t.as_str())
+                                .collect();
+                            if !tag_strs.is_empty() {
+                                println!("     Tags: {}", tag_strs.join(", "));
+                            }
+                        }
+                        if let Some(created_at) = metadata.get("created_at").and_then(|v| v.as_str()) {
+                            println!("     Created: {}", created_at);
+                        }
+                    } else {
+                        println!("     (No metadata available)");
+                    }
                 }
+                println!();
             }
         }
         Err(e) => println!("  Error reading directory: {}", e),

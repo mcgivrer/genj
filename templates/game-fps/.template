@@ -1,0 +1,17 @@
+{
+    "name": "game-fps",
+    "version": "1.0.0",
+    "language": "Java",
+    "tags": [
+        "game",
+        "fps",
+        "java",
+        "build-script",
+        "junit"
+    ],
+    "description": "A Java project template for a 2d game with gameloop based on constant Frame-Per-Second.",
+    "author": "Frédéric Delorme",
+    "contact": "frederic.delorme@gmail.com",
+    "created_at": "2025-12-02T21:56:00Z",
+    "license": "MIT"
+}
