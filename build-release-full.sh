@@ -15,7 +15,7 @@ echo "✓ Compilation réussie"
 # Générer les archives ZIP pour chaque template
 echo "📦 Génération des templates ZIP..."
 TEMPLATE_SRC_DIR="templates"
-TEMPLATE_ZIP_DIR="release-templates"
+TEMPLATE_ZIP_DIR="target/release-templates"
 mkdir -p "$TEMPLATE_ZIP_DIR"
 
 for dir in "$TEMPLATE_SRC_DIR"/*/; do

@@ -84,10 +84,44 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         eprintln!("⚠️  Attention: Le répertoire docs n'existe pas");
     }
 
+    // Ajouter les templates ZIP du répertoire release-templates
+    if Path::new("target/release-templates").is_dir() {
+        println!("📦 Ajout des templates...");
+        for entry in fs::read_dir("target/release-templates").expect("Impossible de lire le répertoire release-templates") {
+            if let Ok(entry) = entry {
+                let path = entry.path();
+                if path.is_file() && path.extension().map_or(false, |ext| ext == "zip") {
+                    let filename = path.file_name().unwrap().to_string_lossy();
+                    let file_content = fs::read(&path)
+                        .expect(&format!("Impossible de lire {}", path.display()));
+                    
+                    zip.start_file(format!("templates/{}", filename), options.clone())
+                        .expect(&format!("Erreur lors de l'ajout de {}", filename));
+                    zip.write_all(&file_content)
+                        .expect(&format!("Erreur lors de l'écriture de {}", filename));
+                    
+                    println!("  ✓ Ajout de : templates/{} ({} bytes)", filename, file_content.len());
+                }
+            }
+        }
+    } else {
+        eprintln!("⚠️  Attention: Le répertoire release-templates n'existe pas");
+    }
+
     zip.finish().expect("Erreur lors de la finalisation du ZIP");
     println!("✅ Fichier ZIP créé avec succès: {}", zip_filename);
     println!("   Version: {}", version);
     println!("   Plateforme: {}", platform);
+    println!("   Structure:");
+    println!("   ├── genj{}", exe_ext);
+    println!("   ├── docs/");
+    println!("   │   ├── MANUAL.md");
+    println!("   │   ├── TEMPLATES.md");
+    println!("   │   └── ...");
+    println!("   └── templates/");
+    println!("       ├── basic-java.zip");
+    println!("       ├── game-fps.zip");
+    println!("       └── ...");
     
     Ok(())
 }
