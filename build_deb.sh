@@ -67,6 +67,14 @@ else
     echo -e "${YELLOW}Warning: docs/man/man5/genj-template.5 man file not found (optional)${NC}"
 fi
 
+# Copier les templates ZIP dans le package
+if [ -n "$GENJ_TEMPLATE_ZIP_DIR" ] && [ -d "$GENJ_TEMPLATE_ZIP_DIR" ]; then
+    TEMPLATE_INSTALL_DIR="${GENJ_TEMPLATE_INSTALL_DIR:-usr/share/genj/templates}"
+    mkdir -p "$DEBIAN_DIR/$TEMPLATE_INSTALL_DIR"
+    cp "$GENJ_TEMPLATE_ZIP_DIR"/*.zip "$DEBIAN_DIR/$TEMPLATE_INSTALL_DIR/"
+    echo "✓ Templates ZIP copiés dans $DEBIAN_DIR/$TEMPLATE_INSTALL_DIR"
+fi
+
 # Create control file
 echo -e "${YELLOW}Creating control file...${NC}"
 cat > "$DEBIAN_META/control" << EOF

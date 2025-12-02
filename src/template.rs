@@ -1,11 +1,10 @@
 use crate::fs::{is_text_path, write_bytes};
 use crate::log::{log_verbose, log_warning};
-use std::fs::{create_dir_all, read_to_string, copy};
+use std::fs::{self, create_dir_all, read_to_string, copy, File};
 use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 use zip::ZipArchive;
-use std::fs::File;
 
 
 /// Main entry: process template path (file or dir)
@@ -185,4 +184,62 @@ fn copy_dir_with_replace(
 
     log_verbose("Template copy complete", verbose);
     Ok(())
+}
+
+/// List available templates from system and user directories
+pub fn list_available_templates() {
+    let system_path = Path::new("/usr/share/genj/templates");
+    let home_dir = dirs::home_dir().map(|h| h.join(".genj"));
+    
+    println!("=== Available Templates ===\n");
+    
+    // List system templates
+    println!("📦 System templates (/usr/share/genj/templates):");
+    list_templates_in_dir(system_path);
+    
+    // List user templates
+    if let Some(user_path) = home_dir {
+        println!("\n👤 User templates (~/.genj):");
+        list_templates_in_dir(&user_path);
+    }
+    
+    println!("\n💡 Usage: genj -t <template_name_or_path> -d <destination> [options]");
+    println!("   Or: genj -t /usr/share/genj/templates/basic-java.zip -d ./out -n MyProject");
+}
+
+fn list_templates_in_dir(path: &Path) {
+    if !path.exists() {
+        println!("  (No templates found - directory does not exist)");
+        return;
+    }
+    
+    match fs::read_dir(path) {
+        Ok(entries) => {
+            let mut templates: Vec<_> = entries
+                .filter_map(|e| e.ok())
+                .filter_map(|e| {
+                    let path = e.path();
+                    let name = path.file_name()?.to_string_lossy().to_string();
+                    if path.is_file() && (name.ends_with(".zip")) {
+                        Some(name)
+                    } else if path.is_dir() {
+                        Some(format!("{}/", name))
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            
+            templates.sort();
+            
+            if templates.is_empty() {
+                println!("  (No templates found)");
+            } else {
+                for template in templates {
+                    println!("  - {}", template);
+                }
+            }
+        }
+        Err(e) => println!("  Error reading directory: {}", e),
+    }
 }

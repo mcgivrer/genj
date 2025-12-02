@@ -14,7 +14,36 @@ use crate::genrc::write_genrc;
 use crate::vscode_git::setup_vscode_and_git;
 use chrono::prelude::*;
 use std::io;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
+
+/// Resolve template path from CLI option or default search paths
+fn resolve_template_path(template_opt: &Option<String>) -> io::Result<PathBuf> {
+    match template_opt {
+        Some(t) => {
+            let path = Path::new(t);
+            if path.exists() {
+                Ok(path.to_path_buf())
+            } else {
+                Err(io::Error::new(
+                    io::ErrorKind::NotFound,
+                    format!("Template not found: {}", t),
+                ))
+            }
+        }
+        None => Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "Template is required (use --list to see available templates)",
+        )),
+    }
+}
+
+/// Resolve destination path from CLI option or use current directory
+fn resolve_destination_path(destination_opt: &Option<String>) -> PathBuf {
+    match destination_opt {
+        Some(d) => PathBuf::from(d),
+        None => PathBuf::from("."),
+    }
+}
 
 pub fn run(cli: Cli) -> io::Result<()> {
     if cli.verbose {
@@ -24,9 +53,12 @@ pub fn run(cli: Cli) -> io::Result<()> {
         println!();
     }
 
-    let mut dest_path = PathBuf::from(&cli.destination);
+    // Resolve template path
+    let template_path = resolve_template_path(&cli.template)?;
+    let mut dest_path = resolve_destination_path(&cli.destination);
     dest_path.push(&cli.project_name);
 
+    log_verbose(&format!("Template: {}", template_path.display()), cli.verbose);
     log_verbose(&format!("Destination path will be: {}", dest_path.display()), cli.verbose);
 
     // Replacements array
@@ -43,10 +75,8 @@ pub fn run(cli: Cli) -> io::Result<()> {
         ("${PROJECT_YEAR}", current_year.as_str()),
     ];
 
-    log_info(&format!("Reading template from: {}", cli.template));
-
-    let template_path = std::path::Path::new(&cli.template);
-    process_template(template_path, &dest_path, &replacements, cli.verbose)?;
+    log_info(&format!("Reading template from: {}", template_path.display()));
+    process_template(&template_path, &dest_path, &replacements, cli.verbose)?;
 
     // Build files (.pom / build.gradle) and .sdkmanrc
     let build_tool = cli.build_tool.to_lowercase();
