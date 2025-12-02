@@ -5,7 +5,7 @@ use zip::ZipWriter;
 use zip::write::FileOptions;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Lire la version depuis Cargo.toml
+    // Read version from Cargo.toml
     let cargo_toml = fs::read_to_string("Cargo.toml")?;
     let version = cargo_toml
         .lines()
@@ -15,13 +15,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let package_name = "genj";
     
-    // Déterminer l'extension de l'exécutable
+    // Determine executable extension
     #[cfg(target_os = "windows")]
     let exe_ext = ".exe";
     #[cfg(not(target_os = "windows"))]
     let exe_ext = "";
 
-    // Construire le nom du fichier ZIP basé sur la plateforme
+    // Build ZIP filename based on platform
     let platform = if cfg!(target_os = "windows") {
         "windows-x86_64"
     } else if cfg!(target_os = "macos") {
@@ -33,85 +33,85 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let zip_filename = format!("target/package/{}-{}-{}.zip", package_name, version, platform);
     let exe_path = format!("target/release/{}{}", package_name, exe_ext);
 
-    // Créer le répertoire build s'il n'existe pas
-    fs::create_dir_all("target/package").expect("Impossible de créer le répertoire build");
+    // Create build directory if it doesn't exist
+    fs::create_dir_all("target/package").expect("Failed to create build directory");
 
-    // Créer le fichier ZIP
+    // Create ZIP file
     let file = fs::File::create(&zip_filename)
-        .expect(&format!("Impossible de créer {}", zip_filename));
+        .expect(&format!("Failed to create {}", zip_filename));
     let mut zip = ZipWriter::new(file);
     let options = FileOptions::default()
         .compression_method(zip::CompressionMethod::Deflated)
         .unix_permissions(0o755);
 
-    println!("📦 Création du fichier ZIP : {}", zip_filename);
+    println!("📦 Creating ZIP file: {}", zip_filename);
 
-    // Ajouter l'exécutable compilé
+    // Add compiled executable
     if Path::new(&exe_path).exists() {
         let exe_data = fs::read(&exe_path)
-            .expect(&format!("Impossible de lire {}", exe_path));
+            .expect(&format!("Failed to read {}", exe_path));
         
         zip.start_file(format!("{}{}", package_name, exe_ext), options.clone())
-            .expect("Erreur lors de l'ajout du fichier EXE au ZIP");
+            .expect("Error adding EXE file to ZIP");
         zip.write_all(&exe_data)
-            .expect("Erreur lors de l'écriture du fichier EXE");
+            .expect("Error writing EXE file");
         
-        println!("  ✓ Ajout de : {}{} ({} bytes)", package_name, exe_ext, exe_data.len());
+        println!("  ✓ Added: {}{} ({} bytes)", package_name, exe_ext, exe_data.len());
     } else {
-        eprintln!("⚠️  Attention: {} non trouvé à {}", package_name, exe_path);
+        eprintln!("⚠️  Warning: {} not found at {}", package_name, exe_path);
     }
 
-    // Ajouter les fichiers *.md du répertoire docs
+    // Add *.md files from docs directory
     if Path::new("docs").is_dir() {
-        for entry in fs::read_dir("docs").expect("Impossible de lire le répertoire docs") {
+        for entry in fs::read_dir("docs").expect("Failed to read docs directory") {
             if let Ok(entry) = entry {
                 let path = entry.path();
                 if path.extension().map_or(false, |ext| ext == "md") {
                     let filename = path.file_name().unwrap().to_string_lossy();
                     let file_content = fs::read(&path)
-                        .expect(&format!("Impossible de lire {}", path.display()));
+                        .expect(&format!("Failed to read {}", path.display()));
                     
                     zip.start_file(format!("docs/{}", filename), options.clone())
-                        .expect(&format!("Erreur lors de l'ajout de {}", filename));
+                        .expect(&format!("Error adding {}", filename));
                     zip.write_all(&file_content)
-                        .expect(&format!("Erreur lors de l'écriture de {}", filename));
+                        .expect(&format!("Error writing {}", filename));
                     
-                    println!("  ✓ Ajout de : docs/{} ({} bytes)", filename, file_content.len());
+                    println!("  ✓ Added: docs/{} ({} bytes)", filename, file_content.len());
                 }
             }
         }
     } else {
-        eprintln!("⚠️  Attention: Le répertoire docs n'existe pas");
+        eprintln!("⚠️  Warning: docs directory not found");
     }
 
-    // Ajouter les templates ZIP du répertoire release-templates
+    // Add template ZIPs from release-templates directory
     if Path::new("target/release-templates").is_dir() {
-        println!("📦 Ajout des templates...");
-        for entry in fs::read_dir("target/release-templates").expect("Impossible de lire le répertoire release-templates") {
+        println!("📦 Adding templates...");
+        for entry in fs::read_dir("target/release-templates").expect("Failed to read release-templates directory") {
             if let Ok(entry) = entry {
                 let path = entry.path();
                 if path.is_file() && path.extension().map_or(false, |ext| ext == "zip") {
                     let filename = path.file_name().unwrap().to_string_lossy();
                     let file_content = fs::read(&path)
-                        .expect(&format!("Impossible de lire {}", path.display()));
+                        .expect(&format!("Failed to read {}", path.display()));
                     
                     zip.start_file(format!("templates/{}", filename), options.clone())
-                        .expect(&format!("Erreur lors de l'ajout de {}", filename));
+                        .expect(&format!("Error adding {}", filename));
                     zip.write_all(&file_content)
-                        .expect(&format!("Erreur lors de l'écriture de {}", filename));
+                        .expect(&format!("Error writing {}", filename));
                     
-                    println!("  ✓ Ajout de : templates/{} ({} bytes)", filename, file_content.len());
+                    println!("  ✓ Added: templates/{} ({} bytes)", filename, file_content.len());
                 }
             }
         }
     } else {
-        eprintln!("⚠️  Attention: Le répertoire release-templates n'existe pas");
+        eprintln!("⚠️  Warning: release-templates directory not found");
     }
 
-    zip.finish().expect("Erreur lors de la finalisation du ZIP");
-    println!("✅ Fichier ZIP créé avec succès: {}", zip_filename);
+    zip.finish().expect("Error finalizing ZIP");
+    println!("✅ ZIP file created successfully: {}", zip_filename);
     println!("   Version: {}", version);
-    println!("   Plateforme: {}", platform);
+    println!("   Platform: {}", platform);
     println!("   Structure:");
     println!("   ├── genj{}", exe_ext);
     println!("   ├── docs/");

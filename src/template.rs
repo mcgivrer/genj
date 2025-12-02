@@ -292,35 +292,35 @@ fn list_templates_in_dir_with_metadata(path: &Path, _display_path: &str) {
                     println!("\n  📋 Template: {}", name);
                     
                     if let Some(metadata) = metadata {
-                        // Display all metadata fields without truncation
+                        // Display all metadata fields with bold labels
                         if let Some(description) = metadata.get("description").and_then(|v| v.as_str()) {
-                            println!("     Description: {}", description);
+                            println!("     \x1b[1mDescription:\x1b[0m {}", description);
                         }
                         if let Some(language) = metadata.get("language").and_then(|v| v.as_str()) {
-                            println!("     Language: {}", language);
+                            println!("     \x1b[1mLanguage:\x1b[0m {}", language);
                         }
                         if let Some(version) = metadata.get("version").and_then(|v| v.as_str()) {
-                            println!("     Version: {}", version);
+                            println!("     \x1b[1mVersion:\x1b[0m {}", version);
                         }
                         if let Some(author) = metadata.get("author").and_then(|v| v.as_str()) {
-                            println!("     Author: {}", author);
+                            println!("     \x1b[1mAuthor:\x1b[0m {}", author);
                         }
                         if let Some(contact) = metadata.get("contact").and_then(|v| v.as_str()) {
-                            println!("     Contact: {}", contact);
+                            println!("     \x1b[1mContact:\x1b[0m {}", contact);
                         }
                         if let Some(license) = metadata.get("license").and_then(|v| v.as_str()) {
-                            println!("     License: {}", license);
+                            println!("     \x1b[1mLicense:\x1b[0m {}", license);
                         }
                         if let Some(tags) = metadata.get("tags").and_then(|v| v.as_array()) {
                             let tag_strs: Vec<_> = tags.iter()
                                 .filter_map(|t| t.as_str())
                                 .collect();
                             if !tag_strs.is_empty() {
-                                println!("     Tags: {}", tag_strs.join(", "));
+                                println!("     \x1b[1mTags:\x1b[0m {}", tag_strs.join(", "));
                             }
                         }
                         if let Some(created_at) = metadata.get("created_at").and_then(|v| v.as_str()) {
-                            println!("     Created: {}", created_at);
+                            println!("     \x1b[1mCreated:\x1b[0m {}", created_at);
                         }
                     } else {
                         println!("     (No metadata available)");
