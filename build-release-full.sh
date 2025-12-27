@@ -18,11 +18,13 @@ TEMPLATE_SRC_DIR="templates"
 TEMPLATE_ZIP_DIR="target/release-templates"
 mkdir -p "$TEMPLATE_ZIP_DIR"
 
+
+# Utilise le binaire Rust zip-template pour zipper chaque template
 for dir in "$TEMPLATE_SRC_DIR"/*/; do
     template_name=$(basename "$dir")
     zip_file="$TEMPLATE_ZIP_DIR/${template_name}.zip"
     echo "  - $template_name -> $zip_file"
-    (cd "$dir" && zip -r "../../$zip_file" .)
+    cargo run --release --bin zip-template -- "$dir" "$zip_file"
 done
 
 echo "✓ Template ZIPs generated in $TEMPLATE_ZIP_DIR"
