@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <defs>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="620" fill="#f8fafc"/>
+  <text x="28" y="42" font-family="Arial" font-size="28" fill="#0f172a">Material behavior comparison on the same test scene</text>
+  <text x="28" y="72" font-family="Arial" font-size="15" fill="#475569">Same initial speed and gravity. Different friction and elasticity produce different trajectories and rebounds.</text>
+
+  <!-- Lane backgrounds -->
+  <rect x="24" y="100" width="1152" height="150" rx="10" fill="#ecfeff" stroke="#bae6fd"/>
+  <rect x="24" y="265" width="1152" height="150" rx="10" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <rect x="24" y="430" width="1152" height="150" rx="10" fill="#fff7ed" stroke="#fed7aa"/>
+
+  <!-- Ground lines -->
+  <line x1="60" y1="220" x2="1140" y2="220" stroke="#64748b" stroke-width="3"/>
+  <line x1="60" y1="385" x2="1140" y2="385" stroke="#64748b" stroke-width="3"/>
+  <line x1="60" y1="550" x2="1140" y2="550" stroke="#64748b" stroke-width="3"/>
+
+  <!-- ICE lane -->
+  <text x="44" y="132" font-family="Arial" font-size="20" fill="#0f172a">ICE (friction: 0.02, elasticity: 0.05)</text>
+  <rect x="120" y="180" width="28" height="28" fill="#93c5fd" stroke="#1e3a8a"/>
+  <path d="M150 208 C 300 205, 520 204, 780 203" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+  <rect x="800" y="176" width="28" height="28" fill="#60a5fa" stroke="#1e3a8a"/>
+  <path d="M828 203 C 900 203, 980 203, 1060 203" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-blue)"/>
+  <text x="870" y="180" font-family="Arial" font-size="13" fill="#1e3a8a">Long slide, weak bounce</text>
+
+  <!-- RUBBER lane -->
+  <text x="44" y="297" font-family="Arial" font-size="20" fill="#0f172a">RUBBER (friction: 0.90, elasticity: 0.85)</text>
+  <rect x="120" y="345" width="28" height="28" fill="#86efac" stroke="#166534"/>
+  <path d="M148 345 C 260 260, 360 260, 470 345" fill="none" stroke="#16a34a" stroke-width="4" marker-end="url(#arrow-green)"/>
+  <path d="M470 345 C 560 410, 640 410, 730 345" fill="none" stroke="#16a34a" stroke-width="4" marker-end="url(#arrow-green)"/>
+  <path d="M730 345 C 790 300, 840 300, 900 345" fill="none" stroke="#16a34a" stroke-width="3" stroke-dasharray="7 6" marker-end="url(#arrow-green)"/>
+  <text x="820" y="316" font-family="Arial" font-size="13" fill="#166534">High rebounds, fast damping</text>
+
+  <!-- METAL lane -->
+  <text x="44" y="462" font-family="Arial" font-size="20" fill="#0f172a">METAL (friction: 0.20, elasticity: 0.10)</text>
+  <rect x="120" y="510" width="28" height="28" fill="#fca5a5" stroke="#7f1d1d"/>
+  <path d="M148 538 C 280 537, 410 537, 540 536" fill="none" stroke="#dc2626" stroke-width="4" marker-end="url(#arrow-red)"/>
+  <path d="M540 536 C 610 500, 680 500, 750 536" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+  <path d="M750 536 C 850 535, 950 535, 1050 534" fill="none" stroke="#dc2626" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-red)"/>
+  <text x="820" y="506" font-family="Arial" font-size="13" fill="#7f1d1d">Heavy feel, short bounce, moderate slide</text>
+
+  <!-- Legend -->
+  <rect x="24" y="584" width="1152" height="28" fill="#e2e8f0"/>
+  <text x="34" y="603" font-family="Arial" font-size="13" fill="#334155">Solid path: early trajectory. Dashed path: later trajectory after energy loss. All lanes start with equivalent initial conditions.</text>
+</svg>

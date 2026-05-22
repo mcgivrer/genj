@@ -1,0 +1,377 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.demo</groupId>
+  <artifactId>${PROJECT_NAME}</artifactId>
+  <version>${PROJECT_VERSION}</version>
+
+  <name>${PROJECT_NAME}</name>
+  <description>A simple Java game engine demo project with Maven build configuration.</description>
+
+  <contributors>
+    <contributor>
+      <name>${AUTHOR_NAME}</name>
+      <email>${AUTHOR_EMAIL}</email>
+      <organization>${VENDOR_NAME}</organization>
+    </contributor>
+  </contributors>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Build configuration properties
+       ══════════════════════════════════════════════════════════════════════ -->
+  <properties>
+    <!-- Source file encoding for the compiler and resource filtering -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Fully-qualified main class used by the jar manifest and exec plugin -->
+    <main.class>com.core.App</main.class>
+    <!-- Application display name passed to jpackage for installer branding -->
+    <app.name>GameEngineDemo</app.name>
+    <!-- Output directory for OS-specific installer packages (exe / deb / rpm / dmg) -->
+    <jpackage.dest>${project.build.directory}/dist</jpackage.dest>
+    <!-- Location of the trimmed JRE image produced by maven-jlink-plugin.
+         maven-jlink-plugin 3.x writes to classifiers/<classifier>/ when a
+         classifier is configured, so the path must include that subdirectory. -->
+    <runtime.image.dir>${project.build.directory}/maven-jlink/classifiers/runtime</runtime.image.dir>
+
+    <!-- Java language level — both source and target must match the JDK version -->
+    <maven.compiler.target>25</maven.compiler.target>
+    <maven.compiler.source>25</maven.compiler.source>
+  </properties>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Dependencies — runtime and test
+       ══════════════════════════════════════════════════════════════════════ -->
+  <dependencies>
+    <!-- Gson — JSON serialization for Level Editor (Phase 2) -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.10.1</version>
+    </dependency>
+
+    <!-- JUnit 5 (Jupiter) — unit test engine and assertions -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.11.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Cucumber step-definition annotations and scenario runner (BDD layer) -->
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>7.20.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Cucumber JUnit Platform engine — bridges Cucumber to the JUnit 5 launcher -->
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit-platform-engine</artifactId>
+      <version>7.20.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- JUnit Platform Suite — allows CucumberTestSuite to aggregate BDD tests -->
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite</artifactId>
+      <version>1.11.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Build plugins
+       ══════════════════════════════════════════════════════════════════════ -->
+  <build>
+    <plugins>
+
+      <!-- ── maven-surefire-plugin ──────────────────────────────────────────
+           Discovers and runs JUnit 5 tests during the "test" phase.
+           The custom <includes> adds *Suite.java so that CucumberTestSuite
+           (the JUnit Platform Suite runner for Cucumber) is picked up by
+           Surefire alongside the regular *Test.java unit tests.
+      ────────────────────────────────────────────────────────────────────── -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.2</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/*Tests.java</include>
+            <include>**/*Suite.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <!-- ── maven-compiler-plugin ──────────────────────────────────────────
+           Compiles Java source files. Source and target are set to Java 25
+           via the maven.compiler.* properties defined above.
+      ────────────────────────────────────────────────────────────────────── -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+
+      <!-- ── maven-jar-plugin ──────────────────────────────────────────────
+           Packages compiled classes into an executable JAR. The manifest
+           is configured with Main-Class so the JAR is directly runnable
+           via "java -jar" without any additional arguments.
+      ────────────────────────────────────────────────────────────────────── -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>${main.class}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- ── maven-jlink-plugin ──────────────────────────────────────────────
+           Builds a trimmed, self-contained JRE image in target/maven-jlink
+           using the Java Module System (jlink). Only the modules actually
+           required by this application are included:
+             java.base    — core language runtime
+             java.desktop — Swing / AWT (game window & rendering)
+             java.logging — java.util.logging
+           stripDebug and compress=2 reduce the image size; noHeaderFiles and
+           noManPages remove documentation to further shrink the output.
+           This runtime image is later consumed by jpackage in the OS profiles.
+      ────────────────────────────────────────────────────────────────────── -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jlink-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>create-custom-runtime</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jlink</goal>
+            </goals>
+            <configuration>
+              <classifier>runtime</classifier>
+              <addModules>java.base,java.desktop,java.logging</addModules>
+              <stripDebug>true</stripDebug>
+              <compress>2</compress>
+              <noHeaderFiles>true</noHeaderFiles>
+              <noManPages>true</noManPages>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- ── exec-maven-plugin (default build) ───────────────────────────────
+           Provides the "mvn exec:java" convenience goal to run the application
+           directly from the classpath during development, without packaging.
+           In OS-specific profiles this same plugin is reused to invoke jpackage
+           for installer creation.
+      ────────────────────────────────────────────────────────────────────── -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+          <mainClass>${main.class}</mainClass>
+        </configuration>
+      </plugin>
+
+      <!-- ── jacoco-maven-plugin ───────────────────────────────────────────
+           Measures bytecode-level test coverage and produces an HTML report
+           under target/site/jacoco/ after the test phase.
+           Two executions are required:
+             jacoco-prepare — instruments the JVM agent before tests run
+                              (must bind before the Surefire test phase)
+             jacoco-report  — aggregates collected data into the HTML report
+                              (binds to the test phase, after Surefire)
+           Version 0.8.13+ is required for Java 25 class file support.
+      ────────────────────────────────────────────────────────────────────── -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.13</version>
+        <executions>
+          <execution>
+            <id>jacoco-prepare</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       OS-specific packaging profiles
+       Each profile is activated automatically by Maven's OS detection and
+       invokes jpackage (via exec-maven-plugin) to create a native installer
+       from the JAR + the trimmed runtime image built by maven-jlink-plugin.
+       Profiles are only engaged during the "package" phase (mvn package).
+       ══════════════════════════════════════════════════════════════════════ -->
+  <profiles>
+
+    <!-- ── Windows: produces a .exe installer (requires WiX Toolset) ─────── -->
+    <profile>
+      <id>package-windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jpackage-exe</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>jpackage</executable>
+                  <arguments>
+                    <argument>--type</argument>
+                    <argument>EXE</argument>
+                    <argument>--name</argument>
+                    <argument>${app.name}</argument>
+                    <argument>--input</argument>
+                    <argument>${project.build.directory}</argument>
+                    <argument>--main-jar</argument>
+                    <argument>${project.build.finalName}.jar</argument>
+                    <argument>--main-class</argument>
+                    <argument>${main.class}</argument>
+                    <argument>--app-version</argument>
+                    <argument>${project.version}</argument>
+                    <argument>--runtime-image</argument>
+                    <argument>${runtime.image.dir}</argument>
+                    <argument>--dest</argument>
+                    <argument>${jpackage.dest}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- ── Linux (auto): produces a .deb installer ─────────────────────────
+         Auto-activated on Linux. Requires fakeroot to be installed.
+    ────────────────────────────────────────────────────────────────────────── -->
+    <profile>
+      <id>package-linux</id>
+      <activation>
+        <os>
+          <name>Linux</name>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jpackage-deb</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>jpackage</executable>
+                  <arguments>
+                    <argument>--type</argument>
+                    <argument>DEB</argument>
+                    <argument>--name</argument>
+                    <argument>${app.name}</argument>
+                    <argument>--input</argument>
+                    <argument>${project.build.directory}</argument>
+                    <argument>--main-jar</argument>
+                    <argument>${project.build.finalName}.jar</argument>
+                    <argument>--main-class</argument>
+                    <argument>${main.class}</argument>
+                    <argument>--app-version</argument>
+                    <argument>${project.version}</argument>
+                    <argument>--runtime-image</argument>
+                    <argument>${runtime.image.dir}</argument>
+                    <argument>--dest</argument>
+                    <argument>${jpackage.dest}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- ── macOS: produces a .dmg disk image ──────────────────────────────── -->
+    <profile>
+      <id>package-macos</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jpackage-dmg</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>jpackage</executable>
+                  <arguments>
+                    <argument>--type</argument>
+                    <argument>DMG</argument>
+                    <argument>--name</argument>
+                    <argument>${app.name}</argument>
+                    <argument>--input</argument>
+                    <argument>${project.build.directory}</argument>
+                    <argument>--main-jar</argument>
+                    <argument>${project.build.finalName}.jar</argument>
+                    <argument>--main-class</argument>
+                    <argument>${main.class}</argument>
+                    <argument>--app-version</argument>
+                    <argument>${project.version}</argument>
+                    <!-- macOS jpackage cannot consume a flat jlink image
+                         (it expects a macOS JDK bundle structure with Contents/Home).
+                         Omitting the runtime-image argument lets jpackage use the
+                         current JDK from JAVA_HOME, which works on all macOS runners. -->
+                    <argument>--dest</argument>
+                    <argument>${jpackage.dest}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 548" width="780" height="548" font-family="Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="780" height="548" fill="#f8fafc" rx="4"/>
+
+  <!-- Title block -->
+  <rect x="0" y="0" width="780" height="58" fill="#0f172a" rx="4"/>
+  <rect x="0" y="40" width="780" height="18" fill="#0f172a"/>
+  <text x="16" y="30" font-size="17" font-weight="bold" fill="white">Code Coverage by Component — GameEngineDemo 1.0.0</text>
+  <text x="16" y="50" font-size="12" fill="#94a3b8">Instruction coverage (%) · JaCoCo 0.8.13 · Java 25 · 74 tests, 0 failures</text>
+
+  <!-- Column headers -->
+  <text x="215" y="72" font-size="11" fill="#64748b" text-anchor="end">Class</text>
+  <text x="420" y="72" font-size="11" fill="#64748b" text-anchor="middle">Instruction Coverage</text>
+  <text x="634" y="72" font-size="11" fill="#64748b" text-anchor="middle">Cov.</text>
+  <text x="720" y="72" font-size="11" fill="#64748b" text-anchor="middle">Cyclo.</text>
+  <line x1="0" y1="77" x2="780" y2="77" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ─────────────────────────────── GROUP: com.demo.entity ─── -->
+  <rect x="0" y="78" width="780" height="23" fill="#f1f5f9"/>
+  <text x="14" y="94" font-size="11" font-weight="bold" fill="#1e40af">com.demo.entity</text>
+
+  <!-- Entity · 81 % · complexity 26 -->
+  <rect x="0" y="101" width="780" height="30" fill="white"/>
+  <text x="213" y="121" font-size="13" fill="#111827" text-anchor="end">Entity</text>
+  <rect x="221" y="109" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <rect x="221" y="109" width="324" height="14" rx="3" fill="#22c55e"/>
+  <text x="630" y="121" font-size="13" fill="#111827" text-anchor="middle">81 %</text>
+  <circle cx="720" cy="116" r="15" fill="#dc2626"/>
+  <text x="720" y="121" font-size="11" font-weight="bold" fill="white" text-anchor="middle">26</text>
+
+  <!-- GameObject · 100 % · complexity 1 -->
+  <rect x="0" y="131" width="780" height="30" fill="#f8fafc"/>
+  <text x="213" y="151" font-size="13" fill="#111827" text-anchor="end">GameObject</text>
+  <rect x="221" y="139" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <rect x="221" y="139" width="400" height="14" rx="3" fill="#16a34a"/>
+  <text x="630" y="151" font-size="13" fill="#111827" text-anchor="middle">100 %</text>
+  <circle cx="720" cy="146" r="15" fill="#94a3b8"/>
+  <text x="720" y="151" font-size="11" font-weight="bold" fill="white" text-anchor="middle">1</text>
+
+  <!-- World · 100 % · complexity 6 -->
+  <rect x="0" y="161" width="780" height="30" fill="white"/>
+  <text x="213" y="181" font-size="13" fill="#111827" text-anchor="end">World</text>
+  <rect x="221" y="169" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <rect x="221" y="169" width="400" height="14" rx="3" fill="#16a34a"/>
+  <text x="630" y="181" font-size="13" fill="#111827" text-anchor="middle">100 %</text>
+  <circle cx="720" cy="176" r="15" fill="#94a3b8"/>
+  <text x="720" y="181" font-size="11" font-weight="bold" fill="white" text-anchor="middle">6</text>
+
+  <!-- ─────────────────────────────── GROUP: com.demo.physics ─── -->
+  <rect x="0" y="191" width="780" height="23" fill="#f1f5f9"/>
+  <text x="14" y="207" font-size="11" font-weight="bold" fill="#1e40af">com.demo.physics</text>
+
+  <!-- CollisionEngine · 94 % · complexity 36 -->
+  <rect x="0" y="214" width="780" height="30" fill="white"/>
+  <text x="213" y="234" font-size="13" fill="#111827" text-anchor="end">CollisionEngine</text>
+  <rect x="221" y="222" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <rect x="221" y="222" width="376" height="14" rx="3" fill="#22c55e"/>
+  <text x="630" y="234" font-size="13" fill="#111827" text-anchor="middle">94 %</text>
+  <circle cx="720" cy="229" r="15" fill="#dc2626"/>
+  <text x="720" y="234" font-size="11" font-weight="bold" fill="white" text-anchor="middle">36</text>
+
+  <!-- Material · 100 % · complexity 3 -->
+  <rect x="0" y="244" width="780" height="30" fill="#f8fafc"/>
+  <text x="213" y="264" font-size="13" fill="#111827" text-anchor="end">Material</text>
+  <rect x="221" y="252" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <rect x="221" y="252" width="400" height="14" rx="3" fill="#16a34a"/>
+  <text x="630" y="264" font-size="13" fill="#111827" text-anchor="middle">100 %</text>
+  <circle cx="720" cy="259" r="15" fill="#94a3b8"/>
+  <text x="720" y="264" font-size="11" font-weight="bold" fill="white" text-anchor="middle">3</text>
+
+  <!-- PhysicsEngine · 99 % · complexity 14 -->
+  <rect x="0" y="274" width="780" height="30" fill="white"/>
+  <text x="213" y="294" font-size="13" fill="#111827" text-anchor="end">PhysicsEngine</text>
+  <rect x="221" y="282" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <rect x="221" y="282" width="396" height="14" rx="3" fill="#22c55e"/>
+  <text x="630" y="294" font-size="13" fill="#111827" text-anchor="middle">99 %</text>
+  <circle cx="720" cy="289" r="15" fill="#f59e0b"/>
+  <text x="720" y="294" font-size="11" font-weight="bold" fill="white" text-anchor="middle">14</text>
+
+  <!-- PhysicsType · 100 % · complexity 1 -->
+  <rect x="0" y="304" width="780" height="30" fill="#f8fafc"/>
+  <text x="213" y="324" font-size="13" fill="#111827" text-anchor="end">PhysicsType</text>
+  <rect x="221" y="312" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <rect x="221" y="312" width="400" height="14" rx="3" fill="#16a34a"/>
+  <text x="630" y="324" font-size="13" fill="#111827" text-anchor="middle">100 %</text>
+  <circle cx="720" cy="319" r="15" fill="#94a3b8"/>
+  <text x="720" y="324" font-size="11" font-weight="bold" fill="white" text-anchor="middle">1</text>
+
+  <!-- ─────────────────────────────── GROUP: com.demo.utils (not targeted) ─── -->
+  <rect x="0" y="334" width="780" height="23" fill="#f1f5f9"/>
+  <text x="14" y="350" font-size="11" font-weight="bold" fill="#64748b">com.demo.utils</text>
+  <text x="158" y="350" font-size="10" fill="#94a3b8" font-style="italic">— not targeted · tested implicitly via physics pipeline</text>
+
+  <!-- CircularQueue · 0 % · complexity 3 -->
+  <rect x="0" y="357" width="780" height="30" fill="white"/>
+  <text x="213" y="377" font-size="13" fill="#94a3b8" text-anchor="end">CircularQueue</text>
+  <rect x="221" y="365" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <text x="630" y="377" font-size="13" fill="#94a3b8" text-anchor="middle">0 %</text>
+  <circle cx="720" cy="372" r="15" fill="#e2e8f0"/>
+  <text x="720" y="377" font-size="11" fill="#94a3b8" text-anchor="middle">3</text>
+
+  <!-- Colors · 0 % · complexity 3 -->
+  <rect x="0" y="387" width="780" height="30" fill="#f8fafc"/>
+  <text x="213" y="407" font-size="13" fill="#94a3b8" text-anchor="end">Colors</text>
+  <rect x="221" y="395" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <text x="630" y="407" font-size="13" fill="#94a3b8" text-anchor="middle">0 %</text>
+  <circle cx="720" cy="402" r="15" fill="#e2e8f0"/>
+  <text x="720" y="407" font-size="11" fill="#94a3b8" text-anchor="middle">3</text>
+
+  <!-- ─────────────────────────────── GROUP: com.demo (not targeted) ─── -->
+  <rect x="0" y="417" width="780" height="23" fill="#f1f5f9"/>
+  <text x="14" y="433" font-size="11" font-weight="bold" fill="#64748b">com.demo</text>
+  <text x="88" y="433" font-size="10" fill="#94a3b8" font-style="italic">— not targeted · entry point &amp; UI rendering layer</text>
+
+  <!-- DemoApp · 0 % · complexity 79 -->
+  <rect x="0" y="440" width="780" height="30" fill="white"/>
+  <text x="213" y="460" font-size="13" fill="#94a3b8" text-anchor="end">DemoApp</text>
+  <rect x="221" y="448" width="400" height="14" rx="3" fill="#e2e8f0"/>
+  <text x="630" y="460" font-size="13" fill="#94a3b8" text-anchor="middle">0 %</text>
+  <circle cx="720" cy="455" r="15" fill="#94a3b8"/>
+  <text x="720" y="460" font-size="11" font-weight="bold" fill="white" text-anchor="middle">79</text>
+
+  <!-- ─────────────────────────────── LEGEND ─── -->
+  <line x1="0" y1="476" x2="780" y2="476" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Coverage legend -->
+  <text x="14" y="494" font-size="11" font-weight="bold" fill="#475569">Coverage:</text>
+  <rect x="84" y="484" width="14" height="10" rx="2" fill="#16a34a"/>
+  <text x="102" y="494" font-size="11" fill="#475569">100 %</text>
+  <rect x="148" y="484" width="14" height="10" rx="2" fill="#22c55e"/>
+  <text x="166" y="494" font-size="11" fill="#475569">≥ 80 %</text>
+  <rect x="214" y="484" width="14" height="10" rx="2" fill="#f59e0b"/>
+  <text x="232" y="494" font-size="11" fill="#475569">50 – 79 %</text>
+  <rect x="292" y="484" width="14" height="10" rx="2" fill="#e2e8f0"/>
+  <text x="310" y="494" font-size="11" fill="#94a3b8">not targeted</text>
+
+  <!-- Complexity legend -->
+  <text x="14" y="518" font-size="11" font-weight="bold" fill="#475569">Cyclomatic complexity:</text>
+  <circle cx="163" cy="513" r="9" fill="#dc2626"/>
+  <text x="163" y="518" font-size="9" font-weight="bold" fill="white" text-anchor="middle">n</text>
+  <text x="176" y="518" font-size="11" fill="#475569">High (≥ 20)</text>
+  <circle cx="250" cy="513" r="9" fill="#f59e0b"/>
+  <text x="250" y="518" font-size="9" font-weight="bold" fill="white" text-anchor="middle">n</text>
+  <text x="263" y="518" font-size="11" fill="#475569">Medium (10 – 19)</text>
+  <circle cx="370" cy="513" r="9" fill="#94a3b8"/>
+  <text x="370" y="518" font-size="9" font-weight="bold" fill="white" text-anchor="middle">n</text>
+  <text x="383" y="518" font-size="11" fill="#475569">Low (&lt; 10)</text>
+
+  <text x="14" y="540" font-size="10" fill="#94a3b8" font-style="italic">Bar = 400 px for 100 % instruction coverage. Cyclomatic complexity = total branches + 1 per method, per JaCoCo.</text>
+
+</svg>

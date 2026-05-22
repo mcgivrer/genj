@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="360" viewBox="0 0 980 360">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="980" height="360" fill="#fff7ed"/>
+  <text x="24" y="34" font-family="Arial" font-size="22" fill="#7c2d12">Dynamic collision with mass</text>
+
+  <rect x="180" y="150" width="130" height="80" fill="#fca5a5" stroke="#7f1d1d" stroke-width="2"/>
+  <text x="205" y="196" font-family="Arial" font-size="16" fill="#111827">A (mA)</text>
+  <line x1="140" y1="190" x2="176" y2="190" stroke="#b91c1c" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="80" y="182" font-family="Arial" font-size="15" fill="#7f1d1d">vA</text>
+
+  <rect x="450" y="150" width="180" height="80" fill="#fde68a" stroke="#92400e" stroke-width="2"/>
+  <text x="505" y="196" font-family="Arial" font-size="16" fill="#111827">B (mB)</text>
+  <line x1="700" y1="190" x2="634" y2="190" stroke="#b91c1c" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="710" y="182" font-family="Arial" font-size="15" fill="#7f1d1d">vB</text>
+
+  <text x="24" y="288" font-family="Arial" font-size="15" fill="#334155">Separation: pushA = overlap * (mB/(mA+mB)), pushB = overlap * (mA/(mA+mB))</text>
+  <text x="24" y="316" font-family="Arial" font-size="15" fill="#334155">Post-impact speed: momentum conservation + average restitution e</text>
+</svg>

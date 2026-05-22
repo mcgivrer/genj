@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="320" viewBox="0 0 820 320">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#1f6feb"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="820" height="320" fill="#f7f9fc"/>
+  <text x="24" y="34" font-family="Arial" font-size="22" fill="#1f2937">Gravity applied to a dynamic entity</text>
+
+  <rect x="300" y="90" width="120" height="80" rx="6" fill="#8ecae6" stroke="#1f2937" stroke-width="2"/>
+  <text x="323" y="135" font-family="Arial" font-size="18" fill="#111827">Entity</text>
+
+  <line x1="360" y1="170" x2="360" y2="255" stroke="#1f6feb" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="380" y="215" font-family="Arial" font-size="16" fill="#1f6feb">g = (gx, gy)</text>
+
+  <text x="24" y="280" font-family="Arial" font-size="16" fill="#334155">Formula: v &lt;- v + g * dt</text>
+</svg>

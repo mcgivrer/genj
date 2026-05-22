@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="1000" height="680"
+     font-family="Segoe UI, Arial, sans-serif" encoding="UTF-8">
+
+  <!-- Background -->
+  <rect width="1000" height="680" fill="#1a1a2e"/>
+
+  <!-- Title -->
+  <text x="500" y="35" text-anchor="middle" font-size="20" font-weight="bold" fill="#e0e0f0">
+    Scene Tree Explorer (F-17) — Hierarchical Selection & Sync
+  </text>
+
+  <!-- ─── LEFT PANEL: Scene Tree ─── -->
+  <rect x="20" y="60" width="280" height="600" rx="8" fill="#1e1e3e" stroke="#5555aa" stroke-width="2"/>
+  
+  <!-- Panel Header -->
+  <rect x="20" y="60" width="280" height="32" rx="8" fill="#252560" stroke="#5555aa" stroke-width="2"/>
+  <text x="35" y="82" font-size="11" font-weight="bold" fill="#9090cc">Scene Tree</text>
+  <text x="250" y="82" font-size="10" fill="#6666aa">Ctrl+3</text>
+
+  <!-- Search Box -->
+  <rect x="28" y="100" width="264" height="24" rx="4" fill="#2a2a4a" stroke="#4a6a9a" stroke-width="1"/>
+  <text x="35" y="118" font-size="9" fill="#7a7aaa">Search (Ctrl+F)...</text>
+
+  <!-- Tree Items -->
+  <g id="tree-items">
+    <!-- World Node -->
+    <text x="35" y="145" font-size="11" font-weight="bold" fill="#6ab4f5">▼ [W] World</text>
+    
+    <!-- player_ship (expanded) -->
+    <text x="50" y="168" font-size="10" fill="#8abcd9">▼ [GO] player_ship</text>
+    <text x="70" y="188" font-size="9" fill="#6a9abb">└ transform</text>
+    <text x="70" y="205" font-size="9" fill="#6a9abb">└ rigidbody</text>
+    
+    <!-- enemy_01 (collapsed) -->
+    <text x="50" y="228" font-size="10" fill="#8abcd9">▶ [GO] enemy_01</text>
+    
+    <!-- laser_emitter (child of enemy_01, visible after expand) -->
+    <text x="70" y="248" font-size="9" fill="#9a9a99" opacity="0.6">└ [T] laser_emitter</text>
+    
+    <!-- platform_01 (collapsed) -->
+    <text x="50" y="270" font-size="10" fill="#8abcd9">▶ [GO] platform_01</text>
+    
+    <!-- platform_02 (collapsed) -->
+    <text x="50" y="290" font-size="10" fill="#8abcd9">▶ [GO] platform_02</text>
+    
+    <!-- UI_canvas (expanded) -->
+    <text x="50" y="313" font-size="10" fill="#8abcd9">▼ [GO] UI_canvas</text>
+    
+    <!-- score_display (child of UI_canvas, selected) -->
+    <rect x="62" y="325" width="212" height="18" rx="3" fill="#4a6a9a" stroke="#7a9aca" stroke-width="1"/>
+    <text x="70" y="339" font-size="9" fill="#e0e0f0" font-weight="bold">└ [T] score_display</text>
+    
+    <!-- lives_display -->
+    <text x="70" y="359" font-size="9" fill="#6a9abb">└ [T] lives_display</text>
+    
+    <!-- background (collapsed) -->
+    <text x="50" y="382" font-size="10" fill="#8abcd9">▶ [GO] background</text>
+    
+    <!-- Scroll indicator -->
+    <text x="250" y="415" font-size="8" fill="#5a5aaa" text-anchor="end">scroll</text>
+  </g>
+
+  <!-- Tree Legend (at bottom of tree) -->
+  <g id="tree-legend" opacity="0.8">
+    <text x="35" y="455" font-size="8" fill="#6a6aaa">Icons:</text>
+    <text x="35" y="470" font-size="8" fill="#6a6aaa">[W]=World   [GO]=GameObject</text>
+    <text x="35" y="483" font-size="8" fill="#6a6aaa">[T]=TextObject   ▼/▶ Expand/Collapse</text>
+  </g>
+
+  <!-- ─── MIDDLE PANEL: Viewport (Game View) ─── -->
+  <rect x="320" y="60" width="360" height="600" rx="8" fill="#0a0a1a" stroke="#4a8a4a" stroke-width="2"/>
+  
+  <!-- Viewport Header -->
+  <rect x="320" y="60" width="360" height="32" rx="8" fill="#1a2a1a" stroke="#4a8a4a" stroke-width="2"/>
+  <text x="340" y="82" font-size="11" font-weight="bold" fill="#6ab96a">Viewport</text>
+  
+  <!-- Game World Background -->
+  <rect x="330" y="100" width="340" height="550" fill="#0f1f0f" stroke="#2a5a2a" stroke-width="1"/>
+  
+  <!-- Grid overlay -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a3a1a" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect x="330" y="100" width="340" height="550" fill="url(#grid)"/>
+  
+  <!-- Axes (center reference) -->
+  <line x1="500" y1="100" x2="500" y2="650" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="330" y1="375" x2="670" y2="375" stroke="#4a4a4a" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  
+  <!-- Entities in viewport -->
+  <!-- player_ship (selected) -->
+  <rect x="450" y="320" width="40" height="40" fill="none" stroke="#ffa500" stroke-width="2" stroke-dasharray="2,2"/>
+  <rect x="455" y="325" width="30" height="30" fill="#4a7aaa" opacity="0.7"/>
+  <text x="470" y="341" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">ship</text>
+  
+  <!-- Selection handles -->
+  <circle cx="450" cy="320" r="3" fill="#ffa500"/>
+  <circle cx="490" cy="320" r="3" fill="#ffa500"/>
+  <circle cx="450" cy="360" r="3" fill="#ffa500"/>
+  <circle cx="490" cy="360" r="3" fill="#ffa500"/>
+  
+  <!-- enemy_01 -->
+  <rect x="580" y="280" width="32" height="32" fill="#a44a4a" opacity="0.6"/>
+  <text x="596" y="295" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">enemy</text>
+  
+  <!-- platform_01 -->
+  <rect x="360" y="480" width="100" height="20" fill="#4a6a4a" opacity="0.6"/>
+  <text x="410" y="491" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">platform</text>
+  
+  <!-- Coordinate display -->
+  <text x="345" y="625" font-size="8" fill="#6a9a6a">pos: (120.0, 200.0)</text>
+  
+  <!-- ─── RIGHT PANEL: Properties ─── -->
+  <rect x="700" y="60" width="280" height="600" rx="8" fill="#1e1e3e" stroke="#aa5555" stroke-width="2"/>
+  
+  <!-- Properties Header -->
+  <rect x="700" y="60" width="280" height="32" rx="8" fill="#3e1e1e" stroke="#aa5555" stroke-width="2"/>
+  <text x="720" y="82" font-size="11" font-weight="bold" fill="#f5a0a0">Properties Panel</text>
+  
+  <!-- Property Fields (synced with tree selection) -->
+  <g id="properties">
+    <!-- Name -->
+    <text x="715" y="115" font-size="9" font-weight="bold" fill="#e0a0a0">Name:</text>
+    <rect x="715" y="120" width="250" height="20" rx="3" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="1"/>
+    <text x="725" y="133" font-size="9" fill="#d0d0e0">score_display</text>
+    
+    <!-- Position X -->
+    <text x="715" y="165" font-size="9" font-weight="bold" fill="#e0a0a0">Position X:</text>
+    <rect x="715" y="170" width="250" height="20" rx="3" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="1"/>
+    <text x="725" y="183" font-size="9" fill="#d0d0e0">280.0</text>
+    
+    <!-- Position Y -->
+    <text x="715" y="215" font-size="9" font-weight="bold" fill="#e0a0a0">Position Y:</text>
+    <rect x="715" y="220" width="250" height="20" rx="3" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="1"/>
+    <text x="725" y="233" font-size="9" fill="#d0d0e0">50.0</text>
+    
+    <!-- Width -->
+    <text x="715" y="265" font-size="9" font-weight="bold" fill="#e0a0a0">Width:</text>
+    <rect x="715" y="270" width="250" height="20" rx="3" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="1"/>
+    <text x="725" y="283" font-size="9" fill="#d0d0e0">200.0</text>
+    
+    <!-- Height -->
+    <text x="715" y="315" font-size="9" font-weight="bold" fill="#e0a0a0">Height:</text>
+    <rect x="715" y="320" width="250" height="20" rx="3" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="1"/>
+    <text x="725" y="333" font-size="9" fill="#d0d0e0">30.0</text>
+    
+    <!-- Physics Type -->
+    <text x="715" y="365" font-size="9" font-weight="bold" fill="#e0a0a0">Physics:</text>
+    <rect x="715" y="370" width="250" height="20" rx="3" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="1"/>
+    <text x="725" y="383" font-size="9" fill="#d0d0e0">NONE</text>
+    
+    <!-- Apply Button -->
+    <rect x="715" y="410" width="250" height="26" rx="4" fill="#4a6a4a" stroke="#6a9a6a" stroke-width="1"/>
+    <text x="840" y="430" text-anchor="middle" font-size="10" font-weight="bold" fill="#c0f0c0">Apply Changes</text>
+  </g>
+
+  <!-- ─── ANNOTATIONS & FLOW ARROWS ─── -->
+  
+  <!-- Arrow: Tree selection → Viewport highlight -->
+  <defs>
+    <marker id="arrowhead-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#ffa500"/>
+    </marker>
+    <marker id="arrowhead-cyan" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#6ab4f5"/>
+    </marker>
+  </defs>
+  
+  <!-- Selection sync flow -->
+  <path d="M 300 340 Q 320 320 330 320" stroke="#ffa500" stroke-width="2" fill="none" marker-end="url(#arrowhead-orange)" stroke-dasharray="4,2"/>
+  <text x="310" y="310" font-size="8" fill="#ffa500" font-weight="bold">Click in tree</text>
+  
+  <!-- Properties sync flow -->
+  <path d="M 660 340 Q 680 320 700 320" stroke="#6ab4f5" stroke-width="2" fill="none" marker-end="url(#arrowhead-cyan)" stroke-dasharray="4,2"/>
+  <text x="670" y="310" font-size="8" fill="#6ab4f5" font-weight="bold">Auto-sync</text>
+
+  <!-- ─── INTERACTION GUIDE ─── -->
+  <g id="interaction-guide">
+    <rect x="20" y="670" width="960" height="1" fill="none"/>
+    
+    <!-- Legend box at bottom -->
+    <text x="30" y="665" font-size="9" fill="#9090cc" font-weight="bold">Key Interactions:</text>
+    <text x="30" y="678" font-size="8" fill="#7a7aaa">
+      • Single-click in tree = select entity  • Double-click = frame view  • Right-click = context menu
+    </text>
+  </g>
+
+  <!-- ─── LEGEND: Relationship Indicators ─── -->
+  <g id="legend-relationships" opacity="0.9">
+    <!-- Selected indicator -->
+    <rect x="700" y="520" width="280" height="130" rx="6" fill="#252545" stroke="#7a7aaa" stroke-width="1" opacity="0.9"/>
+    
+    <text x="715" y="540" font-size="10" font-weight="bold" fill="#c0c0e0">Selection Sync Model:</text>
+    
+    <!-- Tree selection box -->
+    <rect x="715" y="555" width="100" height="35" rx="3" fill="#1e1e3e" stroke="#4a6a9a" stroke-width="1"/>
+    <text x="765" y="572" text-anchor="middle" font-size="8" fill="#6a9abb">Tree Panel</text>
+    <text x="765" y="582" text-anchor="middle" font-size="7" fill="#5a7aaa">(click node)</text>
+    
+    <!-- Arrow right -->
+    <path d="M 820 572 L 845 572" stroke="#7a9aca" stroke-width="2" fill="none" marker-end="url(#arrowhead-cyan)"/>
+    
+    <!-- Viewport box -->
+    <rect x="850" y="555" width="100" height="35" rx="3" fill="#0a1a0a" stroke="#4a8a4a" stroke-width="1"/>
+    <text x="900" y="572" text-anchor="middle" font-size="8" fill="#6ab96a">Viewport</text>
+    <text x="900" y="582" text-anchor="middle" font-size="7" fill="#5a8a5a">(highlight)</text>
+    
+    <!-- Bidirectional indicator -->
+    <text x="762" y="630" text-anchor="middle" font-size="8" fill="#9a9aaa">↔ Bidirectional Sync: Viewport selection updates tree; Tree selection updates Properties</text>
+  </g>
+
+</svg>

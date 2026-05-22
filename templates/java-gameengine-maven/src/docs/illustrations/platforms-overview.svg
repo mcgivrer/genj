@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="648" viewBox="-30 -55 1260 908">
+  <defs>
+    <!-- Waypoint path arrow -->
+    <marker id="wp-arr" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto">
+      <path d="M0,0 L9,4 L0,8 z" fill="#7ec850"/>
+    </marker>
+    <!-- Gravity arrow -->
+    <marker id="grav-arr" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto">
+      <path d="M0,0 L9,4 L0,8 z" fill="#f87171"/>
+    </marker>
+  </defs>
+
+  <!-- ── Outer background ─────────────────────────────────────────── -->
+  <rect x="-30" y="-55" width="1260" height="908" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="600" y="-22" font-family="Arial, sans-serif" font-size="23" fill="#e2e8f0" text-anchor="middle">DemoScene — Platforms and Trajectories</text>
+
+  <!-- ── World background ─────────────────────────────────────────── -->
+  <rect x="0" y="0" width="1200" height="800" fill="#0f172a" stroke="#1e3a5f" stroke-width="2"/>
+
+  <!-- ── Ground (y=776, h=24, STONE) ──────────────────────────────── -->
+  <rect x="0" y="776" width="1200" height="24" fill="#3c3c3c" stroke="#555" stroke-width="1"/>
+  <text x="600" y="793" font-family="Arial" font-size="12" fill="#888" text-anchor="middle">ground — STONE</text>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FIXED PLATFORMS
+       ══════════════════════════════════════════════════════════ -->
+
+  <!-- plat_high_left (100,550) 250×16 — ICE -->
+  <rect x="100" y="550" width="250" height="16" fill="#64b4d2" stroke="#a0dcf0" stroke-width="2" rx="2"/>
+  <text x="225" y="543" font-family="Arial" font-size="12" fill="#a0dcf0" text-anchor="middle">plat_high_left · ICE</text>
+  <text x="225" y="583" font-family="Arial" font-size="10" fill="#64b4d2" text-anchor="middle">glisse · friction ≈ 0</text>
+
+  <!-- plat_mid_1 (350,480) 180×16 — RUBBER -->
+  <rect x="350" y="480" width="180" height="16" fill="#b46e14" stroke="#dca032" stroke-width="2" rx="2"/>
+  <text x="440" y="473" font-family="Arial" font-size="12" fill="#dca032" text-anchor="middle">plat_mid_1 · RUBBER</text>
+  <text x="440" y="513" font-family="Arial" font-size="10" fill="#dca032" text-anchor="middle">rebondit · e = 0.85</text>
+
+  <!-- plat_mid_2 (650,420) 180×16 — METAL -->
+  <rect x="650" y="420" width="180" height="16" fill="#788291" stroke="#b4bec8" stroke-width="2" rx="2"/>
+  <text x="740" y="413" font-family="Arial" font-size="12" fill="#b4bec8" text-anchor="middle">plat_mid_2 · METAL</text>
+  <text x="740" y="453" font-family="Arial" font-size="10" fill="#b4bec8" text-anchor="middle">légèrement glissant</text>
+
+  <!-- plat_high_right (900,350) 250×16 — STONE -->
+  <rect x="900" y="350" width="250" height="16" fill="#505050" stroke="#808080" stroke-width="2" rx="2"/>
+  <text x="1025" y="343" font-family="Arial" font-size="12" fill="#999" text-anchor="middle">plat_high_right · STONE</text>
+  <text x="1025" y="383" font-family="Arial" font-size="10" fill="#777" text-anchor="middle">grippy · référence</text>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MOVING PLATFORM 1 — HorizontalPatrolBehavior(200, 520, 90)
+       Platform 160×16 · ICE · x patrol: 200 to 520
+       ══════════════════════════════════════════════════════════ -->
+
+  <!-- Trajectory line at y=658 (platform centre y=650+8) -->
+  <line x1="200" y1="658" x2="520" y2="658"
+        stroke="#ffd700" stroke-width="1.5" stroke-dasharray="8 5"/>
+  <!-- Stop bars -->
+  <line x1="200" y1="641" x2="200" y2="675" stroke="#ffd700" stroke-width="2"/>
+  <line x1="520" y1="641" x2="520" y2="675" stroke="#ffd700" stroke-width="2"/>
+  <!-- Bidirectional arrows (drawn as filled triangles) -->
+  <polygon points="192,654 204,658 192,662" fill="#ffd700"/>
+  <polygon points="528,654 516,658 528,662" fill="#ffd700"/>
+
+  <!-- Ghost at max position: x = 520-160 = 360 -->
+  <rect x="360" y="650" width="160" height="16"
+        fill="none" stroke="#a0dcf0" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
+  <!-- Platform at start position x=200 -->
+  <rect x="200" y="650" width="160" height="16" fill="#64b4d2" stroke="#a0dcf0" stroke-width="2" rx="2"/>
+
+  <!-- Labels -->
+  <text x="360" y="641" font-family="Arial" font-size="12" fill="#a0dcf0" text-anchor="middle">plat_h_moving · ICE</text>
+  <text x="360" y="698" font-family="Arial" font-size="11" fill="#ffd700" text-anchor="middle">x: 200 → 520 · 90 px/s</text>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MOVING PLATFORM 2 — VerticalPatrolBehavior(500, 680, 70)
+       Platform 160×16 · RUBBER · y patrol: 500 to 680
+       ══════════════════════════════════════════════════════════ -->
+
+  <!-- Trajectory line at x=680 (platform centre x=600+80) -->
+  <line x1="680" y1="500" x2="680" y2="680"
+        stroke="#ffd700" stroke-width="1.5" stroke-dasharray="8 5"/>
+  <!-- Stop bars -->
+  <line x1="663" y1="500" x2="697" y2="500" stroke="#ffd700" stroke-width="2"/>
+  <line x1="663" y1="680" x2="697" y2="680" stroke="#ffd700" stroke-width="2"/>
+  <!-- Bidirectional arrows -->
+  <polygon points="676,492 680,504 684,492" fill="#ffd700"/>
+  <polygon points="676,688 680,676 684,688" fill="#ffd700"/>
+
+  <!-- Ghost at top: y=500 -->
+  <rect x="600" y="500" width="160" height="16"
+        fill="none" stroke="#dca032" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
+  <!-- Ghost at bottom: entity.y = 680-16 = 664 -->
+  <rect x="600" y="664" width="160" height="16"
+        fill="none" stroke="#dca032" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
+  <!-- Platform at mid position y=582 -->
+  <rect x="600" y="582" width="160" height="16" fill="#b46e14" stroke="#dca032" stroke-width="2" rx="2"/>
+
+  <!-- Labels -->
+  <text x="680" y="493" font-family="Arial" font-size="12" fill="#dca032" text-anchor="middle">plat_v_moving · RUBBER</text>
+  <text x="760" y="612" font-family="Arial" font-size="11" fill="#ffd700">y: 500→680 · 70 px/s</text>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MOVING PLATFORM 3 — WaypointBehavior(4 pts, 80, loop)
+       Platform 140×16 · WOOD
+       Waypoints (centre of platform): (870,550),(1000,460),(1050,580),(870,640)
+       Platform top-left: x = wp.x-70, y = wp.y
+       ══════════════════════════════════════════════════════════ -->
+
+  <!-- Path segments with direction arrows -->
+  <line x1="870" y1="550" x2="1000" y2="460"
+        stroke="#7ec850" stroke-width="1.5" stroke-dasharray="7 4"
+        marker-end="url(#wp-arr)"/>
+  <line x1="1000" y1="460" x2="1050" y2="580"
+        stroke="#7ec850" stroke-width="1.5" stroke-dasharray="7 4"
+        marker-end="url(#wp-arr)"/>
+  <line x1="1050" y1="580" x2="870" y2="640"
+        stroke="#7ec850" stroke-width="1.5" stroke-dasharray="7 4"
+        marker-end="url(#wp-arr)"/>
+  <!-- Return segment (loop, lighter) -->
+  <line x1="870" y1="640" x2="870" y2="550"
+        stroke="#7ec850" stroke-width="1" stroke-dasharray="4 5"
+        marker-end="url(#wp-arr)" opacity="0.5"/>
+
+  <!-- Ghost platforms at each waypoint -->
+  <rect x="930" y="460" width="140" height="16"
+        fill="none" stroke="#50a050" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+  <rect x="980" y="580" width="140" height="16"
+        fill="none" stroke="#50a050" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+  <rect x="800" y="640" width="140" height="16"
+        fill="none" stroke="#50a050" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+
+  <!-- Waypoint nodes -->
+  <circle cx="870" cy="550" r="5" fill="#7ec850" stroke="#fff" stroke-width="1.5"/>
+  <circle cx="1000" cy="460" r="4" fill="#7ec850" stroke="#fff" stroke-width="1.5" opacity="0.85"/>
+  <circle cx="1050" cy="580" r="4" fill="#7ec850" stroke="#fff" stroke-width="1.5" opacity="0.85"/>
+  <circle cx="870" cy="640" r="4" fill="#7ec850" stroke="#fff" stroke-width="1.5" opacity="0.85"/>
+
+  <!-- Waypoint index labels -->
+  <text x="862" y="546" font-family="Arial" font-size="10" fill="#b5e8a0">1</text>
+  <text x="1006" y="456" font-family="Arial" font-size="10" fill="#b5e8a0">2</text>
+  <text x="1056" y="578" font-family="Arial" font-size="10" fill="#b5e8a0">3</text>
+  <text x="862" y="636" font-family="Arial" font-size="10" fill="#b5e8a0">4</text>
+
+  <!-- Platform at initial position (x=800, y=550) -->
+  <rect x="800" y="550" width="140" height="16" fill="#327832" stroke="#50a050" stroke-width="2" rx="2"/>
+
+  <!-- Labels -->
+  <text x="940" y="453" font-family="Arial" font-size="12" fill="#7ec850" text-anchor="middle">plat_waypoint · WOOD</text>
+  <text x="960" y="735" font-family="Arial" font-size="11" fill="#7ec850" text-anchor="middle">4 waypoints · loop · 80 px/s</text>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       PLAYER (600,400) 24×32 — STONE (blue)
+       ══════════════════════════════════════════════════════════ -->
+  <rect x="600" y="400" width="24" height="32" fill="#3b82f6" stroke="#93c5fd" stroke-width="2" rx="2"/>
+  <text x="612" y="393" font-family="Arial" font-size="11" fill="#93c5fd" text-anchor="middle">player</text>
+  <text x="612" y="447" font-family="Arial" font-size="10" fill="#93c5fd" text-anchor="middle">STONE · 200 px/s</text>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       GRAVITY INDICATOR (top-right)
+       ══════════════════════════════════════════════════════════ -->
+  <line x1="1157" y1="22" x2="1157" y2="82"
+        stroke="#f87171" stroke-width="2.5" marker-end="url(#grav-arr)"/>
+  <text x="1168" y="58" font-family="Arial" font-size="12" fill="#f87171">g = 15 m/s²</text>
+  <text x="1168" y="72" font-family="Arial" font-size="10" fill="#f8717180">750 px/s²</text>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       LEGEND (top-left, inside world)
+       ══════════════════════════════════════════════════════════ -->
+  <rect x="10" y="10" width="295" height="165" fill="#1e293b" stroke="#334155" stroke-width="1.5" rx="4" opacity="0.96"/>
+  <text x="22" y="31" font-family="Arial" font-size="13" font-weight="bold" fill="#94a3b8">Materials</text>
+
+  <rect x="22" y="40" width="28" height="10" fill="#64b4d2" stroke="#a0dcf0" stroke-width="1"/>
+  <text x="58" y="50" font-family="Arial" font-size="11" fill="#cbd5e1">ICE — friction ≈ 0 · glisse</text>
+
+  <rect x="22" y="57" width="28" height="10" fill="#b46e14" stroke="#dca032" stroke-width="1"/>
+  <text x="58" y="67" font-family="Arial" font-size="11" fill="#cbd5e1">RUBBER — élasticité 0.85 · rebondit</text>
+
+  <rect x="22" y="74" width="28" height="10" fill="#788291" stroke="#b4bec8" stroke-width="1"/>
+  <text x="58" y="84" font-family="Arial" font-size="11" fill="#cbd5e1">METAL — légèrement glissant</text>
+
+  <rect x="22" y="91" width="28" height="10" fill="#505050" stroke="#808080" stroke-width="1"/>
+  <text x="58" y="101" font-family="Arial" font-size="11" fill="#cbd5e1">STONE — grippy · stable</text>
+
+  <rect x="22" y="108" width="28" height="10" fill="#327832" stroke="#50a050" stroke-width="1"/>
+  <text x="58" y="118" font-family="Arial" font-size="11" fill="#cbd5e1">WOOD — standard</text>
+
+  <text x="22" y="138" font-family="Arial" font-size="13" font-weight="bold" fill="#94a3b8">Trajectories</text>
+
+  <line x1="22" y1="149" x2="55" y2="149" stroke="#ffd700" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <polygon points="58,145 70,149 58,153" fill="#ffd700"/>
+  <text x="77" y="153" font-family="Arial" font-size="11" fill="#cbd5e1">patrol path + stop bars</text>
+
+  <line x1="22" y1="165" x2="55" y2="165" stroke="#7ec850" stroke-width="1.5" stroke-dasharray="6 3"
+        marker-end="url(#wp-arr)"/>
+  <text x="77" y="169" font-family="Arial" font-size="11" fill="#cbd5e1">waypoint path (directionnel)</text>
+
+</svg>

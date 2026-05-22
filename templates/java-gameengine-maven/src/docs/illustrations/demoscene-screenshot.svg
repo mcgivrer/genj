@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <!--
+    DemoScene — Simulated screenshot
+    Window : 800×600 px
+    World  : 1200×800 px
+    Camera : zoom=1.0, follows player; at t=0 → cam=(212,116)
+    Screen transform: screen.x = world.x − 212 , screen.y = world.y − 116
+  -->
+
+  <!-- ── World background ──────────────────────────────────────────────── -->
+  <rect width="800" height="600" fill="#0f172a"/>
+
+  <!-- ── Random 8×8 boxes (seed 1234, alternating RUBBER/METAL) ────────── -->
+  <!-- A representative sample of the 200 dynamic boxes -->
+  <rect x="42"  y="18"  width="8" height="8" fill="#e74c3c"/>
+  <rect x="66"  y="52"  width="8" height="8" fill="#3498db"/>
+  <rect x="120" y="30"  width="8" height="8" fill="#2ecc71"/>
+  <rect x="18"  y="94"  width="8" height="8" fill="#f39c12"/>
+  <rect x="200" y="14"  width="8" height="8" fill="#9b59b6"/>
+  <rect x="254" y="78"  width="8" height="8" fill="#1abc9c"/>
+  <rect x="310" y="42"  width="8" height="8" fill="#e67e22"/>
+  <rect x="350" y="110" width="8" height="8" fill="#e74c3c"/>
+  <rect x="90"  y="152" width="8" height="8" fill="#f1c40f"/>
+  <rect x="156" y="200" width="8" height="8" fill="#2ecc71"/>
+  <rect x="470" y="22"  width="8" height="8" fill="#3498db"/>
+  <rect x="512" y="66"  width="8" height="8" fill="#e74c3c"/>
+  <rect x="542" y="140" width="8" height="8" fill="#9b59b6"/>
+  <rect x="600" y="30"  width="8" height="8" fill="#f39c12"/>
+  <rect x="634" y="110" width="8" height="8" fill="#1abc9c"/>
+  <rect x="694" y="54"  width="8" height="8" fill="#e67e22"/>
+  <rect x="728" y="18"  width="8" height="8" fill="#2ecc71"/>
+  <rect x="762" y="88"  width="8" height="8" fill="#e74c3c"/>
+  <rect x="48"  y="260" width="8" height="8" fill="#3498db"/>
+  <rect x="112" y="318" width="8" height="8" fill="#f1c40f"/>
+  <rect x="216" y="290" width="8" height="8" fill="#9b59b6"/>
+  <rect x="276" y="240" width="8" height="8" fill="#e67e22"/>
+  <rect x="344" y="280" width="8" height="8" fill="#1abc9c"/>
+  <rect x="492" y="216" width="8" height="8" fill="#e74c3c"/>
+  <rect x="558" y="262" width="8" height="8" fill="#f39c12"/>
+  <rect x="622" y="200" width="8" height="8" fill="#2ecc71"/>
+  <rect x="744" y="230" width="8" height="8" fill="#3498db"/>
+  <rect x="32"  y="400" width="8" height="8" fill="#9b59b6"/>
+  <rect x="84"  y="450" width="8" height="8" fill="#e74c3c"/>
+  <rect x="170" y="390" width="8" height="8" fill="#f1c40f"/>
+  <rect x="324" y="510" width="8" height="8" fill="#1abc9c"/>
+  <rect x="456" y="400" width="8" height="8" fill="#f39c12"/>
+  <rect x="582" y="450" width="8" height="8" fill="#e67e22"/>
+  <rect x="716" y="374" width="8" height="8" fill="#3498db"/>
+  <rect x="762" y="500" width="8" height="8" fill="#2ecc71"/>
+  <rect x="240" y="558" width="8" height="8" fill="#9b59b6"/>
+  <rect x="504" y="546" width="8" height="8" fill="#e74c3c"/>
+
+  <!-- ── STATIC PLATFORMS ──────────────────────────────────────────────── -->
+
+  <!-- plat_high_left  : world(100,550) 250×16  ICE — clipped left -->
+  <rect x="0"   y="434" width="138" height="16" fill="#64b4d2" stroke="#a0dcf0" stroke-width="1.5" rx="1"/>
+
+  <!-- plat_mid_1      : world(350,480) 180×16  RUBBER -->
+  <rect x="138" y="364" width="180" height="16" fill="#b46e14" stroke="#dca032" stroke-width="1.5" rx="1"/>
+
+  <!-- plat_mid_2      : world(650,420) 180×16  METAL -->
+  <rect x="438" y="304" width="180" height="16" fill="#788291" stroke="#b4bec8" stroke-width="1.5" rx="1"/>
+
+  <!-- plat_high_right : world(900,350) 250×16  STONE — clipped right -->
+  <rect x="688" y="234" width="112" height="16" fill="#505050" stroke="#808080" stroke-width="1.5" rx="1"/>
+
+  <!-- ── MOVING PLATFORMS ──────────────────────────────────────────────── -->
+
+  <!-- plat_h_moving   : world(200,650) 160×16  ICE — patrol x=[200..520] — clipped left -->
+  <rect x="0"   y="534" width="148" height="16" fill="#64b4d2" stroke="#a0dcf0" stroke-width="1.5" rx="1"/>
+
+  <!-- plat_v_moving   : world(600,600) 160×16  RUBBER — patrol y=[500..680] -->
+  <rect x="388" y="484" width="160" height="16" fill="#b46e14" stroke="#dca032" stroke-width="1.5" rx="1"/>
+
+  <!-- plat_waypoint   : world(870,550) 140×16  WOOD -->
+  <rect x="658" y="434" width="140" height="16" fill="#32783c" stroke="#50a050" stroke-width="1.5" rx="1"/>
+
+  <!-- ── PLAYER ────────────────────────────────────────────────────────── -->
+  <!-- world(600,400) 24×32  BLUE fill, white outline — renderPriority=10 -->
+  <rect x="388" y="284" width="24" height="32" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+
+  <!-- ── HUD TEXTS (screen space) ─────────────────────────────────────── -->
+  <text x="80"  y="60"
+        font-family="Arial, sans-serif" font-size="24" font-weight="bold"
+        fill="#ffffff">Welcome into this demo</text>
+
+  <text x="760" y="570"
+        font-family="Arial, sans-serif" font-size="12" font-weight="bold"
+        fill="#6b7280" text-anchor="end">press ESCAPE to exit</text>
+
+  <!-- ── MINIMAP ────────────────────────────────────────────────────────
+       Position: (690, 490) 100×100 px   zoom≈0.0833
+       world(x,y) → minimap(690 + x*0.0833, 490 + y*0.0833)
+  ─────────────────────────────────────────────────────────────────────── -->
+  <!-- minimap background + world background -->
+  <rect x="690" y="490" width="100" height="100" fill="#0f172a"/>
+
+  <!-- minimap ground  : world(0,776) 1200×24 → (690,555) 100×2 -->
+  <rect x="690" y="555" width="100" height="2" fill="#3c3c3c"/>
+
+  <!-- minimap ICE platforms (plat_high_left, plat_h_moving) -->
+  <rect x="698" y="536" width="21" height="1" fill="#64b4d2"/>
+  <rect x="707" y="544" width="13" height="1" fill="#64b4d2"/>
+
+  <!-- minimap RUBBER platforms (plat_mid_1, plat_v_moving) -->
+  <rect x="719" y="530" width="15" height="1" fill="#dca032"/>
+  <rect x="740" y="550" width="13" height="1" fill="#dca032"/>
+
+  <!-- minimap METAL platform (plat_mid_2) -->
+  <rect x="744" y="525" width="15" height="1" fill="#b4bec8"/>
+
+  <!-- minimap STONE platform (plat_high_right) -->
+  <rect x="763" y="519" width="21" height="1" fill="#808080"/>
+
+  <!-- minimap WOOD platform (plat_waypoint) -->
+  <rect x="762" y="536" width="12" height="1" fill="#50a050"/>
+
+  <!-- minimap player: world(600,400) → (740, 523) -->
+  <rect x="740" y="523" width="2" height="3" fill="#2563eb"/>
+
+  <!-- Camera viewport rectangle on minimap -->
+  <!-- cam=(212,116) window=800×600 → minimap: (708,500) 67×50 -->
+  <rect x="708" y="500" width="67" height="50" fill="none" stroke="#facc15" stroke-width="0.8" stroke-dasharray="3 2"/>
+
+  <!-- minimap border -->
+  <rect x="690" y="490" width="100" height="100" fill="none" stroke="#374151" stroke-width="1.5"/>
+
+  <!-- ── PLATFORM LABELS (subtle, for documentation context) ───────────── -->
+  <text x="60"  y="428" font-family="Arial, sans-serif" font-size="9" fill="#a0dcf0" opacity="0.75">ICE</text>
+  <text x="162" y="358" font-family="Arial, sans-serif" font-size="9" fill="#dca032" opacity="0.75">RUBBER</text>
+  <text x="462" y="298" font-family="Arial, sans-serif" font-size="9" fill="#b4bec8" opacity="0.75">METAL</text>
+  <text x="700" y="228" font-family="Arial, sans-serif" font-size="9" fill="#808080" opacity="0.75">STONE</text>
+  <text x="50"  y="528" font-family="Arial, sans-serif" font-size="9" fill="#a0dcf0" opacity="0.75">ICE ⟷</text>
+  <text x="392" y="478" font-family="Arial, sans-serif" font-size="9" fill="#dca032" opacity="0.75">RUBBER ↕</text>
+  <text x="662" y="428" font-family="Arial, sans-serif" font-size="9" fill="#50a050" opacity="0.75">WOOD ↗</text>
+</svg>

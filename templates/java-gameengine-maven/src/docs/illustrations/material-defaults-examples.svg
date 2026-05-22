@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="520" viewBox="0 0 1080 520">
+  <rect x="0" y="0" width="1080" height="520" fill="#f8fafc"/>
+
+  <text x="24" y="36" font-family="Arial" font-size="26" fill="#0f172a">Default Material Examples</text>
+  <text x="24" y="62" font-family="Arial" font-size="14" fill="#475569">Visual comparison of friction, elasticity, and relative density-based mass behavior.</text>
+
+  <rect x="24" y="88" width="1032" height="392" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+
+  <text x="50" y="122" font-family="Arial" font-size="14" fill="#334155">Material</text>
+  <text x="240" y="122" font-family="Arial" font-size="14" fill="#334155">Friction</text>
+  <text x="540" y="122" font-family="Arial" font-size="14" fill="#334155">Elasticity</text>
+  <text x="790" y="122" font-family="Arial" font-size="14" fill="#334155">Typical behavior</text>
+
+  <line x1="40" y1="134" x2="1038" y2="134" stroke="#e2e8f0"/>
+
+  <!-- RUBBER -->
+  <text x="50" y="170" font-family="Arial" font-size="15" fill="#111827">RUBBER</text>
+  <rect x="240" y="154" width="220" height="16" fill="#dbeafe"/>
+  <rect x="240" y="154" width="198" height="16" fill="#2563eb"/>
+  <text x="468" y="167" font-family="Arial" font-size="12" fill="#1e3a8a">0.90</text>
+  <rect x="540" y="154" width="180" height="16" fill="#fee2e2"/>
+  <rect x="540" y="154" width="153" height="16" fill="#dc2626"/>
+  <text x="728" y="167" font-family="Arial" font-size="12" fill="#991b1b">0.85</text>
+  <text x="790" y="170" font-family="Arial" font-size="13" fill="#334155">High grip, high bounce, medium mass tendency</text>
+
+  <!-- ICE -->
+  <text x="50" y="220" font-family="Arial" font-size="15" fill="#111827">ICE</text>
+  <rect x="240" y="204" width="220" height="16" fill="#dbeafe"/>
+  <rect x="240" y="204" width="4" height="16" fill="#2563eb"/>
+  <text x="468" y="217" font-family="Arial" font-size="12" fill="#1e3a8a">0.02</text>
+  <rect x="540" y="204" width="180" height="16" fill="#fee2e2"/>
+  <rect x="540" y="204" width="9" height="16" fill="#dc2626"/>
+  <text x="728" y="217" font-family="Arial" font-size="12" fill="#991b1b">0.05</text>
+  <text x="790" y="220" font-family="Arial" font-size="13" fill="#334155">Very low grip, almost no bounce, low mass tendency</text>
+
+  <!-- METAL -->
+  <text x="50" y="270" font-family="Arial" font-size="15" fill="#111827">METAL</text>
+  <rect x="240" y="254" width="220" height="16" fill="#dbeafe"/>
+  <rect x="240" y="254" width="44" height="16" fill="#2563eb"/>
+  <text x="468" y="267" font-family="Arial" font-size="12" fill="#1e3a8a">0.20</text>
+  <rect x="540" y="254" width="180" height="16" fill="#fee2e2"/>
+  <rect x="540" y="254" width="18" height="16" fill="#dc2626"/>
+  <text x="728" y="267" font-family="Arial" font-size="12" fill="#991b1b">0.10</text>
+  <text x="790" y="270" font-family="Arial" font-size="13" fill="#334155">Low bounce, low friction, high mass tendency</text>
+
+  <!-- WOOD -->
+  <text x="50" y="320" font-family="Arial" font-size="15" fill="#111827">WOOD</text>
+  <rect x="240" y="304" width="220" height="16" fill="#dbeafe"/>
+  <rect x="240" y="304" width="110" height="16" fill="#2563eb"/>
+  <text x="468" y="317" font-family="Arial" font-size="12" fill="#1e3a8a">0.50</text>
+  <rect x="540" y="304" width="180" height="16" fill="#fee2e2"/>
+  <rect x="540" y="304" width="36" height="16" fill="#dc2626"/>
+  <text x="728" y="317" font-family="Arial" font-size="12" fill="#991b1b">0.20</text>
+  <text x="790" y="320" font-family="Arial" font-size="13" fill="#334155">Balanced grip, low bounce, low mass tendency</text>
+
+  <!-- STONE -->
+  <text x="50" y="370" font-family="Arial" font-size="15" fill="#111827">STONE</text>
+  <rect x="240" y="354" width="220" height="16" fill="#dbeafe"/>
+  <rect x="240" y="354" width="154" height="16" fill="#2563eb"/>
+  <text x="468" y="367" font-family="Arial" font-size="12" fill="#1e3a8a">0.70</text>
+  <rect x="540" y="354" width="180" height="16" fill="#fee2e2"/>
+  <rect x="540" y="354" width="27" height="16" fill="#dc2626"/>
+  <text x="728" y="367" font-family="Arial" font-size="12" fill="#991b1b">0.15</text>
+  <text x="790" y="370" font-family="Arial" font-size="13" fill="#334155">High grip, low bounce, high mass tendency</text>
+
+  <!-- DEFAULT -->
+  <text x="50" y="420" font-family="Arial" font-size="15" fill="#111827">DEFAULT</text>
+  <rect x="240" y="404" width="220" height="16" fill="#dbeafe"/>
+  <rect x="240" y="404" width="44" height="16" fill="#2563eb"/>
+  <text x="468" y="417" font-family="Arial" font-size="12" fill="#1e3a8a">0.20</text>
+  <rect x="540" y="404" width="180" height="16" fill="#fee2e2"/>
+  <rect x="540" y="404" width="72" height="16" fill="#dc2626"/>
+  <text x="728" y="417" font-family="Arial" font-size="12" fill="#991b1b">0.40</text>
+  <text x="790" y="420" font-family="Arial" font-size="13" fill="#334155">Generic baseline behavior</text>
+
+  <text x="24" y="500" font-family="Arial" font-size="12" fill="#64748b">Note: "mass tendency" refers to relative effect of density in computeMass(width, height).</text>
+</svg>

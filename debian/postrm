@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+# Update man database after removal
+if command -v mandb &>/dev/null; then
+    mandb -q
+fi

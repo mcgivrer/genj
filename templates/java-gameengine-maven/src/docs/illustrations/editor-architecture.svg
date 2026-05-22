@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700"
+     font-family="Segoe UI, Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="1000" height="700" fill="#1a1a2e"/>
+
+  <!-- Title -->
+  <text x="500" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#e0e0f0">
+    EditorApp Architecture — Package Structure &amp; Dependencies
+  </text>
+
+  <!-- Arrows markers -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#4a90d9"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#4ab04a"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#d94a4a"/>
+    </marker>
+  </defs>
+
+  <!-- ─── TOP LEVEL: EditorApp ─── -->
+  <rect x="350" y="60" width="300" height="70" rx="8" fill="#1e3a5f" stroke="#4a90d9" stroke-width="2"/>
+  <text x="500" y="85" text-anchor="middle" font-size="13" font-weight="bold" fill="#6ab4f5">EditorApp (JFrame)</text>
+  <text x="500" y="103" text-anchor="middle" font-size="10" fill="#8abcd9">Main orchestrator, Editor mode toggle (Ctrl+E)</text>
+  <text x="500" y="118" text-anchor="middle" font-size="9" fill="#6a9abb">Manages: DockManager, ToolManager, EditorScene</text>
+
+  <!-- ─── MIDDLE LEVEL: Core Components ─── -->
+
+  <!-- EditorScene -->
+  <rect x="50" y="180" width="160" height="90" rx="6" fill="#1a3a1a" stroke="#4ab04a" stroke-width="1.5"/>
+  <text x="130" y="205" text-anchor="middle" font-size="11" font-weight="bold" fill="#6ad96a">EditorScene</text>
+  <text x="130" y="222" text-anchor="middle" font-size="8" fill="#7abf8a">extends BaseScene</text>
+  <text x="130" y="236" text-anchor="middle" font-size="8" fill="#6a9a7a">∙ World entity</text>
+  <text x="130" y="249" text-anchor="middle" font-size="8" fill="#6a9a7a">∙ entities list</text>
+  <text x="130" y="263" text-anchor="middle" font-size="8" fill="#6a9a7a">Sync with UI</text>
+
+  <!-- EditorInputHandler -->
+  <rect x="250" y="180" width="160" height="90" rx="6" fill="#2a1e3a" stroke="#9a4ad9" stroke-width="1.5"/>
+  <text x="330" y="205" text-anchor="middle" font-size="11" font-weight="bold" fill="#c06af5">EditorInputHandler</text>
+  <text x="330" y="222" text-anchor="middle" font-size="8" fill="#a88abf">Swing Listeners</text>
+  <text x="330" y="236" text-anchor="middle" font-size="8" fill="#9a7aaa">∙ KeyListener</text>
+  <text x="330" y="249" text-anchor="middle" font-size="8" fill="#9a7aaa">∙ MouseListener</text>
+  <text x="330" y="263" text-anchor="middle" font-size="8" fill="#9a7aaa">∙ MouseMotionListener</text>
+
+  <!-- EditorViewport -->
+  <rect x="450" y="180" width="160" height="90" rx="6" fill="#1e3a5f" stroke="#4a90d9" stroke-width="1.5"/>
+  <text x="530" y="205" text-anchor="middle" font-size="11" font-weight="bold" fill="#6ab4f5">EditorViewport</text>
+  <text x="530" y="222" text-anchor="middle" font-size="8" fill="#8abcd9">Canvas rendering</text>
+  <text x="530" y="236" text-anchor="middle" font-size="8" fill="#7a9abb">∙ EditorCamera</text>
+  <text x="530" y="249" text-anchor="middle" font-size="8" fill="#7a9abb">∙ EditorOverlay</text>
+  <text x="530" y="263" text-anchor="middle" font-size="8" fill="#7a9abb">∙ World rendering</text>
+
+  <!-- DockManager -->
+  <rect x="650" y="180" width="160" height="90" rx="6" fill="#3a3a1e" stroke="#d9c94a" stroke-width="1.5"/>
+  <text x="730" y="205" text-anchor="middle" font-size="11" font-weight="bold" fill="#f5e06a">DockManager (v1.0)</text>
+  <text x="730" y="222" text-anchor="middle" font-size="8" fill="#c8b86a">JSplitPane-based</text>
+  <text x="730" y="236" text-anchor="middle" font-size="8" fill="#b8a85a">∙ Left: Scene Tree</text>
+  <text x="730" y="249" text-anchor="middle" font-size="8" fill="#b8a85a">∙ Center: Viewport</text>
+  <text x="730" y="263" text-anchor="middle" font-size="8" fill="#b8a85a">∙ Right: Tabs</text>
+
+  <!-- ─── TOOLS LAYER ─── -->
+  <rect x="20" y="310" width="200" height="120" rx="6" fill="#2a2a4a" stroke="#5555aa" stroke-width="1.5"/>
+  <text x="120" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#9090cc">tools/</text>
+  <text x="120" y="348" text-anchor="middle" font-size="9" fill="#7a7aaa">EditorTool (interface)</text>
+  <text x="120" y="363" text-anchor="middle" font-size="8" fill="#6a6aaa">├─ SelectTool</text>
+  <text x="120" y="376" text-anchor="middle" font-size="8" fill="#6a6aaa">├─ DragTool</text>
+  <text x="120" y="389" text-anchor="middle" font-size="8" fill="#6a6aaa">├─ PlaceTool</text>
+  <text x="120" y="402" text-anchor="middle" font-size="8" fill="#6a6aaa">└─ GridTool</text>
+  <text x="120" y="418" text-anchor="middle" font-size="8" font-weight="bold" fill="#8a8abb">ToolManager dispatch</text>
+
+  <!-- UI LAYER (LEFT) -->
+  <rect x="250" y="310" width="200" height="120" rx="6" fill="#3a1e1e" stroke="#d94a4a" stroke-width="1.5"/>
+  <text x="350" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#f56a6a">ui/</text>
+  <text x="350" y="348" text-anchor="middle" font-size="9" fill="#c88a8a">JPanel components</text>
+  <text x="350" y="363" text-anchor="middle" font-size="8" fill="#b87a7a">├─ PropertiesPanel</text>
+  <text x="350" y="376" text-anchor="middle" font-size="8" fill="#b87a7a">├─ BehaviorsPanel</text>
+  <text x="350" y="389" text-anchor="middle" font-size="8" fill="#b87a7a">├─ SceneTreePanel</text>
+  <text x="350" y="402" text-anchor="middle" font-size="8" fill="#b87a7a">├─ MaterialDialog</text>
+  <text x="350" y="418" text-anchor="middle" font-size="8" fill="#b87a7a">└─ StatusBar</text>
+
+  <!-- IO LAYER (CENTER) -->
+  <rect x="480" y="310" width="200" height="120" rx="6" fill="#2a2a1e" stroke="#d9c94a" stroke-width="1.5"/>
+  <text x="580" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#f5e06a">io/</text>
+  <text x="580" y="348" text-anchor="middle" font-size="9" fill="#c8b86a">Scene persistence (JSON)</text>
+  <text x="580" y="363" text-anchor="middle" font-size="8" fill="#b8a85a">├─ SceneWriter</text>
+  <text x="580" y="376" text-anchor="middle" font-size="8" fill="#b8a85a">├─ SceneReader</text>
+  <text x="580" y="389" text-anchor="middle" font-size="8" fill="#b8a85a">├─ JsonSceneFormat</text>
+  <text x="580" y="402" text-anchor="middle" font-size="8" fill="#b8a85a">└─ EditorHistory</text>
+  <text x="580" y="418" text-anchor="middle" font-size="8" font-weight="bold" fill="#a8a85a">(Undo/Redo stack)</text>
+
+  <!-- PLUGIN LAYER (RIGHT) -->
+  <rect x="710" y="310" width="200" height="120" rx="6" fill="#1a2a2a" stroke="#4ac8c8" stroke-width="1.5"/>
+  <text x="810" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#6af0f0">plugin/</text>
+  <text x="810" y="348" text-anchor="middle" font-size="9" fill="#7abfbf">Extension mechanism</text>
+  <text x="810" y="363" text-anchor="middle" font-size="8" fill="#6a9f9f">├─ EditorPlugin</text>
+  <text x="810" y="376" text-anchor="middle" font-size="8" fill="#6a9f9f">├─ PluginRegistry</text>
+  <text x="810" y="389" text-anchor="middle" font-size="8" fill="#6a9f9f">├─ ServiceLoader</text>
+  <text x="810" y="402" text-anchor="middle" font-size="8" fill="#6a9f9f">└─ @BehaviorParam</text>
+  <text x="810" y="418" text-anchor="middle" font-size="8" font-weight="bold" fill="#5a9f9f">Behavior catalog</text>
+
+  <!-- ─── DEPENDENCIES (Bottom) ─── -->
+  
+  <!-- Core Engine -->
+  <rect x="50" y="480" width="200" height="80" rx="6" fill="#1a1a3a" stroke="#4a4a9a" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="150" y="505" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a8aca">Core Engine</text>
+  <text x="150" y="522" text-anchor="middle" font-size="8" fill="#6a6aaa">(com.core.*)</text>
+  <text x="150" y="536" text-anchor="middle" font-size="7" fill="#5a5a9a">∙ BaseScene</text>
+  <text x="150" y="548" text-anchor="middle" font-size="7" fill="#5a5a9a">∙ Entity hierarchy</text>
+
+  <!-- Swing Framework -->
+  <rect x="300" y="480" width="200" height="80" rx="6" fill="#1a1a1a" stroke="#5a5a5a" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="400" y="505" text-anchor="middle" font-size="10" font-weight="bold" fill="#a0a0a0">Swing Framework</text>
+  <text x="400" y="522" text-anchor="middle" font-size="8" fill="#808080">(java.awt.*)</text>
+  <text x="400" y="536" text-anchor="middle" font-size="7" fill="#606060">∙ JFrame, JPanel</text>
+  <text x="400" y="548" text-anchor="middle" font-size="7" fill="#606060">∙ Graphics2D rendering</text>
+
+  <!-- Gson JSON Library -->
+  <rect x="550" y="480" width="200" height="80" rx="6" fill="#1a1a1a" stroke="#5a5a5a" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="650" y="505" text-anchor="middle" font-size="10" font-weight="bold" fill="#a0a0a0">Gson Library</text>
+  <text x="650" y="522" text-anchor="middle" font-size="8" fill="#808080">(com.google.gson)</text>
+  <text x="650" y="536" text-anchor="middle" font-size="7" fill="#606060">∙ JSON serialization</text>
+  <text x="650" y="548" text-anchor="middle" font-size="7" fill="#606060">∙ TypeToken support</text>
+
+  <!-- Java ServiceLoader -->
+  <rect x="800" y="480" width="170" height="80" rx="6" fill="#1a1a1a" stroke="#5a5a5a" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="885" y="505" text-anchor="middle" font-size="10" font-weight="bold" fill="#a0a0a0">ServiceLoader</text>
+  <text x="885" y="522" text-anchor="middle" font-size="8" fill="#808080">(java.util.*)</text>
+  <text x="885" y="536" text-anchor="middle" font-size="7" fill="#606060">∙ Plugin discovery</text>
+  <text x="885" y="548" text-anchor="middle" font-size="7" fill="#606060">∙ Module metadata</text>
+
+  <!-- ─── DEPENDENCY ARROWS ─── -->
+
+  <!-- EditorApp → EditorScene -->
+  <path d="M 130 250 L 130 310" stroke="#4ab04a" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="90" y="285" font-size="8" fill="#4ab04a">creates</text>
+
+  <!-- EditorApp → EditorInputHandler -->
+  <path d="M 330 250 L 330 310" stroke="#9a4ad9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="290" y="285" font-size="8" fill="#9a4ad9">registers</text>
+
+  <!-- EditorApp → EditorViewport -->
+  <path d="M 530 250 L 530 310" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="470" y="285" font-size="8" fill="#4a90d9">hosts</text>
+
+  <!-- EditorApp → DockManager -->
+  <path d="M 730 250 L 730 310" stroke="#d9c94a" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="680" y="285" font-size="8" fill="#d9c94a">manages</text>
+
+  <!-- EditorInputHandler → ToolManager (tools) -->
+  <path d="M 250 225 Q 185 270 160 310" stroke="#5555aa" stroke-width="1.5" marker-end="url(#arrow-blue)" stroke-dasharray="3,2"/>
+  <text x="210" y="260" font-size="7" fill="#5555aa">dispatches</text>
+
+  <!-- EditorViewport → ui panels -->
+  <path d="M 450 225 Q 400 270 360 310" stroke="#d94a4a" stroke-width="1.5" marker-end="url(#arrow-red)" stroke-dasharray="3,2"/>
+  <text x="410" y="260" font-size="7" fill="#d94a4a">updates</text>
+
+  <!-- DockManager → ui panels -->
+  <path d="M 650 225 Q 550 270 450 310" stroke="#d94a4a" stroke-width="1.5" marker-end="url(#arrow-red)" stroke-dasharray="3,2"/>
+  <text x="570" y="260" font-size="7" fill="#d94a4a">contains</text>
+
+  <!-- EditorScene → Core Engine (dependency) -->
+  <path d="M 130 270 L 150 480" stroke="#4a4a9a" stroke-width="1" marker-end="url(#arrow-blue)" stroke-dasharray="5,3" opacity="0.7"/>
+
+  <!-- EditorInputHandler → Swing (dependency) -->
+  <path d="M 330 270 L 400 480" stroke="#5a5a5a" stroke-width="1" marker-end="url(#arrow-blue)" stroke-dasharray="5,3" opacity="0.7"/>
+
+  <!-- io/ → Gson (dependency) -->
+  <path d="M 580 390 L 650 480" stroke="#5a5a5a" stroke-width="1" marker-end="url(#arrow-blue)" stroke-dasharray="5,3" opacity="0.7"/>
+
+  <!-- plugin/ → ServiceLoader (dependency) -->
+  <path d="M 810 390 L 870 480" stroke="#5a5a5a" stroke-width="1" marker-end="url(#arrow-blue)" stroke-dasharray="5,3" opacity="0.7"/>
+
+  <!-- ─── LEGEND ─── -->
+  <g id="legend" opacity="0.85">
+    <rect x="20" y="600" width="960" height="80" rx="4" fill="#0f0f1f" stroke="#4a6a9a" stroke-width="1"/>
+    
+    <text x="35" y="620" font-size="9" font-weight="bold" fill="#9090cc">Legend:</text>
+    
+    <!-- Solid arrow -->
+    <line x1="35" y1="635" x2="65" y2="635" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <text x="80" y="639" font-size="8" fill="#9090cc">= Direct dependency / instantiation</text>
+    
+    <!-- Dashed arrow -->
+    <line x1="35" y1="655" x2="65" y2="655" stroke="#4a90d9" stroke-width="1.5" marker-end="url(#arrow-blue)" stroke-dasharray="3,2"/>
+    <text x="80" y="659" font-size="8" fill="#9090cc">= Event / message dispatch</text>
+    
+    <text x="400" y="639" font-size="8" fill="#7a7aaa">Box colors: UI (red), Tools (blue), IO (yellow), Plugin (cyan), Core (green)</text>
+    <text x="400" y="659" font-size="8" fill="#7a7aaa">Dashed borders: External dependencies (Core Engine, Swing, Gson, ServiceLoader)</text>
+  </g>
+
+</svg>

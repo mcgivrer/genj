@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="510" viewBox="0 0 900 510" data-updated="2025">
+  <defs>
+    <!-- Arrowhead orange, orient="auto" handles direction automatically -->
+    <marker id="arr-orange" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#ff8c00"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="900" height="510" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="450" y="26" font-family="Arial, sans-serif" font-size="15"
+        fill="#e2e8f0" text-anchor="middle" font-weight="bold">
+    VisualDebugBehavior — Panel de debug lié aux entités
+  </text>
+
+  <!-- ══ Main scene viewport (x=22 y=38 w=594 h=356 bottom=394) ══ -->
+  <rect x="22" y="38" width="594" height="356"
+        fill="#0f172a" stroke="#2d4a6a" stroke-width="1.5" stroke-dasharray="8 4" rx="2"/>
+  <text x="28" y="53" font-family="Arial, sans-serif" font-size="10" fill="#4a7fa5">
+    main_camera (viewport=null → priorité max, zoom=1.0)
+  </text>
+
+  <!-- Ground -->
+  <rect x="22" y="372" width="594" height="22" fill="#1a2a1a" stroke="#2d4a2d" stroke-width="1"/>
+  <text x="319" y="387" font-family="Arial, sans-serif" font-size="10"
+        fill="#4a664a" text-anchor="middle">sol — STONE</text>
+
+  <!-- ─── Filter annotation box (inside scene, top-left) ─── -->
+  <rect x="30" y="56" width="213" height="30" fill="#0a1628" stroke="#1e3a5f" stroke-width="1" rx="2"/>
+  <text x="37" y="70" font-family="Consolas, Courier New, monospace" font-size="9" fill="#7dd3fc">app.debug.filter=player,plat_*</text>
+  <text x="37" y="81" font-family="Arial, sans-serif" font-size="8.5" fill="#6b7280">filtre par nom — joker * supporté</text>
+
+  <!-- ─── Entity "player" (x=92 y=188 w=40 h=56 → center=112,216) ─── -->
+  <rect x="92" y="188" width="40" height="56"
+        fill="#1d4ed8" stroke="#93c5fd" stroke-width="1.5" rx="2"/>
+  <text x="112" y="260" font-family="Arial, sans-serif" font-size="11"
+        fill="#93c5fd" text-anchor="middle">player</text>
+  <!-- entity center marker -->
+  <circle cx="112" cy="216" r="2.5" fill="#ff8c00" opacity="0.8"/>
+
+  <!-- ─── Debug panel (right, elastic lag shown) ─── -->
+  <!-- panel: x=172 y=128 w=185 h=152 → centerY=204  entity centerY=216 → lag≈12px -->
+  <rect x="172" y="128" width="185" height="152"
+        fill="#02020e" fill-opacity="0.50" rx="3"/>
+  <!-- Accent line: LEFT side (entity-facing when panel is on right), NO full border -->
+  <line x1="172" y1="131" x2="172" y2="277"
+        stroke="#ff8c00" stroke-width="2" stroke-linecap="round"/>
+  <!-- panel center marker -->
+  <circle cx="172" cy="204" r="2.5" fill="#93c5fd" opacity="0.8"/>
+
+  <!-- Elastic lag annotation: dashed vertical segment between entity center Y and panel center Y -->
+  <line x1="152" y1="204" x2="152" y2="216"
+        stroke="#3b82f6" stroke-width="1" stroke-dasharray="2 2"/>
+  <line x1="148" y1="204" x2="156" y2="204" stroke="#3b82f6" stroke-width="1"/>
+  <line x1="148" y1="216" x2="156" y2="216" stroke="#3b82f6" stroke-width="1"/>
+  <text x="120" y="212" font-family="Arial, sans-serif" font-size="8" fill="#3b82f6">lag</text>
+
+  <!-- Oblique dashed arrow: entity right edge at entityMidY (132,216) → panel accent at panelMidY (172,204) -->
+  <line x1="132" y1="216" x2="172" y2="204"
+        stroke="#ff8c00" stroke-width="1.5" stroke-dasharray="4 3"
+        marker-end="url(#arr-orange)"/>
+
+  <!-- Panel text content -->
+  <text x="181" y="146" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#4b5563">── debug &gt; 2 ──────────────────</text>
+  <text x="181" y="160" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">id   : 3</text>
+  <text x="181" y="173" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">name : player</text>
+  <text x="181" y="186" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">pos  : (92, 188)</text>
+  <text x="181" y="199" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">size : 40 × 56</text>
+  <line x1="178" y1="207" x2="350" y2="207" stroke="#1e3a5f" stroke-width="1"/>
+  <text x="181" y="219" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#4b5563">── debug &gt; 3 ──────────────────</text>
+  <text x="181" y="232" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">vx   : -12.5</text>
+  <text x="181" y="245" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">vy   :  +0.0</text>
+  <text x="181" y="258" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">mass : 1.54</text>
+  <text x="181" y="271" font-family="Consolas, Courier New, monospace"
+        font-size="10.5" fill="#ff8c00">mat  : WOOD</text>
+
+  <!-- ─── Entity "enemy" (x=434 y=200 w=44 h=44) — debug>4 collision sides, no panel ─── -->
+  <rect x="434" y="200" width="44" height="44"
+        fill="#7f1d1d" stroke="#fca5a5" stroke-width="1.5" rx="2"/>
+  <!-- Collision sides in yellow (3px BasicStroke) -->
+  <line x1="434" y1="200" x2="434" y2="244"
+        stroke="#ffd700" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="434" y1="200" x2="478" y2="200"
+        stroke="#ffd700" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="456" y="262" font-family="Arial, sans-serif" font-size="11"
+        fill="#fca5a5" text-anchor="middle">enemy</text>
+  <text x="488" y="196" font-family="Arial, sans-serif" font-size="10.5" fill="#ffd700">debug &gt; 3</text>
+  <text x="488" y="210" font-family="Arial, sans-serif" font-size="10" fill="#ca8a04">côtés collision</text>
+  <text x="488" y="224" font-family="Arial, sans-serif" font-size="10" fill="#ca8a04">surlignés en jaune</text>
+
+  <!-- ─── Obstacle near right edge → panel flips to left ─── -->
+  <!-- obstacle: x=540 y=305 w=28 h=28 → center (554,319) -->
+  <rect x="540" y="305" width="28" height="28"
+        fill="#4c1d95" stroke="#c4b5fd" stroke-width="1.5" rx="2"/>
+  <text x="554" y="346" font-family="Arial, sans-serif" font-size="10"
+        fill="#c4b5fd" text-anchor="middle">obstacle</text>
+  <!-- Panel on left: x=356 y=298 w=168 h=46 → centerY=321 -->
+  <rect x="356" y="298" width="168" height="46"
+        fill="#02020e" fill-opacity="0.50" rx="3"/>
+  <!-- Accent line: RIGHT side (entity-facing when panel is on left) -->
+  <line x1="524" y1="301" x2="524" y2="341"
+        stroke="#ff8c00" stroke-width="2" stroke-linecap="round"/>
+  <text x="364" y="314" font-family="Consolas, Courier New, monospace"
+        font-size="10" fill="#ff8c00">id: 7   name: obstacle</text>
+  <text x="364" y="330" font-family="Consolas, Courier New, monospace"
+        font-size="10" fill="#ff8c00">pos: (540,305)  sz: 28×28</text>
+  <!-- Arrow: entity left edge (540,319) → panel right accent line (524,321) — slight oblique -->
+  <line x1="540" y1="319" x2="524" y2="321"
+        stroke="#ff8c00" stroke-width="1.5" stroke-dasharray="4 3"
+        marker-end="url(#arr-orange)"/>
+  <text x="356" y="358" font-family="Arial, sans-serif" font-size="9.5"
+        fill="#9ca3af" font-style="italic">↑ panel basculé à gauche (entité proche du bord droit)</text>
+
+  <!-- ════ Right panel: implementation notes (x=630 y=38 w=248 h=356) ════ -->
+  <rect x="630" y="38" width="248" height="356"
+        fill="#080d1a" stroke="#1e3a5f" stroke-width="1" rx="4"/>
+  <text x="754" y="58" font-family="Arial, sans-serif" font-size="12"
+        fill="#60a5fa" text-anchor="middle" font-weight="bold">Pistes d'implémentation</text>
+  <line x1="635" y1="64" x2="873" y2="64" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- §1 Classe -->
+  <text x="641" y="79" font-family="Arial, sans-serif" font-size="10.5"
+        fill="#94a3b8" font-weight="bold">Classe</text>
+  <text x="641" y="93" font-family="Consolas, Courier New, monospace"
+        font-size="9.5" fill="#e2e8f0">VisualDebugBehavior</text>
+  <text x="641" y="107" font-family="Consolas, Courier New, monospace"
+        font-size="9.5" fill="#e2e8f0">  implements Behavior</text>
+  <line x1="635" y1="114" x2="873" y2="114" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- §2 Méthodes -->
+  <text x="641" y="128" font-family="Arial, sans-serif" font-size="10.5"
+        fill="#94a3b8" font-weight="bold">Méthodes</text>
+  <text x="641" y="142" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#7dd3fc">draw() → panel (debug &gt; 2)</text>
+  <text x="641" y="155" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#7dd3fc">  fond translucide + ligne accentuée</text>
+  <text x="641" y="168" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#7dd3fc">  flèche oblique pointillée</text>
+  <text x="641" y="181" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#86efac">drawDebug() → collision (debug &gt; 4)</text>
+  <text x="641" y="194" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#86efac">  trait jaune 3 px sur côtés actifs</text>
+  <line x1="635" y1="201" x2="873" y2="201" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- §3 Caméra principale -->
+  <text x="641" y="215" font-family="Arial, sans-serif" font-size="10.5"
+        fill="#94a3b8" font-weight="bold">Caméra principale (static)</text>
+  <text x="641" y="229" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#e2e8f0">viewport=null → Integer.MAX_VALUE</text>
+  <text x="641" y="243" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#e2e8f0">  (priorité sur minicarte)</text>
+  <text x="641" y="257" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#e2e8f0">refreshPrimaryCamera() 1×/frame</text>
+  <line x1="635" y1="264" x2="873" y2="264" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- §4 Suivi élastique -->
+  <text x="641" y="278" font-family="Arial, sans-serif" font-size="10.5"
+        fill="#94a3b8" font-weight="bold">Suivi élastique (lerp)</text>
+  <text x="641" y="292" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#e2e8f0">smoothCy += (targetCy - smoothCy)</text>
+  <text x="641" y="306" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#e2e8f0">           * ELASTIC_FACTOR (0.12)</text>
+  <text x="641" y="320" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#6b7280">≈ 90% en ~18 frames (300ms @60fps)</text>
+  <line x1="635" y1="327" x2="873" y2="327" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- §5 Filtre -->
+  <text x="641" y="341" font-family="Arial, sans-serif" font-size="10.5"
+        fill="#94a3b8" font-weight="bold">Filtre (app.debug.filter)</text>
+  <text x="641" y="355" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#ffd700">player,plat_*  → joker *</text>
+  <text x="641" y="369" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#e2e8f0">matchesDebugFilter(entity.name)</text>
+  <text x="641" y="383" font-family="Consolas, Courier New, monospace"
+        font-size="9" fill="#6b7280">* seul = tout afficher (défaut)</text>
+
+  <!-- ════ Legend (x=22 y=404 w=856 h=84) ════ -->
+  <rect x="22" y="404" width="856" height="84"
+        fill="#080d1a" stroke="#1e3a5f" stroke-width="1" rx="3"/>
+  <text x="32" y="422" font-family="Arial, sans-serif" font-size="11"
+        fill="#60a5fa" font-weight="bold">Légende</text>
+
+  <!-- Item 1 : panel accent line + fill -->
+  <rect x="32" y="430" width="14" height="14"
+        fill="#02020e" fill-opacity="0.50" rx="1"/>
+  <line x1="32" y1="430" x2="32" y2="444" stroke="#ff8c00" stroke-width="2"/>
+  <text x="52" y="441" font-family="Arial, sans-serif" font-size="10" fill="#9ca3af">
+    Panel : fond translucide (opacity 0.48) + ligne accentuée sur le côté entité — pas de bordure complète
+  </text>
+
+  <!-- Item 2 : oblique dashed arrow -->
+  <line x1="300" y1="455" x2="332" y2="462"
+        stroke="#ff8c00" stroke-width="1.5" stroke-dasharray="4 3"
+        marker-end="url(#arr-orange)"/>
+  <text x="340" y="463" font-family="Arial, sans-serif" font-size="10" fill="#9ca3af">
+    Flèche oblique pointillée — entityMidY → panelMidY (oblique quand lag élastique actif)
+  </text>
+
+  <!-- Item 3 : viewport -->
+  <rect x="32" y="462" width="14" height="10"
+        fill="none" stroke="#2d4a6a" stroke-width="1.5" stroke-dasharray="6 3" rx="1"/>
+  <text x="52" y="471" font-family="Arial, sans-serif" font-size="10" fill="#9ca3af">
+    Viewport de la caméra (coordonnées en espace-monde, dans la transform du Renderer)
+  </text>
+
+  <!-- Item 4 : collision side -->
+  <line x1="550" y1="455" x2="578" y2="455"
+        stroke="#ffd700" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="586" y="459" font-family="Arial, sans-serif" font-size="10" fill="#9ca3af">
+    Côté en collision (debug &gt; 3) — BasicStroke jaune 3 px
+  </text>
+
+  <!-- Item 5 : elastic lag -->
+  <circle cx="558" cy="472" r="2.5" fill="#3b82f6"/>
+  <text x="568" y="476" font-family="Arial, sans-serif" font-size="10" fill="#9ca3af">
+    Marqueur centre — lag élastique (ELASTIC_FACTOR=0.12 / frame)
+  </text>
+</svg>

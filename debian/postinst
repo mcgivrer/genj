@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+# Update man database after installation
+if command -v mandb &>/dev/null; then
+    mandb -q
+fi
+
+echo "genj has been installed successfully."
+echo "View the manual with:          man genj"
+echo "View the template guide with:  man genj-template"
+echo "Templates are available in:    /usr/share/genj/templates/"
+echo "User templates directory:      ~/.genj/"

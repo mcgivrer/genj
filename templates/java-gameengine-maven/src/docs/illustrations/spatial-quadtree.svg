@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="540" viewBox="0 0 900 540">
+  <!-- Background -->
+  <rect width="900" height="540" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="345" y="30" font-family="Arial,sans-serif" font-size="15"
+        fill="#e2e8f0" text-anchor="middle" font-weight="bold">
+    QuadTree — Partitionnement spatial du monde de jeu
+  </text>
+
+  <!-- ═══ World boundary ═══ -->
+  <rect x="30" y="48" width="600" height="382" fill="#0f172a" stroke="#2d4a6a" stroke-width="1.5"/>
+  <text x="36" y="62" font-family="Arial,sans-serif" font-size="10" fill="#2d6a9a">
+    Monde 1200×800
+  </text>
+
+  <!-- ─── Depth-3 cell backgrounds (NW-NW sub-quadrants) ─── -->
+  <!-- NW-NW-NW : (30,48) → (105,97) -->
+  <rect x="30"  y="48" width="75" height="49" fill="#2d1b4e" fill-opacity="0.50"/>
+  <!-- NW-NW-NE : (105,48) → (180,97) -->
+  <rect x="105" y="48" width="75" height="49" fill="#2d1b4e" fill-opacity="0.50"/>
+  <!-- NW-NW-SW : (30,97) → (105,148) -->
+  <rect x="30"  y="97" width="75" height="51" fill="#2d1b4e" fill-opacity="0.50"/>
+  <!-- NW-NW-SE : (105,97) → (180,148) -->
+  <rect x="105" y="97" width="75" height="51" fill="#2d1b4e" fill-opacity="0.50"/>
+
+  <!-- ─── Depth-2 cell backgrounds (NW-NE, NW-SW, NW-SE) ─── -->
+  <!-- NW-NE : (180,48) → (330,148) -->
+  <rect x="180" y="48"  width="150" height="100" fill="#0a2a18" fill-opacity="0.60"/>
+  <!-- NW-SW : (30,148) → (180,245) -->
+  <rect x="30"  y="148" width="150" height="97"  fill="#0a2a18" fill-opacity="0.60"/>
+  <!-- NW-SE : (180,148) → (330,245) -->
+  <rect x="180" y="148" width="150" height="97"  fill="#0a2a18" fill-opacity="0.60"/>
+
+  <!-- ─── Level-3 division lines: cyan, 1px (NW-NW area only) ─── -->
+  <line x1="105" y1="48"  x2="105" y2="148" stroke="#06b6d4" stroke-width="1"/>
+  <line x1="30"  y1="97"  x2="180" y2="97"  stroke="#06b6d4" stroke-width="1"/>
+
+  <!-- ─── Level-2 division lines: amber, 1.5px (NW quadrant only) ─── -->
+  <line x1="180" y1="48"  x2="180" y2="245" stroke="#f59e0b" stroke-width="1.5"/>
+  <line x1="30"  y1="148" x2="330" y2="148" stroke="#f59e0b" stroke-width="1.5"/>
+
+  <!-- ─── Level-1 division lines: gray, 2px (full world) ─── -->
+  <line x1="330" y1="48"  x2="330" y2="430" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="30"  y1="245" x2="630" y2="245" stroke="#94a3b8" stroke-width="2"/>
+
+  <!-- Redraw world border on top of all lines -->
+  <rect x="30" y="48" width="600" height="382" fill="none"
+        stroke="#2d4a6a" stroke-width="1.5"/>
+
+  <!-- ═══ Entity circles (orange, r=5) ═══ -->
+  <!-- NW-NW-NW -->
+  <circle cx="55"  cy="65"  r="5" fill="#ff8c00"/>
+  <circle cx="88"  cy="80"  r="5" fill="#ff8c00"/>
+  <!-- NW-NW-NE -->
+  <circle cx="125" cy="63"  r="5" fill="#ff8c00"/>
+  <circle cx="163" cy="78"  r="5" fill="#ff8c00"/>
+  <!-- NW-NW-SW -->
+  <circle cx="52"  cy="116" r="5" fill="#ff8c00"/>
+  <circle cx="86"  cy="132" r="5" fill="#ff8c00"/>
+  <!-- NW-NW-SE -->
+  <circle cx="128" cy="112" r="5" fill="#ff8c00"/>
+  <circle cx="163" cy="136" r="5" fill="#ff8c00"/>
+  <!-- NW-NE -->
+  <circle cx="218" cy="72"  r="5" fill="#ff8c00"/>
+  <circle cx="276" cy="108" r="5" fill="#ff8c00"/>
+  <circle cx="312" cy="80"  r="5" fill="#ff8c00"/>
+  <!-- NW-SW -->
+  <circle cx="75"  cy="185" r="5" fill="#ff8c00"/>
+  <circle cx="145" cy="215" r="5" fill="#ff8c00"/>
+  <!-- NW-SE -->
+  <circle cx="225" cy="172" r="5" fill="#ff8c00"/>
+  <circle cx="295" cy="218" r="5" fill="#ff8c00"/>
+  <!-- NE -->
+  <circle cx="390" cy="92"  r="5" fill="#ff8c00"/>
+  <circle cx="495" cy="150" r="5" fill="#ff8c00"/>
+  <circle cx="580" cy="108" r="5" fill="#ff8c00"/>
+  <!-- SW -->
+  <circle cx="110" cy="315" r="5" fill="#ff8c00"/>
+  <circle cx="240" cy="378" r="5" fill="#ff8c00"/>
+  <!-- SE -->
+  <circle cx="420" cy="290" r="5" fill="#ff8c00"/>
+  <circle cx="518" cy="372" r="5" fill="#ff8c00"/>
+  <circle cx="600" cy="315" r="5" fill="#ff8c00"/>
+
+  <!-- ═══ Quadrant labels ═══ -->
+  <!-- NW global label (above world, near top of NW) -->
+  <text x="180" y="44" font-family="Arial,sans-serif" font-size="9"
+        fill="#f59e0b" text-anchor="middle">NW — subdivisé (densité &gt; maxItems)</text>
+
+  <!-- NW-NE, NW-SW, NW-SE (level-2 cells) -->
+  <text x="255" y="106" font-family="Arial,sans-serif" font-size="9"
+        fill="#f59e0b" text-anchor="middle">NW-NE (3)</text>
+  <text x="105" y="233" font-family="Arial,sans-serif" font-size="9"
+        fill="#f59e0b" text-anchor="middle">NW-SW (2)</text>
+  <text x="255" y="233" font-family="Arial,sans-serif" font-size="9"
+        fill="#f59e0b" text-anchor="middle">NW-SE (2)</text>
+
+  <!-- NE, SW, SE (level-1 cells) -->
+  <text x="480" y="155" font-family="Arial,sans-serif" font-size="11"
+        fill="#94a3b8" text-anchor="middle">NE (3)</text>
+  <text x="180" y="395" font-family="Arial,sans-serif" font-size="11"
+        fill="#94a3b8" text-anchor="middle">SW (2)</text>
+  <text x="480" y="395" font-family="Arial,sans-serif" font-size="11"
+        fill="#94a3b8" text-anchor="middle">SE (3)</text>
+
+  <!-- Level-3 cell entity counts -->
+  <text x="67"  y="44" font-family="monospace" font-size="8" fill="#06b6d4" text-anchor="middle">NW-NW (subdivisé)</text>
+
+  <!-- ═══ Right column — Legend panel ═══ -->
+  <rect x="648" y="42" width="242" height="400"
+        fill="#0a0f1a" stroke="#1e3a5f" stroke-width="1" rx="4"/>
+
+  <text x="769" y="65" font-family="Arial,sans-serif" font-size="13"
+        fill="#e2e8f0" text-anchor="middle" font-weight="bold">Légende</text>
+
+  <!-- Level 1 -->
+  <line x1="658" y1="85"  x2="710" y2="85"  stroke="#94a3b8" stroke-width="2"/>
+  <text x="720" y="89" font-family="Arial,sans-serif" font-size="11" fill="#94a3b8">Division niveau 1</text>
+
+  <!-- Level 2 -->
+  <line x1="658" y1="108" x2="710" y2="108" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="720" y="112" font-family="Arial,sans-serif" font-size="11" fill="#f59e0b">Division niveau 2</text>
+
+  <!-- Level 3 -->
+  <line x1="658" y1="131" x2="710" y2="131" stroke="#06b6d4" stroke-width="1"/>
+  <text x="720" y="135" font-family="Arial,sans-serif" font-size="11" fill="#06b6d4">Division niveau 3</text>
+
+  <!-- Entity -->
+  <circle cx="684" cy="154" r="5" fill="#ff8c00"/>
+  <text x="720" y="158" font-family="Arial,sans-serif" font-size="11" fill="#ff8c00">Entité (AABB)</text>
+
+  <!-- Zone depth-2 swatch -->
+  <rect x="658" y="170" width="40" height="18"
+        fill="#0a2a18" fill-opacity="0.90" stroke="#f59e0b" stroke-width="0.5"/>
+  <text x="720" y="183" font-family="Arial,sans-serif" font-size="11" fill="#94a3b8">Zone niv. 2</text>
+
+  <!-- Zone depth-3 swatch -->
+  <rect x="658" y="198" width="40" height="18"
+        fill="#2d1b4e" fill-opacity="0.90" stroke="#06b6d4" stroke-width="0.5"/>
+  <text x="720" y="211" font-family="Arial,sans-serif" font-size="11" fill="#94a3b8">Zone niv. 3</text>
+
+  <!-- Separator -->
+  <line x1="658" y1="226" x2="880" y2="226" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- Parameters -->
+  <text x="668" y="244" font-family="Arial,sans-serif" font-size="11"
+        fill="#e2e8f0" font-weight="bold">Paramètres</text>
+  <text x="668" y="262" font-family="monospace" font-size="10" fill="#94a3b8">maxItems = 4</text>
+  <text x="668" y="278" font-family="monospace" font-size="10" fill="#94a3b8">maxDepth = 8</text>
+  <text x="668" y="294" font-family="monospace" font-size="10" fill="#94a3b8">racine ≡ bornes du Monde</text>
+
+  <!-- Separator -->
+  <line x1="658" y1="310" x2="880" y2="310" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- Behaviour notes -->
+  <text x="668" y="328" font-family="Arial,sans-serif" font-size="11"
+        fill="#e2e8f0" font-weight="bold">Comportement</text>
+  <text x="668" y="346" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">NW dense → subdivisé niv. 2</text>
+  <text x="668" y="362" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">NW-NW dense → subdivisé niv. 3</text>
+  <text x="668" y="378" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">Les autres quadrants restent</text>
+  <text x="668" y="394" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">des feuilles (peu d'entités)</text>
+
+  <!-- Separator -->
+  <line x1="658" y1="410" x2="880" y2="410" stroke="#1e3a5f" stroke-width="1"/>
+
+  <!-- Query note -->
+  <text x="668" y="428" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">Requête : seuls les nœuds</text>
+  <text x="668" y="444" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">intersectant le viewport sont</text>
+  <text x="668" y="460" font-family="Arial,sans-serif" font-size="10" fill="#ff8c00">parcourus → O(log n)</text>
+
+  <!-- Bottom note -->
+  <text x="338" y="462" font-family="Arial,sans-serif" font-size="9"
+        fill="#3a5a7a" text-anchor="middle">
+    L'arbre est reconstruit chaque frame après physicsEngine.update()
+  </text>
+  <text x="338" y="475" font-family="Arial,sans-serif" font-size="9"
+        fill="#3a5a7a" text-anchor="middle">
+    Seules les entités actives (active = true) sont insérées
+  </text>
+
+  <!-- Total count -->
+  <text x="338" y="492" font-family="monospace" font-size="9"
+        fill="#ff8c00" text-anchor="middle">
+    Exemple : 23 entités — NW : 15 | NE : 3 | SW : 2 | SE : 3
+  </text>
+</svg>

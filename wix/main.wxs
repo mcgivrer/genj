@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<!--
+  WiX installer template for genj.
+  Build with: cargo install cargo-wix && cargo wix
+-->
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+    <Product
+        Id='*'
+        Name='genj'
+        UpgradeCode='3C8A7B2F-1D5E-4F9A-B6C3-2E0D8A4F1B7C'
+        Manufacturer='Frederic Delorme'
+        Language='1033'
+        Codepage='1252'
+        Version='$(var.Version)'>
+
+        <Package Id='*'
+            Keywords='Installer'
+            Description='Generate a Java project from a template'
+            Comments='Generate a Java project from a template (ZIP file or folder).'
+            Manufacturer='Frederic Delorme'
+            InstallerVersion='450'
+            Languages='1033'
+            Compressed='yes'
+            SummaryCodepage='1252'/>
+
+        <MajorUpgrade
+            Schedule='afterInstallInitialize'
+            DowngradeErrorMessage='A newer version of [ProductName] is already installed. Setup will now exit.'/>
+
+        <Media Id='1' Cabinet='media1.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1'/>
+        <Property Id='DiskPrompt' Value='genj Installation'/>
+
+        <Directory Id='TARGETDIR' Name='SourceDir'>
+            <Directory Id='ProgramFiles64Folder' Name='PFiles'>
+                <Directory Id='APPLICATIONROOTDIRECTORY' Name='genj'>
+
+                    <!-- License file displayed during installation -->
+                    <Component Id='License' Guid='*'>
+                        <File Id='LicenseFile'
+                            Name='License.rtf'
+                            DiskId='1'
+                            Source='wix\License.rtf'
+                            KeyPath='yes'/>
+                    </Component>
+
+                    <!-- README -->
+                    <Component Id='Readme' Guid='*'>
+                        <File Id='ReadmeFile'
+                            Name='README.md'
+                            DiskId='1'
+                            Source='README.md'
+                            KeyPath='yes'/>
+                    </Component>
+
+                    <!-- Templates directory -->
+                    <Directory Id='TemplatesDir' Name='templates'>
+                        <Component Id='TemplatesDir' Guid='*' KeyPath='yes'>
+                            <CreateFolder/>
+                        </Component>
+                    </Directory>
+
+                    <!-- genj.exe binary -->
+                    <Directory Id='Bin' Name='bin'>
+                        <Component Id='binary0' Guid='*'>
+                            <File Id='exe0'
+                                Name='genj.exe'
+                                DiskId='1'
+                                Source='target\release\genj.exe'
+                                KeyPath='yes'/>
+                        </Component>
+
+                        <!-- PATH environment variable -->
+                        <Component Id='Path' Guid='*' KeyPath='yes'>
+                            <Environment
+                                Id='PATH'
+                                Name='PATH'
+                                Value='[Bin]'
+                                Permanent='no'
+                                Part='last'
+                                Action='set'
+                                System='yes'/>
+                        </Component>
+                    </Directory>
+
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <Feature
+            Id='Binaries'
+            Title='Application'
+            Description='Installs the genj binary and the license.'
+            Level='1'
+            ConfigurableDirectory='APPLICATIONROOTDIRECTORY'
+            AllowAdvertise='no'
+            Display='expand'
+            Absent='disallow'>
+
+            <ComponentRef Id='License'/>
+            <ComponentRef Id='Readme'/>
+            <ComponentRef Id='binary0'/>
+            <ComponentRef Id='TemplatesDir'/>
+
+            <Feature
+                Id='Environment'
+                Title='Add to PATH'
+                Description='Adds the [ProductName] installation directory to the PATH environment variable so genj can be called from any terminal.'
+                Level='1'
+                Absent='allow'>
+                <ComponentRef Id='Path'/>
+            </Feature>
+        </Feature>
+
+        <SetProperty Id='ARPINSTALLLOCATION' Value='[APPLICATIONROOTDIRECTORY]' After='CostFinalize'/>
+        <Property Id='ARPHELPLINK' Value='https://github.com/mcgivrer/genj'/>
+        <Property Id='ARPURLINFOABOUT' Value='https://github.com/mcgivrer/genj'/>
+
+        <UI>
+            <UIRef Id='WixUI_FeatureTree'/>
+            <!-- Skip the WelcomeDlg → go straight to CustomizeDlg (no setup type page) -->
+            <Publish Dialog='WelcomeDlg'
+                Control='Next'
+                Event='NewDialog'
+                Value='CustomizeDlg'
+                Order='99'>1</Publish>
+            <Publish Dialog='CustomizeDlg'
+                Control='Back'
+                Event='NewDialog'
+                Value='WelcomeDlg'
+                Order='99'>1</Publish>
+        </UI>
+
+        <WixVariable Id='WixUILicenseRtf' Value='wix\License.rtf'/>
+
+    </Product>
+</Wix>

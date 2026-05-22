@@ -1,6 +1,10 @@
 #!/bin/bash
+# Wrapper : délègue à mkpkg avec le format 'deb'.
+# Toute la configuration est dans [package.metadata.deb] de Cargo.toml.
+exec cargo run --release --bin mkpkg -- --format deb "$@"
 
-set -e
+: <<'LEGACY'
+# ---- ancien script manuel conservé à titre de référence ----
 
 # Configuration
 PROJECT_NAME="genj"

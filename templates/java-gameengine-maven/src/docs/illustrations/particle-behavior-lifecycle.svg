@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="340" viewBox="0 0 900 340">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#1f6feb"/>
+    </marker>
+  </defs>
+  <rect width="900" height="340" fill="#f7f9fc"/>
+  <text x="24" y="38" font-family="Arial" font-size="20" font-weight="bold" fill="#1f2937">Particle Lifecycle</text>
+
+  <!-- Spawn -->
+  <rect x="30"  y="80" width="130" height="60" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="95"  y="112" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#1e3a8a">SPAWN</text>
+  <text x="95"  y="130" font-family="Arial" font-size="11" text-anchor="middle" fill="#374151">spawnParticle()</text>
+
+  <!-- Update -->
+  <rect x="220" y="80" width="180" height="60" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+  <text x="310" y="107" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#14532d">UPDATE (per frame)</text>
+  <text x="310" y="124" font-family="Arial" font-size="11" text-anchor="middle" fill="#374151">integrate vx,vy · apply gravity</text>
+  <text x="310" y="138" font-family="Arial" font-size="11" text-anchor="middle" fill="#374151">fade alpha · shrink size</text>
+
+  <!-- Die -->
+  <rect x="460" y="80" width="130" height="60" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="525" y="112" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#7f1d1d">DIE</text>
+  <text x="525" y="130" font-family="Arial" font-size="11" text-anchor="middle" fill="#374151">life ≤ 0 → alive=false</text>
+
+  <!-- Recycle -->
+  <rect x="660" y="80" width="150" height="60" rx="8" fill="#fef9c3" stroke="#b45309" stroke-width="2"/>
+  <text x="735" y="112" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#78350f">RECYCLE</text>
+  <text x="735" y="130" font-family="Arial" font-size="11" text-anchor="middle" fill="#374151">findDeadSlot() → reset()</text>
+
+  <!-- Arrows: SPAWN → UPDATE → DIE → RECYCLE -->
+  <line x1="160" y1="110" x2="218" y2="110" stroke="#1f6feb" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="400" y1="110" x2="458" y2="110" stroke="#1f6feb" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="590" y1="110" x2="658" y2="110" stroke="#1f6feb" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Loop back: RECYCLE → SPAWN -->
+  <path d="M735,140 Q735,220 95,220 Q95,145 95,142" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arr)"/>
+  <text x="420" y="245" font-family="Arial" font-size="13" text-anchor="middle" fill="#b45309">pool reuse (avoids GC allocation)</text>
+
+  <!-- Pool cap note -->
+  <rect x="270" y="270" width="360" height="50" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="450" y="292" font-family="Arial" font-size="13" text-anchor="middle" fill="#4c1d95">if aliveCount ≥ maxParticles → spawn blocked</text>
+  <text x="450" y="310" font-family="Arial" font-size="13" text-anchor="middle" fill="#4c1d95">pool expands only up to maxParticles</text>
+</svg>

@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <defs>
+    <marker id="arr-orange" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#ff8c00"/>
+    </marker>
+    <marker id="arr-gray" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="450" y="30" font-family="Arial,sans-serif" font-size="15"
+        fill="#e2e8f0" text-anchor="middle" font-weight="bold">
+    Frustum Culling — Occlusion par le viewport caméra
+  </text>
+
+  <!-- ═══ World boundary ═══ -->
+  <rect x="20" y="48" width="860" height="392"
+        fill="#0f172a" stroke="#2d4a6a" stroke-width="1.5"
+        stroke-dasharray="8 4"/>
+  <text x="26" y="62" font-family="Arial,sans-serif" font-size="10" fill="#2d6a9a">
+    Monde (1200×800)
+  </text>
+
+  <!-- ═══ Camera viewport ═══ -->
+  <!-- Subtle fill inside viewport -->
+  <rect x="190" y="115" width="480" height="245"
+        fill="#ff8c00" fill-opacity="0.04"/>
+  <!-- Orange dashed border -->
+  <rect x="190" y="115" width="480" height="245"
+        fill="none" stroke="#ff8c00" stroke-width="2"
+        stroke-dasharray="10 5"/>
+  <!-- Label: top-left -->
+  <text x="196" y="112" font-family="Arial,sans-serif" font-size="10"
+        fill="#ff8c00">Viewport caméra</text>
+  <!-- Dimension annotations -->
+  <text x="430" y="113" font-family="monospace" font-size="9"
+        fill="#ff8c00" text-anchor="middle">vpW / zoom</text>
+  <text x="188" y="244" font-family="monospace" font-size="9"
+        fill="#ff8c00" text-anchor="end" transform="rotate(-90,188,244)">vpH / zoom</text>
+
+  <!-- ──────────────────────────────────────────── -->
+  <!-- ═══ CULLED entities (gray) ═══ -->
+  <!-- ──────────────────────────────────────────── -->
+
+  <!-- Box-left-1 : (55, 148, 35, 35) — outside left -->
+  <rect x="55" y="148" width="35" height="35"
+        fill="#252525" stroke="#444" stroke-width="1.5"/>
+  <line x1="55" y1="148" x2="90" y2="183" stroke="#555" stroke-width="1"/>
+  <line x1="90" y1="148" x2="55" y2="183" stroke="#555" stroke-width="1"/>
+  <text x="72" y="143" font-family="Arial,sans-serif" font-size="9"
+        fill="#555" text-anchor="middle">box_1</text>
+
+  <!-- Platform-left : (35, 332, 120, 16) — outside left -->
+  <rect x="35" y="332" width="120" height="16"
+        fill="#252525" stroke="#444" stroke-width="1.5"/>
+  <line x1="35" y1="332" x2="155" y2="348" stroke="#555" stroke-width="1"/>
+  <line x1="155" y1="332" x2="35" y2="348" stroke="#555" stroke-width="1"/>
+  <text x="95" y="328" font-family="Arial,sans-serif" font-size="9"
+        fill="#555" text-anchor="middle">plat_4</text>
+
+  <!-- Box-right-1 : (730, 182, 35, 35) — outside right -->
+  <rect x="730" y="182" width="35" height="35"
+        fill="#252525" stroke="#444" stroke-width="1.5"/>
+  <line x1="730" y1="182" x2="765" y2="217" stroke="#555" stroke-width="1"/>
+  <line x1="765" y1="182" x2="730" y2="217" stroke="#555" stroke-width="1"/>
+  <text x="748" y="178" font-family="Arial,sans-serif" font-size="9"
+        fill="#555" text-anchor="middle">box_5</text>
+
+  <!-- Platform-right : (715, 345, 120, 16) — outside right -->
+  <rect x="715" y="345" width="120" height="16"
+        fill="#252525" stroke="#444" stroke-width="1.5"/>
+  <line x1="715" y1="345" x2="835" y2="361" stroke="#555" stroke-width="1"/>
+  <line x1="835" y1="345" x2="715" y2="361" stroke="#555" stroke-width="1"/>
+  <text x="775" y="341" font-family="Arial,sans-serif" font-size="9"
+        fill="#555" text-anchor="middle">plat_6</text>
+
+  <!-- Box-above : (368, 60, 35, 35) — above viewport (y<115) -->
+  <rect x="368" y="60" width="35" height="35"
+        fill="#252525" stroke="#444" stroke-width="1.5"/>
+  <line x1="368" y1="60" x2="403" y2="95" stroke="#555" stroke-width="1"/>
+  <line x1="403" y1="60" x2="368" y2="95" stroke="#555" stroke-width="1"/>
+  <text x="386" y="57" font-family="Arial,sans-serif" font-size="9"
+        fill="#555" text-anchor="middle">box_2</text>
+
+  <!-- Box-below : (430, 400, 35, 35) — below viewport (y>360) -->
+  <rect x="430" y="400" width="35" height="35"
+        fill="#252525" stroke="#444" stroke-width="1.5"/>
+  <line x1="430" y1="400" x2="465" y2="435" stroke="#555" stroke-width="1"/>
+  <line x1="465" y1="400" x2="430" y2="435" stroke="#555" stroke-width="1"/>
+  <text x="448" y="452" font-family="Arial,sans-serif" font-size="9"
+        fill="#555" text-anchor="middle">box_3</text>
+
+  <!-- ──────────────────────────────────────────── -->
+  <!-- ═══ VISIBLE entities (bright colors) ═══ -->
+  <!-- ──────────────────────────────────────────── -->
+
+  <!-- Platform : (225, 318, 200, 16) — visible -->
+  <rect x="225" y="318" width="200" height="16"
+        fill="#1e4a2a" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="325" y="314" font-family="Arial,sans-serif" font-size="9"
+        fill="#4ade80" text-anchor="middle">plateforme</text>
+
+  <!-- Player : (305, 192, 38, 50) — visible -->
+  <rect x="305" y="192" width="38" height="50"
+        fill="#1e3a5f" stroke="#60a5fa" stroke-width="2"/>
+  <text x="324" y="188" font-family="Arial,sans-serif" font-size="9"
+        fill="#60a5fa" text-anchor="middle">joueur</text>
+
+  <!-- Enemy : (488, 152, 28, 28) — visible -->
+  <rect x="488" y="152" width="28" height="28"
+        fill="#4c1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <text x="502" y="148" font-family="Arial,sans-serif" font-size="9"
+        fill="#f87171" text-anchor="middle">ennemi</text>
+
+  <!-- Item/coin : (565, 258, 20, 20) — visible -->
+  <rect x="565" y="258" width="20" height="20"
+        fill="#422006" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="575" y="254" font-family="Arial,sans-serif" font-size="9"
+        fill="#f59e0b" text-anchor="middle">★</text>
+
+  <!-- ═══ Culled annotations ═══ -->
+  <!-- Left bracket + label -->
+  <line x1="18" y1="130" x2="18" y2="380"
+        stroke="#555" stroke-width="1.5"/>
+  <line x1="18" y1="130" x2="25" y2="130" stroke="#555" stroke-width="1.5"/>
+  <line x1="18" y1="380" x2="25" y2="380" stroke="#555" stroke-width="1.5"/>
+  <text x="14" y="260" font-family="Arial,sans-serif" font-size="9"
+        fill="#555" text-anchor="middle"
+        transform="rotate(-90,14,260)">hors viewport</text>
+
+  <!-- "éliminées" annotation (right side) -->
+  <text x="878" y="175" font-family="Arial,sans-serif" font-size="10"
+        fill="#555" text-anchor="end">éliminées</text>
+  <text x="878" y="188" font-family="Arial,sans-serif" font-size="10"
+        fill="#555" text-anchor="end">non dessinées</text>
+  <line x1="735" y1="199" x2="872" y2="186"
+        stroke="#555" stroke-width="1" stroke-dasharray="4 3"
+        marker-end="url(#arr-gray)"/>
+
+  <!-- ═══ Stats badge (bottom-right) ═══ -->
+  <rect x="650" y="450" width="230" height="50"
+        fill="#0a0f1a" stroke="#1e3a5f" stroke-width="1" rx="4"/>
+  <text x="765" y="470" font-family="monospace" font-size="11"
+        fill="#4ade80" text-anchor="middle">Dessinées  :  4 / 10</text>
+  <text x="765" y="488" font-family="monospace" font-size="11"
+        fill="#555"    text-anchor="middle">Éliminées  :  6 / 10</text>
+
+  <!-- ═══ Visible count label inside viewport ═══ -->
+  <text x="430" y="345" font-family="Arial,sans-serif" font-size="10"
+        fill="#ff8c00" fill-opacity="0.60" text-anchor="middle">
+    4 entités visibles → drawEntity()
+  </text>
+
+  <!-- ═══ Formula annotations ═══ -->
+  <!-- worldLeft -->
+  <line x1="190" y1="360" x2="190" y2="382"
+        stroke="#ff8c00" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="192" y="392" font-family="monospace" font-size="9"
+        fill="#ff8c00">worldLeft=cam.x</text>
+
+  <!-- worldRight -->
+  <line x1="670" y1="360" x2="670" y2="382"
+        stroke="#ff8c00" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="672" y="392" font-family="monospace" font-size="9"
+        fill="#ff8c00">worldRight=cam.x+vpW/z</text>
+
+  <!-- worldTop -->
+  <line x1="500" y1="115" x2="545" y2="107"
+        stroke="#ff8c00" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="548" y="106" font-family="monospace" font-size="9"
+        fill="#ff8c00">worldTop=cam.y</text>
+
+  <!-- worldBottom -->
+  <line x1="500" y1="360" x2="545" y2="368"
+        stroke="#ff8c00" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="548" y="374" font-family="monospace" font-size="9"
+        fill="#ff8c00">worldBottom=cam.y+vpH/z</text>
+
+  <!-- ═══ Bottom note ═══ -->
+  <text x="450" y="468" font-family="Arial,sans-serif" font-size="9"
+        fill="#3a5a7a" text-anchor="middle">
+    Les Behaviors (draw/drawDebug) continuent d'itérer TOUTES les entités actives
+  </text>
+  <text x="450" y="480" font-family="Arial,sans-serif" font-size="9"
+        fill="#3a5a7a" text-anchor="middle">
+    — VisualDebugBehavior affiche des mini-panels en bord de viewport pour les entités éliminées
+  </text>
+</svg>

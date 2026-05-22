@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760"
+     font-family="Segoe UI, Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="1200" height="760" fill="#1a1a2e"/>
+
+  <!-- Title -->
+  <text x="600" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#e0e0f0">
+    Level Editor (EditorApp) — UI Layout &amp; Docking (v1.0)
+  </text>
+
+  <!-- ─── MAIN WINDOW FRAME ─── -->
+  <rect x="20" y="50" width="1160" height="700" rx="8" fill="#121224" stroke="#4a6a9a" stroke-width="3"/>
+
+  <!-- ─── MENU BAR ─── -->
+  <rect x="20" y="50" width="1160" height="28" rx="8" fill="#1a1a3e" stroke="#4a6a9a" stroke-width="3"/>
+  <text x="35" y="68" font-size="10" font-weight="bold" fill="#9090cc">File</text>
+  <text x="85" y="68" font-size="10" font-weight="bold" fill="#9090cc">Edit</text>
+  <text x="135" y="68" font-size="10" font-weight="bold" fill="#9090cc">View</text>
+  <text x="185" y="68" font-size="10" font-weight="bold" fill="#9090cc">Scene</text>
+  <text x="245" y="68" font-size="10" font-weight="bold" fill="#9090cc">Help</text>
+
+  <!-- ─── TOOLBAR ─── -->
+  <rect x="20" y="78" width="1160" height="42" fill="#1e1e3e" stroke="#3a5a8a" stroke-width="1"/>
+  
+  <!-- Tool Buttons -->
+  <g id="toolbar-tools">
+    <!-- SelectTool (active) -->
+    <rect x="35" y="86" width="36" height="26" rx="3" fill="#4a6a9a" stroke="#6a9aca" stroke-width="1.5"/>
+    <text x="53" y="103" text-anchor="middle" font-size="9" font-weight="bold" fill="#e0e0f0">S</text>
+    
+    <!-- DragTool -->
+    <rect x="78" y="86" width="36" height="26" rx="3" fill="#2a3a5a" stroke="#4a6a8a" stroke-width="1"/>
+    <text x="96" y="103" text-anchor="middle" font-size="9" fill="#9090cc">D</text>
+    
+    <!-- PlaceTool -->
+    <rect x="121" y="86" width="36" height="26" rx="3" fill="#2a3a5a" stroke="#4a6a8a" stroke-width="1"/>
+    <text x="139" y="103" text-anchor="middle" font-size="9" fill="#9090cc">P</text>
+  </g>
+
+  <!-- Grid controls -->
+  <g id="grid-controls">
+    <!-- Grid toggle label -->
+    <text x="200" y="103" font-size="9" fill="#9090cc">Grid:</text>
+    
+    <!-- Toggle button (ON) -->
+    <rect x="230" y="88" width="24" height="18" rx="3" fill="#4a8a4a" stroke="#6ab96a" stroke-width="1"/>
+    <text x="242" y="99" text-anchor="middle" font-size="7" font-weight="bold" fill="#e0f0e0">ON</text>
+    
+    <!-- Size display -->
+    <text x="270" y="103" font-size="9" fill="#9090cc">(16px)</text>
+  </g>
+
+  <!-- ─── LEFT PANEL AREA: Scene Tree (Ctrl+3) ─── -->
+  <rect x="20" y="120" width="240" height="630" rx="4" fill="#1e1e3e" stroke="#5555aa" stroke-width="2"/>
+  
+  <!-- Left Panel Header -->
+  <rect x="20" y="120" width="240" height="26" fill="#252560"/>
+  <text x="32" y="137" font-size="10" font-weight="bold" fill="#9090cc">Scene Tree</text>
+  <text x="224" y="137" font-size="8" fill="#6666aa">▼</text>
+  
+  <!-- Search box -->
+  <rect x="28" y="154" width="224" height="20" rx="3" fill="#2a2a4a" stroke="#4a6a8a" stroke-width="1"/>
+  <text x="35" y="165" font-size="8" fill="#6a7aaa">Search...</text>
+  
+  <!-- Tree content -->
+  <text x="32" y="190" font-size="9" font-weight="bold" fill="#6ab4f5">▼ World</text>
+  <text x="50" y="210" font-size="8" fill="#8abcd9">▼ player_ship</text>
+  <text x="50" y="227" font-size="8" fill="#8abcd9">▶ enemy_01</text>
+  <text x="50" y="244" font-size="8" fill="#8abcd9">▶ platform_01</text>
+  <text x="50" y="261" font-size="8" fill="#8abcd9">▼ UI_canvas</text>
+  <rect x="62" y="269" width="182" height="16" rx="2" fill="#4a6a9a" stroke="#7a9aca" stroke-width="1"/>
+  <text x="68" y="279" font-size="8" fill="#e0e0f0">score_display</text>
+
+  <!-- ─── CENTER PANEL: VIEWPORT ─── -->
+  <rect x="270" y="120" width="630" height="630" rx="4" fill="#0a0a1a" stroke="#4a8a4a" stroke-width="2"/>
+  
+  <!-- Viewport Header -->
+  <rect x="270" y="120" width="630" height="26" fill="#1a2a1a"/>
+  <text x="282" y="137" font-size="10" font-weight="bold" fill="#6ab96a">Game Viewport (EditorScene)</text>
+  
+  <!-- Viewport Canvas Area -->
+  <rect x="278" y="154" width="614" height="588" fill="#0f1f0f" stroke="#2a5a2a" stroke-width="1"/>
+  
+  <!-- Grid -->
+  <defs>
+    <pattern id="grid-main" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#1a3a1a" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect x="278" y="154" width="614" height="588" fill="url(#grid-main)" opacity="0.6"/>
+  
+  <!-- Center axes -->
+  <line x1="585" y1="154" x2="585" y2="742" stroke="#3a4a3a" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>
+  <line x1="278" y1="448" x2="892" y2="448" stroke="#3a4a3a" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>
+  
+  <!-- Sample entities in viewport -->
+  <!-- player_ship (selected) -->
+  <rect x="520" y="380" width="40" height="40" fill="#4a7aaa" opacity="0.7" stroke="#ffa500" stroke-width="2" stroke-dasharray="2,2"/>
+  <text x="540" y="402" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">ship</text>
+  
+  <!-- Selection handles -->
+  <circle cx="520" cy="380" r="2.5" fill="#ffa500"/>
+  <circle cx="560" cy="380" r="2.5" fill="#ffa500"/>
+  <circle cx="520" cy="420" r="2.5" fill="#ffa500"/>
+  <circle cx="560" cy="420" r="2.5" fill="#ffa500"/>
+  
+  <!-- platform -->
+  <rect x="350" y="550" width="120" height="20" fill="#4a6a4a" opacity="0.6"/>
+  <text x="410" y="562" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">platform</text>
+
+  <!-- ─── RIGHT PANEL AREA: Dockable Panels (Tabbed) ─── -->
+  <rect x="920" y="120" width="260" height="630" rx="4" fill="#1e1e3e" stroke="#aa5555" stroke-width="2"/>
+  
+  <!-- Right Panel Tab Bar -->
+  <rect x="920" y="120" width="260" height="26" fill="#2a1a2a"/>
+  
+  <!-- Tab buttons -->
+  <rect x="930" y="125" width="60" height="18" rx="2" fill="#3a3a5a" stroke="#5a5a8a" stroke-width="1"/>
+  <text x="960" y="135" text-anchor="middle" font-size="8" fill="#9090cc">Prop.</text>
+  
+  <rect x="1000" y="125" width="60" height="18" rx="2" fill="#2a2a3a" stroke="#4a4a6a" stroke-width="1"/>
+  <text x="1030" y="135" text-anchor="middle" font-size="8" fill="#7a7aaa">Behavior</text>
+  
+  <rect x="1070" y="125" width="100" height="18" rx="2" fill="#2a2a3a" stroke="#4a4a6a" stroke-width="1"/>
+  <text x="1120" y="135" text-anchor="middle" font-size="8" fill="#7a7aaa">Material...</text>
+
+  <!-- Properties Panel (active tab) -->
+  <g id="properties-panel">
+    <text x="932" y="160" font-size="8" font-weight="bold" fill="#e0a0a0">Name:</text>
+    <rect x="932" y="163" width="238" height="16" rx="2" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="0.5"/>
+    <text x="936" y="172" font-size="7" fill="#d0d0e0">score_display</text>
+    
+    <text x="932" y="190" font-size="8" font-weight="bold" fill="#e0a0a0">X:</text>
+    <rect x="932" y="193" width="110" height="16" rx="2" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="0.5"/>
+    <text x="936" y="202" font-size="7" fill="#d0d0e0">280.0</text>
+    
+    <text x="1052" y="190" font-size="8" font-weight="bold" fill="#e0a0a0">Y:</text>
+    <rect x="1052" y="193" width="110" height="16" rx="2" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="0.5"/>
+    <text x="1056" y="202" font-size="7" fill="#d0d0e0">50.0</text>
+    
+    <text x="932" y="226" font-size="8" font-weight="bold" fill="#e0a0a0">Width:</text>
+    <rect x="932" y="229" width="110" height="16" rx="2" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="0.5"/>
+    <text x="936" y="238" font-size="7" fill="#d0d0e0">200.0</text>
+    
+    <text x="1052" y="226" font-size="8" font-weight="bold" fill="#e0a0a0">Height:</text>
+    <rect x="1052" y="229" width="110" height="16" rx="2" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="0.5"/>
+    <text x="1056" y="238" font-size="7" fill="#d0d0e0">30.0</text>
+    
+    <text x="932" y="265" font-size="8" font-weight="bold" fill="#e0a0a0">Physics:</text>
+    <rect x="932" y="268" width="230" height="16" rx="2" fill="#2a2a4a" stroke="#5a5a8a" stroke-width="0.5"/>
+    <text x="936" y="277" font-size="7" fill="#d0d0e0">NONE</text>
+    
+    <rect x="932" y="295" width="230" height="22" rx="3" fill="#4a6a4a" stroke="#6a9a6a" stroke-width="1"/>
+    <text x="1047" y="309" text-anchor="middle" font-size="8" font-weight="bold" fill="#c0f0c0">Apply</text>
+  </g>
+
+  <!-- ─── STATUS BAR ─── -->
+  <rect x="20" y="750" width="1160" height="10" fill="#0f0f1f" stroke="#3a5a8a" stroke-width="1"/>
+  <text x="35" y="757" font-size="7" fill="#6a7aaa">Mode: EDITOR | Selected: score_display | Pos: (280.0, 50.0) | Grid: ON (16px)</text>
+
+  <!-- ─── ANNOTATIONS & LEGEND ─── -->
+  
+  <!-- Keyboard Shortcuts -->
+  <g id="keyboard-legend">
+    <rect x="20" y="760" width="1160" height="1" fill="none"/>
+  </g>
+
+  <!-- Docking indicators -->
+  <defs>
+    <marker id="arrow-right" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#7a9aca"/>
+    </marker>
+  </defs>
+
+  <!-- Sync flow arrows -->
+  <path d="M 242 250 Q 260 200 270 180" stroke="#ffa500" stroke-width="1.5" fill="none" marker-end="url(#arrow-right)" stroke-dasharray="3,2" opacity="0.7"/>
+  <text x="245" y="210" font-size="7" fill="#ffa500">select</text>
+
+  <path d="M 900 200 Q 910 180 920 160" stroke="#6ab4f5" stroke-width="1.5" fill="none" marker-end="url(#arrow-right)" stroke-dasharray="3,2" opacity="0.7"/>
+  <text x="885" y="175" font-size="7" fill="#6ab4f5">sync props</text>
+
+  <!-- Layout description box -->
+  <rect x="20" y="760" width="1160" height="0" fill="none"/>
+  
+  <text x="40" y="775" font-size="7" fill="#7a9aaa">
+    <tspan>Docking Layout (v1.0 JSplitPane): Left = Scene Tree (Ctrl+3) | Center = Viewport | Right = Tabbed Panels (Properties Ctrl+1, Behaviors Ctrl+2)</tspan>
+  </text>
+
+</svg>
